@@ -10,7 +10,7 @@ Todo el proceso de recolección de tareas y actividades está automatizado, por 
 
 | Nombre | Mail UC | Usuario Discord |
 | :-: | :-: | :-: |
-| {Tu nombre} | {Tu correo UC} | {Tu usuario Discord} |
+| Min Soo | mjeon@uc.cl | min_soos_ |
 
 ## Sobre las entregas
 
