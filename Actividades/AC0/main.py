@@ -1,16 +1,25 @@
 # Debes completar esta función para que retorne la información de los ayudantes
 def cargar_datos(path):
-    return None
+    esto = open(path)
+    lista = esto.readlines()
+    esto.close()
+    for i in range(len(lista)):
+        lista[i]=lista[i].strip()
+        lista[i]=lista[i].split(",")
+    return lista
 
 
 # Completa esta función para encontrar la información del ayudante entregado
 def buscar_info_ayudante(usuario, lista_ayudantes):
-    return None
+    for i in lista_ayudantes:
+        if i[2] == usuario:
+            lista=i
+    return lista
 
 
 # Completa esta función para que los ayudnates puedan saludar
 def saludar_ayudante(info_ayudante):
-    return None
+    return "Hi "+str(info_ayudante[0])
 
 
 if __name__ == '__main__':
