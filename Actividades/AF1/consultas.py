@@ -26,7 +26,7 @@ def descartar_platos(ingredientes_descartados, platos):
                     tiene_ingrediente_descartado = True
         if tiene_ingrediente_descartado == False:
             platos_descartados[i] = platos[i]
-    return platos
+    return platos_descartados
 
 
 # Recibe un plato, comprueba si hay ingredientes suficientes y los descuenta
