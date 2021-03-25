@@ -7,7 +7,7 @@ def platos_por_categoria(platos):
         diccionario[platos[i].categoria].append(platos[i].n)
     return diccionario
     ##############
-    categorias = set()
+    #categorias = set()
     #for i in platos:
        # categorias.add(i.categoria)
     #for i in categorias:
@@ -65,4 +65,5 @@ if __name__ == "__main__":
     print(" PRUEBA CONSULTAS ".center(80, "="))
     platos_por_categoria(platos)
     print("DESCARTED",descartar_platos({"Lechuga","Queso","Tomate"}, platos))
+    
     
