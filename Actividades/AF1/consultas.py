@@ -1,7 +1,6 @@
 import cargar
 from collections import defaultdict
 platos = cargar.cargar_platos()
-print(platos)
 def platos_por_categoria(platos):
     diccionario = defaultdict(list)
     for i in platos:
@@ -18,31 +17,52 @@ def platos_por_categoria(platos):
 
 # Retorna los platos que no incluyan los ingredientes descartados
 def descartar_platos(ingredientes_descartados, platos):
+    platos_descartados={}
     for i in platos:
         tiene_ingrediente_descartado = False
         for e in ingredientes_descartados:
             for h in platos[i].ingredientes:
                 if e == h:
                     tiene_ingrediente_descartado = True
-        if tiene_ingrediente_descartado == True:
-            del platos[platos[i].n]
+        if tiene_ingrediente_descartado == False:
+            platos_descartados[i] = platos[i]
     return platos
 
 
 # Recibe un plato, comprueba si hay ingredientes suficientes y los descuenta
 def ordenar_plato(plato, ingredientes):
-    # COMPLETAR ESTA FUNCIÖN
-    pass
+    ingredientesp = plato.ingredientes
+    hay = True
+    for i in ingredientesp:
+        if ingredientes[i]<1:
+            hay = False
+    if hay == False:
+        return False
+    else:
+        for i in ingredientesp:
+            ingredientes[i]-=1
+        return True
 
 
 # Recibe una lista de platos y retorna el resumen de esa orden
 def resumen_orden(lista_platos):
-    # COMPLETAR ESTA FUNCIÖN
-    pass
+    tiempo = 0
+    presio = 0
+    cantidad = 0
+    platoss = []
+    for i in lista_platos:
+        platoss.append(i.n)
+        cantidad += 1
+        tiempo += i.tiempo
+        presio += i.precio
+    diccio = {"precio total": presio, "tiempo total": tiempo, "cantidad de platos": cantidad}
+    diccio["platos"] = platoss
+    return diccio
 
 
 if __name__ == "__main__":
     # ================== PUEDES PROBAR TUS FUNCIONES AQUÍ =====================
     print(" PRUEBA CONSULTAS ".center(80, "="))
     platos_por_categoria(platos)
-    descartar_platos(ingredientes_descartados, platos)
+    print("DESCARTED",descartar_platos({"Lechuga","Queso","Tomate"}, platos))
+    
