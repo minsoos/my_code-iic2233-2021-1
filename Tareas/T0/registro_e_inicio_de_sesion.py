@@ -10,7 +10,7 @@ def funcion_interfaz_menu():
     elif respuesta == "2":
         return funcion_registrar_usuario()
     elif respuesta == "0":
-        return False,False
+        return False, False
     else:
         print("Respuesta inválida")
         desea_seguir = respuesta_invalida_seguir()
