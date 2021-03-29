@@ -8,7 +8,7 @@ def main():
     exitoso = ingreso[0]
     usuario = ingreso[1]
     if not exitoso:
-        print("Igual no te queríamos con nosotros, chao")
+        print("Igual no te queríamos con nosotros, chao\n")
         pass
     elif exitoso:
         print("")

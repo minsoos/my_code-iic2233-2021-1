@@ -29,9 +29,10 @@ def anadir_grupo(usuario):
             print("Además recuerda que los miembros van separados por \";\"")
             return menu_grupos.menu_grupos(usuario)
         miembros = miembros.split(";")
+        miembros.append(usuario)
         miembros = list(set(miembros))
         if len(miembros)>1:
-            #  Revisamos si hay más de dos miembros en el input
+            #  Revisamos si hay más de un miembro en el input
             usuarios_archivo = open("usuarios.csv")
             usuarios = usuarios_archivo.readlines()
             usuarios_archivo.close()
@@ -45,6 +46,7 @@ def anadir_grupo(usuario):
                     existen = False
                     usuario_error = miembro
             if not existen:
+                # Si no existen arrojamos error
                 print(f"{usuario_error} no existe\n")
                 return menu_grupos.menu_grupos(usuario)
             elif existen:

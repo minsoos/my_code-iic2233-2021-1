@@ -124,13 +124,24 @@ def escribir_mensaje(emisor, receptor, tipo):
 def sacar_de_grupo(emisor, grupo):
     archivo_grupos = open("grupos.csv")
     grupos = archivo_grupos.readlines()
-    archivo_grupos.close()
     for i in range(len(grupos)):
-        if grupos[i] == f"{grupo},{emisor}\n":
+        if f"{grupo},{emisor}" in grupos[i]:
             e = i
     grupos.pop(e)
+    print("Saliste del grupo, buena elección esos no eran tus amigos")
+    #  Si los miembros contados, son iguales a 1, se elimina el grupo
+    miembros_contados = 0
+    for i in range(len(grupos)):
+        if f"{grupo}," in grupos[i]:
+            miembros_contados += 1
+            e = i
+    if miembros_contados == 1:
+        grupos.pop(e)
+    if i == e:
+        grupos[i-1].strip()
     archivo_grupos = open("grupos.csv", "w")
     archivo_grupos.write("".join(grupos))
     archivo_grupos.close()
-    print("Saliste del grupo, buena elección esos no eran tus amigos")
     return menu_de_chats.menu_de_chats(emisor)
+
+
