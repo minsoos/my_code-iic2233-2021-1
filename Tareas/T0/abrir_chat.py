@@ -47,12 +47,15 @@ class Mensaje:
 
 
 def ordenar_mensajes(mensaje):
+    # Para ordenar los mensajes por fecha
     m = mensaje.fecha
     t = m.ano, m.mes, m.dia, m.hora, m.minutos, m.segundos
     return t
 
 
 def unir_mensajes_con_coma(mensaje):
+    #  Para unir los mensajes que tienen coma y fueron separados por el split
+    #  en la leída del archivo
     mensaje_unido = []
     m = mensaje
     for i in range(4, len(mensaje)):
@@ -114,6 +117,7 @@ def abrir_chat_grupal(usuario, grupo, lista_mensajes):
 
 
 def escribir_mensaje(emisor, receptor, tipo):
+    #  Esta función escribe un mensaje en un chat cualquiera
     escrito = input()
     if escrito == VOLVER_FRASE:
         if tipo == "grupo":
@@ -148,6 +152,7 @@ def escribir_mensaje(emisor, receptor, tipo):
 
 
 def sacar_de_grupo(emisor, grupo):
+    #  Esta función saca al emisor de un grupo
     archivo_grupos = open("grupos.csv")
     grupos = archivo_grupos.readlines()
     for i in range(len(grupos)):
