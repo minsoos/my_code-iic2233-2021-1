@@ -15,5 +15,6 @@ def main():
         print("*"*50 + "\n" + "*"*11 + " Has ingresado a tu chat! " + "*"*11 + "\n" + "*"*50)
         return menu_de_chats.menu_de_chats(usuario)
 
+
 if __name__ == "__main__":
     main()

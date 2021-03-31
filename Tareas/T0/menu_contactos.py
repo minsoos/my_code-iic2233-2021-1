@@ -2,6 +2,8 @@ import ver_contactos
 import menu_de_chats
 import anadir_contacto
 from funciones_recurrentes import respuesta_invalida_seguir
+
+
 def menu_contactos(usuario):
     print("")
     print("*"*50 + "\n" + "*"*17 + " MENÚ CONTACTOS " + "*"*17 + "\n" + "*"*50)

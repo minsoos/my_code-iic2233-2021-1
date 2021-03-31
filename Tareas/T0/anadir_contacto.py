@@ -4,11 +4,17 @@ from collections import defaultdict
 
 def anadir_contacto(usuario):
     print("\n¿A quién desea añadir?\n")
-    #  revisamos archivo de contactos.csv
+    #  revisamos archivo de contactos.csv y usuarios.csv
+    usuarios_archivo = open("usuarios.csv")
     contactos_archivo = open("contactos.csv")
     contactos = contactos_archivo.readlines()
+    usuarios = usuarios_archivo.readlines()
     contactos_archivo.close()
+    usuarios_archivo.close()
     dict_contactos = defaultdict(list)
+    set_usuarios = set()
+    for i in usuarios:
+        set_usuarios.add(i.strip())
     for i in range(len(contactos)):
         contactos[i] = contactos[i].strip().split(",")
         dict_contactos[contactos[i][0]].append(contactos[i][1])
@@ -19,7 +25,7 @@ def anadir_contacto(usuario):
             hay_contactos = True
     #  revisamos si está el input en el archivo
     agregar_a = input()
-    if agregar_a in dict_contactos:
+    if agregar_a in set_usuarios:
         if agregar_a in contactos_del_user:
             print("Este contacto ya está agregado\n")
             return menu_contactos.menu_contactos(usuario)

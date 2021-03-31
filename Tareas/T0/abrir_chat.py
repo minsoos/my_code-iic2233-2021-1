@@ -1,6 +1,9 @@
 from datetime import datetime
-import menu_de_chats
+import menu_grupos
+import menu_contactos
 from parametros import ABANDONAR_FRASE, VOLVER_FRASE
+
+
 class Fecha:
     def __init__(self, ano, mes, dia, hora, minutos, segundos):
         self.ano = ano
@@ -16,21 +19,30 @@ class Fecha:
 
 class Mensaje:
     def __init__(self, tipo, emisor, receptor, fecha, contenido):
-        self.tipo = tipo    
+        self.tipo = tipo
         self.emisor = emisor
         self.receptor = receptor
         self.fecha = fecha
         self.contenido = contenido
+
     def definir_fecha(self):
         self.fecha = self.fecha.split(" ")
         fecha = self.fecha[0].split("/")
-        ano = int(fecha[0])
-        mes = int(fecha[1])
-        dia = int(fecha[2])
+        for i in range(len(fecha)):
+            if int(fecha[i]) < 10:
+                fecha[i] = str(int(fecha[i]))
+                fecha[i] = f"0{fecha[i]}"
+        ano = fecha[0]
+        mes = fecha[1]
+        dia = fecha[2]
         hour = self.fecha[1].split(":")
-        hora = int(hour[0])
-        minutos = int(hour[1])
-        segundos = int(hour[2])
+        for i in range(len(hour)):
+            if int(hour[i]) < 10:
+                hour[i] = str(int(hour[i]))
+                hour[i] = f"0{hour[i]}"
+        hora = hour[0]
+        minutos = hour[1]
+        segundos = hour[2]
         self.fecha = Fecha(ano, mes, dia, hora, minutos, segundos)
 
 
@@ -38,6 +50,15 @@ def ordenar_mensajes(mensaje):
     m = mensaje.fecha
     t = m.ano, m.mes, m.dia, m.hora, m.minutos, m.segundos
     return t
+
+
+def unir_mensajes_con_coma(mensaje):
+    mensaje_unido = []
+    m = mensaje
+    for i in range(4, len(mensaje)):
+        mensaje_unido.append(mensaje[i])
+    mensaje =[m[0], m[1], m[2], m[3], ",".join(mensaje_unido)]
+    return mensaje
 
 
 def abrir_chat(usuario, receptor, tipo):
@@ -48,6 +69,7 @@ def abrir_chat(usuario, receptor, tipo):
     for i in range(1, len(mensajes)):
         mensajes[i] = mensajes[i].strip().split(",")
         m = mensajes[i]
+        m = unir_mensajes_con_coma(m)
         mensaje = Mensaje(m[0], m[1], m[2], m[3], m[4])
         mensaje.definir_fecha()
         lista_mensajes.append(mensaje)
@@ -94,9 +116,13 @@ def abrir_chat_grupal(usuario, grupo, lista_mensajes):
 def escribir_mensaje(emisor, receptor, tipo):
     escrito = input()
     if escrito == VOLVER_FRASE:
-        return menu_de_chats.menu_de_chats(emisor)
+        if tipo == "grupo":
+            return menu_grupos.menu_grupos(emisor)
+        elif tipo == "regular":
+            return menu_contactos.menu_contactos(emisor)
     elif escrito == ABANDONAR_FRASE:
         if tipo == "regular":
+            print("\nNo puedes salir de una conversación regular\n")
             return abrir_chat(emisor, receptor, tipo)
         elif tipo == "grupo":
             return sacar_de_grupo(emisor, receptor)
@@ -114,7 +140,7 @@ def escribir_mensaje(emisor, receptor, tipo):
         mensaje_actual = Mensaje(tipo, emisor, receptor, fecha, escrito)
         mensaje_actual.definir_fecha()
         m = mensaje_actual
-        #  Guardamos el mensaje 
+        #  Guardamos el mensaje
         archivo_mensajes = open("mensajes.csv", "a", encoding="utf8")
         archivo_mensajes.write(f"\n{tipo},{emisor},{receptor},{fecha},{escrito}")
         archivo_mensajes.close()
@@ -129,19 +155,9 @@ def sacar_de_grupo(emisor, grupo):
             e = i
     grupos.pop(e)
     print("Saliste del grupo, buena elección esos no eran tus amigos")
-    #  Si los miembros contados, son iguales a 1, se elimina el grupo
-    miembros_contados = 0
-    for i in range(len(grupos)):
-        if f"{grupo}," in grupos[i]:
-            miembros_contados += 1
-            e = i
-    if miembros_contados == 1:
-        grupos.pop(e)
     if i == e:
         grupos[i-1].strip()
     archivo_grupos = open("grupos.csv", "w")
     archivo_grupos.write("".join(grupos))
     archivo_grupos.close()
-    return menu_de_chats.menu_de_chats(emisor)
-
-
+    return menu_grupos.menu_grupos(emisor)

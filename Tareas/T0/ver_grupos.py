@@ -1,7 +1,7 @@
 import menu_grupos
 from funciones_recurrentes import respuesta_invalida_seguir
 from collections import defaultdict
-from abrir_chat import abrir_chat
+import abrir_chat
 
 
 def ver_grupos(usuario):
@@ -35,7 +35,7 @@ def ver_grupos(usuario):
         if 1 <= opcion <= len(grupos_del_user) and hay_grupos:
             # Si es dígito y está entre los pedidos abrimos el chat
             grupo_elegido = grupos_del_user[opcion-1]
-            return abrir_chat(usuario, grupo_elegido, "grupo")
+            return abrir_chat.abrir_chat(usuario, grupo_elegido, "grupo")
         else:
             # Los dos else que quedan es para o repetir, o para volver al menú de chats
             print("opción no válida")

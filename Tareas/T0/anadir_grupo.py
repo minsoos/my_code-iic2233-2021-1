@@ -4,6 +4,7 @@ from collections import defaultdict
 
 def anadir_grupo(usuario):
     print("\n¿Qué grupo desea añadir?\n")
+    print("El nombre del grupo no puede llevar \",\" y debe tener por lo menos un caracter\n")
     #  revisamos archivo de grupos.csv
     grupos_archivo = open("grupos.csv")
     grupos = grupos_archivo.readlines()
@@ -12,8 +13,11 @@ def anadir_grupo(usuario):
     for i in grupos:
         i = i.split(",")
         set_grupos.add(i[0])
-    #  revisamos si está el input en el archivo grupos
     nombre_grupo = input()
+    if "," in nombre_grupo or len(nombre_grupo) < 1:
+        print("El nombre del grupo no puede tener \",\" y su largo debe ser >= a 1")
+        return menu_grupos.menu_grupos(usuario)
+    #  revisamos si está el input en el archivo grupos
     if nombre_grupo in set_grupos:
         print("Este grupo ya existe :(\n")
         return menu_grupos.menu_grupos(usuario)

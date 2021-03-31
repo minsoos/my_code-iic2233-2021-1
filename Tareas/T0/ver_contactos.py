@@ -1,7 +1,7 @@
 import menu_contactos
 from funciones_recurrentes import respuesta_invalida_seguir
 from collections import defaultdict
-from abrir_chat import abrir_chat
+import abrir_chat
 
 
 def ver_contactos(usuario):
@@ -34,7 +34,7 @@ def ver_contactos(usuario):
         if 1 <= opcion <= len(contactos_del_user) and hay_contactos:
             # Si es dígito y está entre los pedidos abrimos el chat
             contacto_elegido = contactos_del_user[opcion-1]
-            return abrir_chat(usuario, contacto_elegido, "regular")
+            return abrir_chat.abrir_chat(usuario, contacto_elegido, "regular")
         else:
             # Los dos else que quedan es para o repetir, o para volver al menú de chats
             print("opción no válida")

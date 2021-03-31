@@ -2,6 +2,8 @@ import ver_grupos
 import menu_de_chats
 import anadir_grupo
 from funciones_recurrentes import respuesta_invalida_seguir
+
+
 def menu_grupos(usuario):
     print("")
     print("*"*50 + "\n" + "*"*18 + " Menú grupos " + "*"*19 + "\n" + "*"*50)
