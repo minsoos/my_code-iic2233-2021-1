@@ -1,6 +1,15 @@
 import registro_e_inicio_de_sesion
 import menu_de_chats
 
+for i in ("usuarios.csv", "contactos.csv", "grupos.csv", "mensajes.csv"):
+    abrido = open(i)
+    archivo = abrido.read()
+    abrido.close()
+    archivo = archivo.strip()
+    abrido = open(i, "w")
+    abrido.write(archivo)
+    abrido.close()
+
 
 def main():
     print("*"*50 + "\n" + "*"*11 + " Has ingresado a DCConecta2 " + "*"*11 + "\n" + "*"*50)
