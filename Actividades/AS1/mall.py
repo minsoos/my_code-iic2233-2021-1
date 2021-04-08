@@ -58,4 +58,3 @@ class Mall:
         self.pedir_resumen()
         print("")
         print(f"Quedaron {len(clientes_fuera)} clientes fuera de sus locales favoritos")
-        print(f"las utilidades del mall son {self.utilidades}")
