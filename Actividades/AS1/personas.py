@@ -19,12 +19,11 @@ class Persona(ABC):
 # Completar
 class Cliente(Persona):
 
-
     def __init__(self, nombre, edad, contagiado, nombre_local_favorito, dinero):
         super().__init__(nombre, edad, contagiado)
         self.nombre_local_favorito = nombre_local_favorito
         self.dinero = int(dinero)
-
+        self.saludar()
 
     def saludar(self):
         # No modificar
@@ -38,6 +37,8 @@ class Trabajador(Persona):
         super().__init__(nombre, edad, contagiado)
         self.sueldo = int(sueldo)
         self.nombre_local = nombre_local
+        self.saludar()
+
     def generar_posible_contagio(self):
         # No modificar
         probabilidad_contagio = random.uniform(0, 1)
