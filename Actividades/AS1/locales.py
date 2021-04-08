@@ -21,7 +21,7 @@ class Local(ABC):
 
     @property
     def utilidades(self):
-        return self.utilidades
+        return self.__utilidades
     
     @utilidades.setter
     def utilidades(self, cambio):
@@ -95,7 +95,7 @@ class Entretenimiento(Local):
         super().__init__(productos, nombre, aforo, trabajador)
         self.categoria = "Entretenimiento"
     def cliente_ingresa(self, cliente):
-        entra = self.cliente_ingresa(cliente)
+        entra = super().cliente_ingresa(cliente)
         if entra == True:
             self.sanitizar_juegos()
             return True
@@ -114,7 +114,7 @@ class Comida(Local):
         self.categoria = "Comida"
 
     def cliente_ingresa(self, cliente):
-        entra = self.cliente_ingresa(cliente)
+        entra = super().cliente_ingresa(cliente)
         if entra == True:
             self.entregar_menu()
             return True
@@ -134,7 +134,7 @@ class Tienda(Local):
         self.categoria = "Tienda"
 
     def cliente_ingresa(self, cliente):
-        entra = self.cliente_ingresa(cliente)
+        entra = super().cliente_ingresa(cliente)
         if entra == True:
             self.anunciar_oferta()
             return True

@@ -9,19 +9,34 @@ class Mall:
         self.locales = locales
 
         # Definir self.abierto
-        self.abierto = None
-
-    # Modifica este método como property (agregar más métodos si es necesario)
+        self.abierto = True
+        self.__utilidades = 0
+    
+    @property
     def utilidades(self):
-        pass
+        return self.utilidades
+
+    @utilidades.setter
+    def utilidades(self):
+        utilidades_totales = 0
+        for i in self.locales:
+            utilidades_totales += i.utilidades
+        self.__utilidades = utilidades_totales
+
 
     def pedir_resumen(self):
-        # Completar
-        pass
+        for i in self.locales:
+            self.locales[i].entregar_resumen()
 
     def vender(self, local, cliente):
-        # Completar
-        pass
+        producto = local.obtener_producto_a_vender()
+        precio = local.productos[producto]
+        if precio <= cliente.dinero:
+            cliente.dinero -= precio
+            local.utilidades += precio
+            print(f"{cliente.nombre} ha comprado {producto}")
+        else:
+            print(f"{cliente.nombre} no puede comprar {producto}")
 
     def iniciar_simulacion(self):
         # No modificar

@@ -17,7 +17,7 @@ class Persona(ABC):
 
 
 # Completar
-class Cliente:
+class Cliente(Persona):
 
 
     def __init__(self, nombre, edad, contagiado, nombre_local_favorito, dinero):
@@ -32,7 +32,7 @@ class Cliente:
 
 
 # Completar
-class Trabajador:
+class Trabajador(Persona):
 
     def __init__(self, nombre, edad, contagiado, sueldo, nombre_local):
         super().__init__(nombre, edad, contagiado)
