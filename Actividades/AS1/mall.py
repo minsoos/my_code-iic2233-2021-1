@@ -10,18 +10,14 @@ class Mall:
 
         # Definir self.abierto
         self.abierto = True
-        self.__utilidades = 0
     
     @property
     def utilidades(self):
-        return self.utilidades
-
-    @utilidades.setter
-    def utilidades(self):
         utilidades_totales = 0
         for i in self.locales:
-            utilidades_totales += i.utilidades
+            utilidades_totales += self.locales[i].utilidades
         self.__utilidades = utilidades_totales
+        return self.__utilidades
 
 
     def pedir_resumen(self):
@@ -62,3 +58,4 @@ class Mall:
         self.pedir_resumen()
         print("")
         print(f"Quedaron {len(clientes_fuera)} clientes fuera de sus locales favoritos")
+        print(f"las utilidades del mall son {self.utilidades}")
