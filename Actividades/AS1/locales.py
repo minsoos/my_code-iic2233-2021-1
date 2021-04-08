@@ -4,7 +4,7 @@ from personas import Trabajador
 
 
 # Completar
-class Local:
+class Local(ABC):
 
     def __init__(self, productos, nombre, aforo, trabajador):
         # No modificar
@@ -19,10 +19,17 @@ class Local:
         self.clientes_rechazados = 0
         self.categoria = None
 
-    # Modifica este método como property (agregar más métodos si es necesario)
+    @property
     def utilidades(self):
-        # Completar
-        pass
+        return self.utilidades
+    
+    @utilidades.setter
+    def utilidades(self, cambio):
+        if self.__utilidades + cambio >= 0:
+            self.__utilidades += cambio
+        else:
+            self.__utilidades = 0
+            self.abierto = False
 
     def cliente_ingresa(self, cliente):
         # No modificar
@@ -82,31 +89,37 @@ class Local:
 
 
 # Completar
-class Entretenimiento:
+class Entretenimiento(Local):
 
     def __init__(self, productos, nombre, aforo, trabajador):
-        # Completar
-        pass
-
+        super().__init__(productos, nombre, aforo, trabajador)
+        self.categoria = "Entretenimiento"
     def cliente_ingresa(self, cliente):
-        # Completar
-        pass
-
+        entra = self.cliente_ingresa(cliente)
+        if entra == True:
+            self.sanitizar_juegos()
+            return True
+        else:
+            return False
     def sanitizar_juegos(self):
         # No modificar
         print("Las instalaciones estan sanitizadas, A JUGAR!")
 
 
 # Completar
-class Comida:
+class Comida(Local):
 
     def __init__(self, productos, nombre, aforo, trabajador):
-        # Completar
-        pass
+        super().__init__(productos, nombre, aforo, trabajador)
+        self.categoria = "Comida"
 
     def cliente_ingresa(self, cliente):
-        # Completar
-        pass
+        entra = self.cliente_ingresa(cliente)
+        if entra == True:
+            self.entregar_menu()
+            return True
+        else:
+            return False
 
     def entregar_menu(self):
         # No modificar
@@ -114,15 +127,19 @@ class Comida:
 
 
 # Completar
-class Tienda:
+class Tienda(Local):
 
     def __init__(self, productos, nombre, aforo, trabajador):
-        # Completar
-        pass
+        super().__init__(productos, nombre, aforo, trabajador)
+        self.categoria = "Tienda"
 
     def cliente_ingresa(self, cliente):
-        # Completar
-        pass
+        entra = self.cliente_ingresa(cliente)
+        if entra == True:
+            self.anunciar_oferta()
+            return True
+        else:
+            return False
 
     def anunciar_oferta(self):
         # No modificar
@@ -133,11 +150,11 @@ class Tienda:
 
 
 # Completar
-class Casino:
+class Casino(Entretenimiento, Comida):
 
     def __init__(self, productos, nombre, aforo, trabajador):
-        # Completar
-        pass
+        super().__init__(productos, nombre, aforo, trabajador)
+        self.categoria = "Casino"
 
     def cliente_ingresa(self, cliente):
         # No modificar
@@ -166,11 +183,11 @@ class Casino:
 
 
 # Completar
-class Supermercado:
+class Supermercado(Comida, Tienda):
 
     def __init__(self, productos, nombre, aforo, trabajador):
-        # Completar
-        pass
+        super().__init__(productos, nombre, aforo, trabajador)
+        self.categoria = "Supermercado"
 
     def cliente_ingresa(self, cliente):
         # No modificar
