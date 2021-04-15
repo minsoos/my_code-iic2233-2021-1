@@ -8,7 +8,7 @@ def verificar_alias_estrella(estrella):
     bool1 = numeros_alias.isdigit()
     bool2 = letras_alias.isupper()
     bool3 = "F" not in letras_alias
-    if bool1 and bool2 and bool3 == False:
+    if not bool1 or not bool2 or not bool3:
         raise ValueError("Error: El alias de la estrella es incorrecto.", bool1, bool2, bool3)
 
 
@@ -25,15 +25,8 @@ def corregir_alias_estrella(estrella):
         if err.args[1] == False:
             #Acá suponemos que están cambiados
             alias = numeros_alias + letras_alias
-        ## Aquí vemos si después de los cambios está bien
-        letras_alias = alias[0:2]
-        numeros_alias = alias[2:4]
-        bool1 = numeros_alias.isdigit()
-        bool2 = letras_alias.isupper()
-        bool3 = "F" not in letras_alias
-        if bool1 and bool2 and bool3:
-            estrella.alias = alias
-            print(f"El alias de {estrella.nombre} fue correctamente corregido.\n")
+        estrella.alias = alias
+        print(f"El alias de {estrella.nombre} fue correctamente corregido.\n")
 
 
 def verificar_distancia_estrella(estrella):
