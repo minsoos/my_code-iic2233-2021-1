@@ -13,4 +13,13 @@ def verificar_condiciones_estrella(estrella):
 
 # Completar
 def generar_ruta_estrellas(estrellas):
-    pass
+    lista_ruta = list()
+    for estrella in estrellas:
+        try:
+            es_segura = verificar_condiciones_estrella(estrella)
+        except RutaPeligrosa as peligro:
+            print(peligro)
+        else:
+            lista_ruta.append(estrella)
+            print(f'¡La estrella {estrella.nombre} se ha agregado a tu ruta!' + u'\x02' + '\n')
+    return lista_ruta
