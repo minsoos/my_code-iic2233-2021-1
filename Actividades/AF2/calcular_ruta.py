@@ -18,8 +18,8 @@ def generar_ruta_estrellas(estrellas):
         try:
             es_segura = verificar_condiciones_estrella(estrella)
         except RutaPeligrosa as peligro:
-            print(peligro)
+            peligro.dar_alerta_peligro()
         else:
-            lista_ruta.append(estrella)
+            lista_ruta.append(estrella.nombre)
             print(f'¡La estrella {estrella.nombre} se ha agregado a tu ruta!' + u'\x02' + '\n')
     return lista_ruta
