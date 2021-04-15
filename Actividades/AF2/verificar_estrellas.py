@@ -20,10 +20,10 @@ def corregir_alias_estrella(estrella):
         alias = estrella.alias
         letras_alias = alias[0:2]
         numeros_alias = alias[2:4]
-        if err.args[3] == False:
+        if not err.args[3]:
             alias = alias.replace("F", "T")
-        if err.args[1] == False:
-            #Acá suponemos que están cambiados
+        if not err.args[1]:
+            #  Acá suponemos que están cambiados
             alias = numeros_alias + letras_alias
         estrella.alias = alias
         print(f"El alias de {estrella.nombre} fue correctamente corregido.\n")
@@ -42,9 +42,11 @@ def corregir_distancia_estrella(estrella):
         estrella.distancia = -estrella.distancia
         print(f"La distancia de la estrella {estrella.nombre} fue corregida.\n")
 
+
 def verificar_magnitud_estrella(estrella):
     if not isinstance(estrella.magnitud, float):
         raise TypeError("Error: Magnitud no es del tipo correcto.")
+
 
 def corregir_magnitud_estrella(estrella):
     try:
@@ -52,17 +54,14 @@ def corregir_magnitud_estrella(estrella):
     except TypeError as err:
         print(err)
         magnitud = estrella.magnitud
-        magnitud = magnitud.replace(";",".")
+        magnitud = magnitud.replace(";", ".")
         try:
-            estrella.magnitud = float(magnitud)
-            
+            estrella.magnitud = float(magnitud)            
         except ValueError:
             pass
         else:
             print(f"La magnitud de la estrella {estrella.nombre} fue corregida.\n")
-
-        
-
+       
 
 def dar_alerta_estrella_cercana(nombre_estrella, diccionario_estrellas):
     try:
@@ -72,7 +71,6 @@ def dar_alerta_estrella_cercana(nombre_estrella, diccionario_estrellas):
     except KeyError:
         print(f"Estrella {nombre_estrella} NO está en nuestra base de datos.")
         print("¡Alerta, puede ser una trampa de algún extraterrestre!")
-
 
 
 if __name__ == "__main__":
