@@ -7,8 +7,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 *.csv
-*.pdf
-MinSoo_Diagrama_de_Clases.pdf
+Enunciado.pdf
+Enunciado (imprimible).pdf
 *.drawio
 *.idea
 *.DS_STORE
