@@ -23,17 +23,20 @@ class DCCatastrofe:
     # Método a completar, inicia simulación
     def iniciar_simulacion(self):
         lista_emergencias = self.cargar_emergencias()
+        lista_para_ir = list()
         i = 1
         for emergencia in lista_emergencias:
             if emergencia[0] == "incendio":
-                catastro_auxiliar = Incendio(emergencia[2], i)
+                catastro_auxiliar = Incendio(emergencia[1], i)
             elif emergencia[0] == "choque":
-                catastro_auxiliar = Choque(emergencia[2], i)
+                catastro_auxiliar = Choque(emergencia[1], i)
             i+=1
-
-
-
-
+            lista_para_ir.append(catastro_auxiliar)
+        for catastro in lista_para_ir:
+            catastro.start()
+            sleep(randint(1, 3))
+        for catastro in lista_para_ir:
+            catastro.join()
         print('Felicidades! No han habido' + ' ̶-h̶e̶r̶i̶d̶o̶s̶ ̶g̶r̶a̶v̶e̶s̶  ' + 'muertos!')
 
 
