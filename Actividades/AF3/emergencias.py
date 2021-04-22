@@ -6,26 +6,25 @@ from parametros import RECURSOS_MAX
 
 
 # Completar
-class Emergencia:
+class Emergencia(Thread):
 
     companias = {"agua": CompaniaServicio("agua", RECURSOS_MAX),
                  "banditas": CompaniaServicio("banditas", RECURSOS_MAX),
                  "donas": CompaniaServicio("donas", RECURSOS_MAX)}
 
-    def __init__(self) -> None:
-        # Completar
-        pass
+    def __init__(self, aviso, numero_catastrofe):
+        super().__init__()
+        self.aviso = aviso
+        self.numero_catastrofe = numero_catastrofe
+        self.gravedad = randint(1,10)
 
 
-# Completar
-class Incendio:
+class Incendio(Emergencia):
 
-    def __init__(self) -> None:
-        pass
+    def __init__(self, aviso, numero_catastrofe):
+        super().__init__(aviso, numero_catastrofe)
 
     def run(self) -> None:
-
-        # Inicia el incendio
         print(f"Inicio de catastrofe N°{self.numero_catastrofe}:")
         print(f"{self.aviso}\n")
 
@@ -34,26 +33,25 @@ class Incendio:
         agua, banditas = Emergencia.companias["agua"], Emergencia.companias["banditas"]
 
         # Completar
+        Emergencia.companias["agua"].disponibilidad.acquire()
+        Emergencia.companias["agua"].solicitar(agua_necesaria)
+        Emergencia.companias["agua"].disponibilidad.release()
+        Emergencia.companias["banditas"].disponibilidad.acquire()
+        Emergencia.companias["banditas"].solicitar(banditas_necesarias)
+        Emergencia.companias["banditas"].disponibilidad.release()
+        self.llamar_bomberos()
 
-
-
-
+    def llamar_bomberos(self):
+        sleep(self.gravedad)
         print(f"Fin de catastrofe N°{self.numero_catastrofe}\n")
 
-    def llamar_bomberos(self) -> None:
-        # Completar
-        pass
-
-
 # Completar
-class Choque:
+class Choque(Emergencia):
 
-    def __init__(self) -> None:
-        pass
+    def __init__(self, aviso, numero_catastrofe):
+        super().__init__(aviso, numero_catastrofe)
 
-    def run(self) -> None:
-
-        # Inicia el choque
+    def run(self):
         print(f"Inicio de catastrofe N°{self.numero_catastrofe}:")
         print(f"{self.aviso}\n")
 
@@ -62,17 +60,18 @@ class Choque:
         donas, banditas = Emergencia.companias["donas"], Emergencia.companias["banditas"]
 
         # Completar
+        Emergencia.companias["banditas"].disponibilidad.acquire()
+        Emergencia.companias["banditas"].solicitar(banditas_necesarias)
+        Emergencia.companias["banditas"].disponibilidad.release()
+        Emergencia.companias["donas"].disponibilidad.acquire()
+        Emergencia.companias["donas"].solicitar(donas_necesarias)
+        Emergencia.companias["donas"].disponibilidad.release()
+        self.atender_heridos()
 
-
-
-
-
-
+    def atender_heridos(self):
+        sleep(self.gravedad)
         print(f"Fin de catastrofe N°{self.numero_catastrofe}\n")
 
-    def atender_heridos(self) -> None:
-        # Completar
-        pass
 
 
 if __name__ == "__main__":

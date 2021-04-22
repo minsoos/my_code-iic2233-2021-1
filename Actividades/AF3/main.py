@@ -22,8 +22,14 @@ class DCCatastrofe:
 
     # Método a completar, inicia simulación
     def iniciar_simulacion(self):
-        # Completar
-
+        lista_emergencias = self.cargar_emergencias()
+        i = 1
+        for emergencia in lista_emergencias:
+            if emergencia[0] == "incendio":
+                catastro_auxiliar = Incendio(emergencia[2], i)
+            elif emergencia[0] == "choque":
+                catastro_auxiliar = Choque(emergencia[2], i)
+            i+=1
 
 
 
