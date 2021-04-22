@@ -1,0 +1,14 @@
+# --------------------------------------------
+# Python
+# --------------------------------------------
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.csv
+companias.py
+parametros.py
+*.pdf
+*.idea
+*.DS_STORE
