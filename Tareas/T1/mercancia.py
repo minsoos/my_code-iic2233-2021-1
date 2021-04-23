@@ -10,11 +10,11 @@ class Mercancia:
     def expirar(barco):
         if barco.tiempo_en_canal > self.tiempo_expiracion:
             #  Vemos cuál es la multa
-            if self.tipo = "petroleo":
+            if self.tipo == "petroleo":
                 multa = MULTA_PETROLEO
-            if self.tipo = "ropa":
+            if self.tipo == "ropa":
                 multa = MULTA_ROPA
-            if self.tipo = "alimentos":
+            if self.tipo == "alimentos":
                 multa = MULTA_ALIMENTOS
             return (True, multa)
         else:

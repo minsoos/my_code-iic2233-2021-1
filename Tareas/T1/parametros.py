@@ -15,3 +15,7 @@ COBRO_USO_PRINCIPIANTE = None
 COBRO_USO_AVANZADO = None
 COSTO_DESENCALLAR = None
 PROB_BASE_DESENCALLAR = None
+RUTA_CANALES = "canales.csv"
+RUTA_BARCOS = "barcos.csv"
+RUTA_MERCANCIA = "mercancia.csv"
+RUTA_TRIPULANTES = "tripulantes.csv"

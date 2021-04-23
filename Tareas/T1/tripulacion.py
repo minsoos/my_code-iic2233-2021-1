@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class Tripulacion(ABC):
+class Tripulante(ABC):
 
     def __init__(self, nombre, experiencia):
         self.nombre = nombre
@@ -12,7 +12,7 @@ class Tripulacion(ABC):
         pass
 
 
-class DCCapitan(Tripulacion):
+class DCCapitan(Tripulante):
 
     def __init__(self, nombre, experiencia):
         super().__init__(nombre, experiencia)
@@ -23,7 +23,7 @@ class DCCapitan(Tripulacion):
         puede_usar_efecto = False
 
 
-class DCCocinero(Tripulacion):
+class DCCocinero(Tripulante):
 
     def __init__(self, nombre, experiencia):
         super().__init__(nombre, experiencia)
@@ -34,7 +34,7 @@ class DCCocinero(Tripulacion):
         puede_usar_efecto = False
 
 
-class DCCarguero(Tripulacion):
+class DCCarguero(Tripulante):
 
     def __init__(self, nombre, experiencia):
         super().__init__(nombre, experiencia)
