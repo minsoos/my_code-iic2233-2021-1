@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-import parametros as param
+import parametros
+from funciones_utiles import ocurre_evento_por_probabilidad
 class Barco(ABC):
     def __init__(self, diccionario):
         self.nombre = diccionario["nombre"]
@@ -12,18 +13,19 @@ class Barco(ABC):
         self.mercancia = diccionario["mercancia"]
         self.tiempo_en_canal = 0
         self.esta_encallado = False
+        self.km = None
 
     def desplazar(self):
         min_1 = (self.carga_maxima - self.mercancia - 0.3*self.pasajeros)/self.carga_maxima
         desplazamiento = max(0.1, min(1, min_1))*self.velocidad_base
         return desplazamiento
 
-    def encallar(self, canal):
-        exp_acumulada = 0
-        for tripulante in self.tripulacion:
-            tripulante.exp  ##  rellenar
-        min_1 = (self.velocidad_base + self.mercancia - exp_acumulada)/120
-        prob_encallar = min(1, min_1) #  rellenar
+    def encallar(self, dificultad_canal):
+        ocurre = ocurre_evento_por_probabilidad(self.prob_encallar)
+        if ocurre:
+            self.esta_encallado = True
+        else:
+            pass
 
     @abstractmethod
     def evento_especial(self):
@@ -33,8 +35,8 @@ class Barco(ABC):
 class BarcoPasajeros(Barco):
     def __init__(self, diccionario):
         super().__init__(diccionario)
-        self.prob_encallar = param.TENDENCIA_ENCALLAR_PASAJEROS
-
+        self.tend_encallar = parametros.TENDENCIA_ENCALLAR_PASAJEROS
+        self.prob_encallar = probabilidad_encallar_barco(self)
     def evento_especial(self):
         pass
 
@@ -43,7 +45,8 @@ class BarcoPasajeros(Barco):
 class BarcoCarguero(Barco):
     def __init__(self, diccionario):
         super().__init__(diccionario)
-        self.prob_encallar = param.TENDENCIA_ENCALLAR_CARGUERO
+        self.tend_encallar = parametros.TENDENCIA_ENCALLAR_CARGUERO
+        self.prob_encallar = probabilidad_encallar_barco(self)
 
     def evento_especial(self):
         pass
@@ -53,10 +56,19 @@ class BarcoCarguero(Barco):
 class Buque(Barco):
     def __init__(self, diccionario):
         super().__init__(diccionario)
-        self.prob_encallar = param.TENDENCIA_ENCALLAR_BUQUE
+        self.tend_encallar = parametros.TENDENCIA_ENCALLAR_BUQUE
+        self.prob_encallar = probabilidad_encallar_barco(self)
 
     def evento_especial(self):
         pass
+
+def probabilidad_encallar_barco(barco):
+    exp_acumulada = 0
+        for tripulante in barco.tripulacion:
+            exp_acumulada += tripulante.experiencia
+        min_1 = (barco.velocidad_base + barco.mercancia - exp_acumulada)/120
+        barco.prob_encallar = min(1, min_1) * barco.tend_encallar * dificultad_canal
+        return prob_encallar
 
 if __name__ == "__main__":
     diccionario = {}

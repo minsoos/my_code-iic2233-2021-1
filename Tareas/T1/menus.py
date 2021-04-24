@@ -1,5 +1,7 @@
 import manejo_de_archivos
 from canales import Canal ##  Sacar después, es para pruebas locales
+import parametros
+
 
 def menu_de_inicio():
     print("")
@@ -60,10 +62,11 @@ def acc_mostrar_proba(canal):
         print(" "*10 + "**Lista vacía**")
     menu_de_acciones(canal)
 
+
 def acc_desencallar(canal):
     print(f"\nBarcos encallados:")
     print("-"*50)
-    n_barco=1
+    n_barco = 1
     lista_barcos_encallados = list()
     numeros_barcos_encallados = set()
     for barco in canal.barcos:
@@ -71,27 +74,59 @@ def acc_desencallar(canal):
             print(f"[{n_barco}]{barco.nombre}")
             lista_barcos_encallados.append((barco))
             numeros_barcos_encallados.add(i)
-            n_barco+=1
+            n_barco += 1
     print("[0]Volver")
     print("-"*50)
     print("\nEscoge una opción\n")
+    #  Ahora el usuario ingresa el input
     opcion = input()
     try:
         opcion = int(opcion)
         if opcion == 0:
-            menu_de_acciones
+            menu_de_acciones(canal)
         elif opcion in numeros_barcos_encallados:
             barco = lista_barcos_encallados[opcion - 1]
-            canal.desencallar_barco(barco)
-    except ValueError: 
-        menu_de_acciones 
+            if canal.dinero >= parametros.COSTO_DESENCALLAR:
+                se_pudo_desencallar = canal.desencallar_barco(barco)
+                if se_pudo_desencallar:
+                    print("El barco fue desencallado")
+                    menu_de_acciones(canal)
+                elif not se_pudo_desencallar:
+                    print("Operación no exitosa, perdimos dinero para nada")
+                    menu_de_acciones(canal)
+            else:
+                print("No hay money")
+                menu_de_acciones(canal)
+        else:
+            print("opción no válida")
+            menu_de_acciones(canal)
+    except ValueError:
+        print("opción no válida")
+        menu_de_acciones(canal)
         # Comentario para mí: ojo si se repite el menú de acc
+
+def acc_mostrar_estado(canal):
+    mensaje = "Estado del canal"
+    print(f"\n{mensaje:^50s}\n")
+    print("-" * 50)
+    print(f"{canal.nombre} de {canal.largo}km de largo, con dificultad {canal.dificultad}")
+    print(f"Horas simuladas: {canal.horas_simuladas}")
+    print(f"Dinero disponible: {canal.dinero}")
+    print(f"Dinero gastado: {canal.dinero_gastado}")
+    print(f"Dinero recibido: {canal.dinero_recibido}")
+    print(f"Número_de_barcos que pasaron: {canal.n_barcos_historicos}")
+    print(f"Número_de_barcos que encallaron: {canal.n_barcos_encallados}")
+    print(f"Eventos especiales ocurridos: {canal.n_eventos_especiales}")
+    if len(canal.barcos) > 0:
+        print("Barcos y sus posiciones:")
+        for barco_y_pos in canal.posiciones_barcos:
+            print(f"{barco_y_pos[0].nombre} está en el km {barco_y_pos[1]}")
+    print("-" * 50)
+    menu_de_acciones(canal)
 
 def acc_simular_hora(canal):
     menu_de_acciones(canal)
 
-def acc_mostrar_estado(canal):
-    menu_de_acciones(canal)
 
 
 
