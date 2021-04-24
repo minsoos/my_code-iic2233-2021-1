@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 import parametros
 from funciones_utiles import ocurre_evento_por_probabilidad
+
+
 class Barco(ABC):
     def __init__(self, diccionario):
         self.nombre = diccionario["nombre"]
@@ -15,18 +17,45 @@ class Barco(ABC):
         self.esta_encallado = False
         self.km = None
 
-    def desplazar(self):
-        min_1 = (self.carga_maxima - self.mercancia - 0.3*self.pasajeros)/self.carga_maxima
+    def desplazar(self, canal):
+        peso_mercancia = 0
+        for caja in mercancia:
+            peso_mercancia += caja.peso
+        min_1 = (self.carga_maxima - peso_mercancia - 0.3*self.pasajeros)/self.carga_maxima
         desplazamiento = max(0.1, min(1, min_1))*self.velocidad_base
-        return desplazamiento
-
+        # El valor retornado retorna a la simulación
+        # Es la simulación la que tiene que comprobar qué barcos pueden avanzar o no
+        #
+        multa_total = 0
+        for caja in self.mercancia:
+            multa = caja.pasa_una_hora()
+            multa_total += multa
+        canal.dinero -= multa_total
+        canal.dinero_gastado += multa_total
+        print(f"El canal pagó una multa de {multa_total} a {self.nombre} por mercancía caducada")
+        #
+        if self.encallar(canal.dificultad):
+            print("El barco {self.nombre} lamentablemente encalló")
+            return 0
+        else:
+            evento_especial() # Revisar cuando hayas completado evento especial
+            return desplazamiento
+    
     def encallar(self, dificultad_canal):
+        # Se usa sólo en la función desplazar
         ocurre = ocurre_evento_por_probabilidad(self.prob_encallar)
+        # Esto está mal, falta la dificultad del canal
         if ocurre:
             self.esta_encallado = True
+            return True
         else:
-            pass
-
+            return False
+    
+    @property
+    def prob_encallar():
+        self.__prob_encallar = probabilidad_encallar_barco(self)
+        return probabilidad_encallar_barco(self)
+    
     @abstractmethod
     def evento_especial(self):
         pass
@@ -36,39 +65,44 @@ class BarcoPasajeros(Barco):
     def __init__(self, diccionario):
         super().__init__(diccionario)
         self.tend_encallar = parametros.TENDENCIA_ENCALLAR_PASAJEROS
-        self.prob_encallar = probabilidad_encallar_barco(self)
+        self.__prob_encallar = None
+    
     def evento_especial(self):
+        # Puedo meter al canal como argumento?
         pass
-
 
 
 class BarcoCarguero(Barco):
     def __init__(self, diccionario):
         super().__init__(diccionario)
         self.tend_encallar = parametros.TENDENCIA_ENCALLAR_CARGUERO
-        self.prob_encallar = probabilidad_encallar_barco(self)
+        self.__prob_encallar = probabilidad_encallar_barco(self)
 
     def evento_especial(self):
         pass
-
 
 
 class Buque(Barco):
     def __init__(self, diccionario):
         super().__init__(diccionario)
         self.tend_encallar = parametros.TENDENCIA_ENCALLAR_BUQUE
-        self.prob_encallar = probabilidad_encallar_barco(self)
+        self.__prob_encallar = probabilidad_encallar_barco(self)
 
     def evento_especial(self):
         pass
 
-def probabilidad_encallar_barco(barco):
+
+def probabilidad_encallar_barco(barco, canal):
     exp_acumulada = 0
         for tripulante in barco.tripulacion:
             exp_acumulada += tripulante.experiencia
         min_1 = (barco.velocidad_base + barco.mercancia - exp_acumulada)/120
-        barco.prob_encallar = min(1, min_1) * barco.tend_encallar * dificultad_canal
+        barco.prob_encallar = min(1, min_1) * barco.tend_encallar * canal.dificultad_canal
         return prob_encallar
+
+def ordenar_por_km(barco):
+    return barco.km
+
 
 if __name__ == "__main__":
     diccionario = {}

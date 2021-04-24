@@ -3,7 +3,9 @@ from parametros import PONDERADOR_AVANZADO, PONDERADOR_PRINCIPIANTE
 from parametros import COBRO_USO_AVANZADO, COBRO_USO_PRINCIPIANTE
 from random import randint
 from funciones_utiles import ocurre_evento_por_probabilidad
-
+from barcos import ordenar_por_km
+from currency_converter import CurrencyConverter
+# Info de librería extraída de https://pypi.org/project/CurrencyConverter/
 
 class Canal():
     def __init__(self, nombre, largo, dificultad):
@@ -19,7 +21,6 @@ class Canal():
         self.horas_simuladas = 0
         self.n_eventos_especiales = 0
         # Fin contadores
-        self.agregaste_un_barco_esta_hora = False
         self.dificultad = dificultad
         if self.dificultad == "principiante":
             self.ponderador_dificultad = PONDERADOR_PRINCIPIANTE
@@ -34,19 +35,46 @@ class Canal():
     #        nombres_barcos.append(barco.nombre)
     #    return nombres_barcos
 
-    def ingresar_barco_al_canal(self, barco):
+    def ingresar_barco(self, barco):
+        # Revisar que no debe haber ningún barco encallado
         if not self.agregaste_un_barco_esta_hora:
             self.barcos.append(barco)
             barco.km = 0
-            self.agregaste_un_barco_esta_hora = True
             self.n_barcos_historicos += 1
 
     def avanzar_barcos(self, ):
-        ##simula nueva hora
+        # simula nueva hora
         # Revisa si el barco está encallado en su atributo
         # Para saber cuánto se desplaza, usa la función desplazar de barco
-        self.agregaste_un_barco_esta_hora = False
+        # Es llamada por simular_hora.py, acc_simular_hora()
+        km_encallamiento = -1
+        self.barcos.sort(key=ordenar_por_km, reverse=False)
+        for barco in self.barcos:
+            if barco.esta_encallado:
+                km_encallamiento = barco.km
+        print(f"La retención más preocupante está en {km_encallamiento}")
+        for barco in self.barcos:
+            if barco.km > km_encallamiento:
+                barco.km += barco.desplazar()
+                print(f"El barco {barco.nombre} avanzó hasta el km {barco.km}")
 
+            # Vemos quién paga a quién
+            # Primero el caso cuando sale del canal
+            if barco.km >= self.largo:
+                self.barcos.sort(key=ordenar_por_km, reverse=False)
+                self.barcos.pop()
+                self.dinero += self.cobro_de_uso
+                self.dinero_recibido += self.cobro_de_uso
+                print(f"El barco {barco.nombre} salió del canal y pagó ${self.cobro_de_uso}USD")
+            # Ahora el caso en que se mantiene en el canal
+            else:
+                costo = barco.costo_mantencion
+                moneda = barco.moneda_origen
+                costo_usd = CurrencyConverter().convert(costo, moneda, "USD")
+                self.dinero -= costo_usd
+                self.dinero_gastado += costo_usd
+                print(f"Se le pagó una mantención de {costo_usd} a {barco.nombre}")
+                
     def desencallar_barco(self, barco):
         costo = COSTO_DESENCALLAR
         self.dinero_gastado += costo
@@ -58,8 +86,3 @@ class Canal():
             return True
         elif not exito:
             return False
-
-
-
-
-    

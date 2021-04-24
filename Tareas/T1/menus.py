@@ -1,6 +1,7 @@
 import manejo_de_archivos
 from canales import Canal ##  Sacar después, es para pruebas locales
 import parametros
+from barcos import ordenar_por_km
 
 
 def menu_de_inicio():
@@ -73,7 +74,7 @@ def acc_desencallar(canal):
         if barco.esta_encallado:
             print(f"[{n_barco}]{barco.nombre}")
             lista_barcos_encallados.append((barco))
-            numeros_barcos_encallados.add(i)
+            numeros_barcos_encallados.add(n_barco)
             n_barco += 1
     print("[0]Volver")
     print("-"*50)
@@ -118,13 +119,11 @@ def acc_mostrar_estado(canal):
     print(f"Número_de_barcos que encallaron: {canal.n_barcos_encallados}")
     print(f"Eventos especiales ocurridos: {canal.n_eventos_especiales}")
     if len(canal.barcos) > 0:
-        print("Barcos y sus posiciones:")
-        for barco_y_pos in canal.posiciones_barcos:
-            print(f"{barco_y_pos[0].nombre} está en el km {barco_y_pos[1]}")
-    print("-" * 50)
-    menu_de_acciones(canal)
-
-def acc_simular_hora(canal):
+        print("\nBarcos y sus posiciones:\n")
+        canal.barcos.sort(key=ordenar_por_km, reverse=False)
+        for barco in canal.barcos:
+            print(f"{barco.nombre} está en el km {barco.km}")
+    print("-" * 50 + "\n")
     menu_de_acciones(canal)
 
 
@@ -134,5 +133,5 @@ if __name__ == "__main__":
     canal_prueba = Canal("canal de pana", 37, "avanzado")
     barcos = manejo_de_archivos.dict_barcos()
     barco_prueba1 = barcos["La Nao Victoria"]
-    canal_prueba.ingresar_barco_al_canal(barco_prueba1)
+    canal_prueba.ingresar_barco(barco_prueba1)
     menu_de_acciones(canal_prueba)
