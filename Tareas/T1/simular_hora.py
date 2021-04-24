@@ -15,7 +15,7 @@ def acc_simular_hora(canal):
             print(f"Barco {barco_encallado.nombre} encallado en km {barco_encallado.km}")
     else:
         barco_entrante = elegir_barco_para_entrar(canal)
-    if barco_entrante not None:
+    if barco_entrante is not None:
         canal.ingresar_barco(barco_entrante)
     canal.avanzar_barcos()
     canal.horas_simuladas += 1
@@ -26,19 +26,21 @@ def elegir_barco_para_entrar(canal):
     barcos_fuera = []
     for barco in barcos_totales:
         if barco not in canal.barcos:
-            barcos_fuera.append(barco)
+            barcos_fuera.append(barcos_totales[barco])
     print("Qué barco quieres meter?\n")
     print("[1]Ninguno")
-    for i in in range(len(barcos_fuera)):
-        print(f"[{i+2}]{barcos_fuera[i]}")
+    for i in range(len(barcos_fuera)):
+        print(f"[{i+2}]{barcos_fuera[i].nombre}")
+    print("")
     input_usuario = input()
+    print("")
     try:
         input_usuario = int(input_usuario)
-        elif input_usuario == 1:
+        if input_usuario == 1:
             return None
         else:
             return barcos_fuera[input_usuario-2]
 
-    except ValueError, KeyError:
+    except (ValueError, IndexError):
         print("La opción ingresada no es correcta, no se ingresará ningún barco")
         return None

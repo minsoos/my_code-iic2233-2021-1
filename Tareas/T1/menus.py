@@ -2,7 +2,7 @@ import manejo_de_archivos
 from canales import Canal ##  Sacar después, es para pruebas locales
 import parametros
 from barcos import ordenar_por_km
-
+from simular_hora import acc_simular_hora
 
 def menu_de_inicio():
     print("")
@@ -31,26 +31,29 @@ def menu_de_inicio():
 
 def menu_de_acciones(canal):
     print("")
-    print("*"*50 + "\n" + "*"*16 + " MENÚ DE ACCIONES " + "*"*16 + "\n" + "*"*50)
-    print(f"\nHola, veo que eres admin de {canal.nombre}")
-    print("\n[1]Mostrar riesgo de encallamiento\n[2]Desencallar barco")
-    print("[3]Simular nueva hora\n[4]Mostar estado\n[0]Volver\n")
-    input_del_usuario = input()
-    ##  Se usará la notación acc_<funcion> para referirse
-    ##  a una acción del menú de acciones
-    if input_del_usuario == "1":
-        acc_mostrar_proba(canal)
-    elif input_del_usuario == "2":
-        acc_desencallar(canal)
-    elif input_del_usuario == "3":
-        acc_simular_hora(canal)
-    elif input_del_usuario == "4":
-        acc_mostrar_estado(canal)
-    elif input_del_usuario == "0":
-        menu_de_inicio()
+    if canal.dinero >= 0:
+        print("*"*50 + "\n" + "*"*16 + " MENÚ DE ACCIONES " + "*"*16 + "\n" + "*"*50)
+        print(f"\nHola, veo que eres admin de {canal.nombre}")
+        print("\n[1]Mostrar riesgo de encallamiento\n[2]Desencallar barco")
+        print("[3]Simular nueva hora\n[4]Mostar estado\n[0]Volver\n")
+        input_del_usuario = input()
+        ##  Se usará la notación acc_<funcion> para referirse
+        ##  a una acción del menú de acciones
+        if input_del_usuario == "1":
+            acc_mostrar_proba(canal)
+        elif input_del_usuario == "2":
+            acc_desencallar(canal)
+        elif input_del_usuario == "3":
+            acc_simular_hora(canal)
+        elif input_del_usuario == "4":
+            acc_mostrar_estado(canal)
+        elif input_del_usuario == "0":
+            menu_de_inicio()
+        else:
+            print("No ingresaste una opción válida")
+            menu_de_acciones(canal)
     else:
-        print("No ingresaste una opción válida")
-        menu_de_acciones(canal)
+        print("Quebraste, ya no puedes seguir controlando el canal")
 
 
 def acc_mostrar_proba(canal):
@@ -115,8 +118,8 @@ def acc_mostrar_estado(canal):
     print(f"Dinero disponible: {canal.dinero}")
     print(f"Dinero gastado: {canal.dinero_gastado}")
     print(f"Dinero recibido: {canal.dinero_recibido}")
-    print(f"Número_de_barcos que pasaron: {canal.n_barcos_historicos}")
-    print(f"Número_de_barcos que encallaron: {canal.n_barcos_encallados}")
+    print(f"Número de barcos que pasaron: {canal.n_barcos_historicos}")
+    print(f"Número de barcos que encallaron: {canal.n_barcos_encallados}")
     print(f"Eventos especiales ocurridos: {canal.n_eventos_especiales}")
     if len(canal.barcos) > 0:
         print("\nBarcos y sus posiciones:\n")
@@ -130,8 +133,13 @@ def acc_mostrar_estado(canal):
 
 
 if __name__ == "__main__":
-    canal_prueba = Canal("canal de pana", 37, "avanzado")
-    barcos = manejo_de_archivos.dict_barcos()
-    barco_prueba1 = barcos["La Nao Victoria"]
-    canal_prueba.ingresar_barco(barco_prueba1)
-    menu_de_acciones(canal_prueba)
+    menu_de_inicio()
+    #canal_prueba = Canal("canal de pana", 37, "avanzado")
+    #barcos = manejo_de_archivos.dict_barcos()
+    #barco_prueba1 = barcos["La Nao Victoria"]
+    #canal_prueba.ingresar_barco(barco_prueba1)
+    #menu_de_acciones(canal_prueba)
+
+# Crear eventos especiales
+# La lista de barcos no cambia (no se descuentan barcos que están dentro)
+# Seguir probando

@@ -10,7 +10,7 @@ from currency_converter import CurrencyConverter
 class Canal():
     def __init__(self, nombre, largo, dificultad):
         self.nombre = nombre
-        self.dinero = int(DINERO_INICIAL)
+        self.dinero = DINERO_INICIAL
         self.largo = largo
         self.barcos = []
         # Contadores de eventos
@@ -37,12 +37,14 @@ class Canal():
 
     def ingresar_barco(self, barco):
         # Revisar que no debe haber ningún barco encallado
-        if not self.agregaste_un_barco_esta_hora:
-            self.barcos.append(barco)
-            barco.km = 0
-            self.n_barcos_historicos += 1
+        self.barcos.append(barco)
+        barco.km = 0
+        barco.tiempo_en_canal = 0
+        barco.ponderador_dificultad = self.ponderador_dificultad
+        self.n_barcos_historicos += 1
+        print(f"El barco {barco.nombre} ingresó al canal")
 
-    def avanzar_barcos(self, ):
+    def avanzar_barcos(self):
         # simula nueva hora
         # Revisa si el barco está encallado en su atributo
         # Para saber cuánto se desplaza, usa la función desplazar de barco
@@ -52,11 +54,16 @@ class Canal():
         for barco in self.barcos:
             if barco.esta_encallado:
                 km_encallamiento = barco.km
-        print(f"La retención más preocupante está en {km_encallamiento}")
+        if km_encallamiento != -1:
+            print(f"La retención más preocupante está en {km_encallamiento}")
         for barco in self.barcos:
             if barco.km > km_encallamiento:
-                barco.km += barco.desplazar()
-                print(f"El barco {barco.nombre} avanzó hasta el km {barco.km}")
+                avanzada = barco.desplazar(self)
+                barco.km += avanzada
+                if avanzada > 0:
+                    print(f"El barco {barco.nombre} avanzó hasta el km {barco.km}")
+                else:
+                    print(f"El barco {barco.nombre} se quedó en el km {barco.km}")
 
             # Vemos quién paga a quién
             # Primero el caso cuando sale del canal
@@ -73,7 +80,7 @@ class Canal():
                 costo_usd = CurrencyConverter().convert(costo, moneda, "USD")
                 self.dinero -= costo_usd
                 self.dinero_gastado += costo_usd
-                print(f"Se le pagó una mantención de {costo_usd} a {barco.nombre}")
+                print(f"Se le pagó una mantención de {costo_usd} a {barco.nombre}\n")
                 
     def desencallar_barco(self, barco):
         costo = COSTO_DESENCALLAR

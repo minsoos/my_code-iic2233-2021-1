@@ -8,7 +8,7 @@ class Mercancia:
         self.peso = peso
         self.tiempo = 0
     
-    def expirar():
+    def expirar(self):
         if self.tipo == "petroleo":
             multa = MULTA_PETROLEO
         if self.tipo == "ropa":
@@ -17,7 +17,7 @@ class Mercancia:
             multa = MULTA_ALIMENTOS
         return multa
 
-    def pasa_una_hora():
+    def pasa_una_hora(self):
         if self.tiempo > self.tiempo_expiracion:
             return expirar()
         else:

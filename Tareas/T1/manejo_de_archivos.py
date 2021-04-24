@@ -17,7 +17,7 @@ def dict_canales():
             dict_canales = {}
             for linea in range(1, len(lineas)):
                 linea_aux = lineas[linea].strip().split(",")
-                canal_aux = Canal(linea_aux[0], linea_aux[1], linea_aux[2])
+                canal_aux = Canal(linea_aux[0], int(linea_aux[1]), linea_aux[2])
                 dict_canales[linea_aux[0]] = canal_aux
             return dict_canales
 
