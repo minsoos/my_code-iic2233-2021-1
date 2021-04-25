@@ -1,9 +1,5 @@
-# Tarea X: Nombre de la tarea :school_satchel:
+# Tarea 1: DCCanal :school_satchel:
 
-  
- ([pueden ver casi todas las funcionalidades que incluye aquí](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet))
-
-  
 ## Consideraciones generales :octocat:
 
 
@@ -11,11 +7,7 @@
 
   
 ***
-<Descripción  de  lo  que  hace  y  que  **_no_**  hace  la  tarea  que  entregaron  junto
-
-con  detalles  de  último  minuto  y  consideraciones  como  por  ejemplo  cambiar  algo
-
-en  cierta  línea  del  código  o  comentar  una  función>
+Ninguna
 
   ***
 
@@ -88,8 +80,26 @@ El módulo principal de la tarea a ejecutar es ```main.py```. Además se debe cr
 11. ```canales.csv``` en ```T1```
 12. ```mercancia.csv``` en ```T1``` 
 13. ```tripulantes.csv``` en ```T1``` 
-  
-  
+  ***
+
+  ## Flujo del programa :cyclone:
+Qué hace cada parte del programa está indicado con comentarios en el código, pero acá se da el flujo de este de forma de poder hacer un tracking general de dónde ocurre cada cosa. Me das el feedback de si es bueno dejarlo aquí o sólo indicarlo en el código porfa :smile:
+
+  -El éxito dado una probabilidad se calcula con la función ocurre_evento_por_probabilidad() de funciones_utiles.py
+  -Los archivos se cargan en diccionarios dados por las funciones de manejo_de_archivos.py
+1. **Main.py**: Hace un print para iniciar el programa y llama a ```menu_de_inicio```
+2. **Menú de inicio**: Da la opción de ingresar al ```menu_de_acciones``` o salir del programa
+3. **Menú de acciones**: Da la opción de salir del programa, volver al menú de inicio o realizar una de las acciones que se detallan a continuación
+3.1 **acc_mostrar_proba()**: Muestra la probabilidad de que encalle cada barco que está en el canal
+3.2 **acc_desencallar()**: Intenta desencallar al barco si hay dinero, por medio del método ```desencallar_barco()``` de la clase Canal, mediante probabilidades
+3.3 **acc_mostrar_estado()**: Printea distintos atributos de canal que dan información acerca del estado del mismo. Además imprime los barcos y sus posiciones
+3.4 **simular_hora.py**: La última acción (```acc_simular_hora()```) se guarda en un archivo aparte, dada su complejidad, realiza partes de la simulación y deriva otras en el método ```ingresar_barco()``` y ```avanzar_barcos()``` de canal
+3.4.1 **Canal.ingresar_barco**: Ingresa un barco al canal, dejándolo listo para que avance por el canal
+3.4.2 **Canal.avanzar_barcos**: Hace avanzar a los barcos que están por delante del último barco encallado, descubriendo su desplazamiento con el método ```desplazar()``` de Barco. Verifica el evento especial de Buque e imprime la situación posicional del barco. Finalmente gestiona los pagos de acuerdo a la situación del barco, aquí verifica el evento especial de BarcoCarguero. PD: Los costos de mantención los calcula con ``` CurrencyConverter()``` 
+3.4.2.1 **Barco.desplazar()**: Calcula el desplazamiento, cobra multas por mercancía vencida y revisa si encalla, tomando en cuenta la posibilidad de usar el efecto especial del capitán. Llama al método ```evento_especial()``` de Barco.
+3.4.2.1.1 **Barco.evento_especial()**: Calcula con probabilidades si ocurre el evento especial. Si lo hacer, modifica las variables que debe modificar el evento especial dependiendo de cada barco, y da una señal de que ya se usó
+
+
 
 ## Librerías :books:
 
@@ -120,97 +130,31 @@ Por otro lado, los módulos que fueron creados fueron los siguientes:
 4. ```tripulación```: Contiene a ```Tripulante``` y sus subclases
 
 5.  ```funciones_utiles```: Contiene a las funciones ```ordenar_por_km()``` y ```ocurre_evento_por_probabilidad()```
-6. ```manejos_de_archivos```: Hecha para <insertar  descripción  **breve**  de  lo  que  hace  o  qué  contiene>
-7. ```menus```: Hecha para <insertar  descripción  **breve**  de  lo  que  hace  o  qué  contiene>
-8. ```parametros```: Hecha para <insertar  descripción  **breve**  de  lo  que  hace  o  qué  contiene>
-9. ```simular_hora```: Hecha para <insertar  descripción  **breve**  de  lo  que  hace  o  qué  contiene>
+6. ```manejos_de_archivos```:  Funciones que abren todos los archivos necesarios y los retornan en diccionarios
+7. ```menus```: Tiene funciones con los menús ```menu_de_inicio()``` y ```menu_de_acciones()```. Además alberga las funciones acciones de este último menú, que se denotan con acc. Se modulariza en otra librería la acción "simular hora", dado que requería una complejidad y extensión mayor
+8. ```simular_hora```: Contiene ```acc_simular_hora()```, última acción del menú de acciones, y ```elegir_barco_para_entrar()```, usada por la primera función
+9. ```parametros```: Contiene los parámetros fijos y paths usados en todo el código
 
   
 
 ## Supuestos y consideraciones adicionales :thinking:
 
-Los supuestos que realicé durante la tarea son los siguientes:
-Asumo que en los barcos encallados no pueden ocurrir eventos
+Realicé los siguientes supuestos:
+* En los barcos encallados no pueden ocurrir eventos
 
-Se asume que siempre te entregarán una moneda válida
+* Siempre te entregarán una moneda válida y que la librería ```currency_converter``` pueda manejar
 
-Se asume que los archivos están como los indicados
+* Los archivos están en el formato indicado
 
-Se asume, que si simulas una hora, ya no hay vuelta atrás, por lo que si te equivocas de tecla al ingresar un barco, el programa asumirá que no quieres ingresar ningún barco
+* Si simulas una hora, ya no hay vuelta atrás, por lo que si no ingresas una opción correcta al elegir un barco, el programa asumirá que no quieres ingresar ningún barco
 
-Se asume que no hay más de tres tripulantes por barco ni se repiten sus tipos en el archivo
+* No se repite el tipo de tripulante en el barco
 
-Se asume que un barco parado no podrá encallar
+* Un barco parado no podrá encallar ni tener eventos especiales
+* Un encallamiento salvado por el capitán se contabiliza como encallamiento en el dato de los encallamientos totales
+* Los barcos que encallan no permiten que haya movimiento hacia atrás de ellos
   
 ***
-1. <Descripción/consideración  1  y  justificación  del  por  qué  es  válido/a>
-
-2. <Descripción/consideración  2  y  justificación  del  por  qué  es  válido/a>
-
-3. ...
-
-  ***
-
-PD: <una  última  consideración  (de  ser  necesaria)  o  comentario  hecho  anteriormente  que  se  quiera  **recalcar**>
-
-  
-  
-
--------
-
-  
-  
-  
-
-**EXTRA:** si van a explicar qué hace específicamente un método, no lo coloquen en el README mismo. Pueden hacerlo directamente comentando el método en su archivo. Por ejemplo:
-
-  
-
-```python
-
-class  Corrector:
-
-  
-
-def  __init__(self):
-
-pass
-
-  
-
-# Este método coloca un 6 en las tareas que recibe
-
-def  corregir(self, tarea):
-
-tarea.nota =  6
-
-return tarea
-
-```
-
-  
-
-Si quieren ser más formales, pueden usar alguna convención de documentación. Google tiene la suya, Python tiene otra y hay muchas más. La de Python es la [PEP287, conocida como reST](https://www.python.org/dev/peps/pep-0287/). Lo más básico es documentar así:
-
-  
-
-```python
-
-def  funcion(argumento):
-
-"""
-
-Mi función hace X con el argumento
-
-"""
-
-return argumento_modificado
-
-```
-
-Lo importante es que expliquen qué hace la función y que si saben que alguna parte puede quedar complicada de entender o tienen alguna función mágica usen los comentarios/documentación para que el ayudante entienda sus intenciones.
-
-  
 
 ## Referencias de código externo :book:
 
@@ -218,7 +162,7 @@ Lo importante es que expliquen qué hace la función y que si saben que alguna p
 
 Para realizar mi tarea saqué código de:
 
-1. \<link  de  código>: este hace \<lo  que  hace> y está implementado en el archivo <nombre.py> en las líneas <número  de  líneas> y hace <explicación  breve  de  que  hace>
+1. \<https://pypi.org/project/CurrencyConverter/>: este es un convertidor de divisas, permite entregar dos divisas y un valor, y transformar este último de una moneda a otra. Está implementado en el archivo <canales.py> en la línea  102
 
   
   
@@ -226,4 +170,4 @@ Para realizar mi tarea saqué código de:
 
 ## Descuentos
 
-La guía de descuentos se encuentra [link](https://github.com/IIC2233/syllabus/blob/master/Tareas/Descuentos.md).
+No hay

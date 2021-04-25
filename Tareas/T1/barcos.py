@@ -41,6 +41,7 @@ class Barco(ABC):
         if multa_total != 0:
             print(f"Se pagó una multa de {multa_total} a {self.nombre} por mercancía caducada")
         #
+        # Este método retorna un booleano acerca de si el barco encalla o no
         encalla = self.encallar()
         #Revisamos si podemos usar la habilidad especial del capitán
         if encalla:
@@ -57,6 +58,7 @@ class Barco(ABC):
             print(f"El barco {self.nombre} lamentablemente encalló")
             return 0
         else:
+            # Sólo si el barco avanzó, llama a su evento especial, que puede activarse o no
             self.evento_especial(canal)
             return desplazamiento
         print("")
@@ -133,7 +135,7 @@ class Buque(Barco):
     def __init__(self, diccionario):
         super().__init__(diccionario)
         self.tend_encallar = parametros.TENDENCIA_ENCALLAR_BUQUE
-        self.averia_buque = 0
+        self.averia_buque = 0  # Horas que le quedan averiado
         self.senal_evento_especial = False
         self.tipo = "Buque"
 

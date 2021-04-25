@@ -36,9 +36,9 @@ class Canal():
     #    return nombres_barcos
 
     def ingresar_barco(self, barco):
-        # Los argumentos vienen seteados, ya que se sacan de cargar_archivos
+        # Las variables del barco vienen seteadas, ya que se sacan de cargar_archivos
         print(f"El barco {barco.nombre} ingresó al canal")
-        # Se revisan los efectos especiales
+        # Se revisan y ejecutan los efectos especiales de los tripulantes (según corresponda)
         for tripulante in barco.tripulacion:
             if tripulante.tipo == "DCCocinero":
                 tripulante.efecto_especial(barco)
@@ -46,6 +46,7 @@ class Canal():
             elif tripulante.tipo == "DCCarguero":
                 tripulante.efecto_especial(barco)
                 print("Su DCCarguero aumentó la capacidad máxima del barco")
+        # Agrega el barco a la lista del canal
         self.barcos.append(barco)
         # Se setea el ponderador_dificultad del barco
         barco.ponderador_dificultad = self.ponderador_dificultad
@@ -56,30 +57,32 @@ class Canal():
         # simula nueva hora
         # Revisa si el barco está encallado en su atributo
         # Para saber cuánto se desplaza, usa la función desplazar de barco
-        # Esta función es llamada por simular_hora.py, acc_simular_hora()
+        # Esta función es llamada por acc_simular_hora() de simular_hora.py
+        # Supone un km de encallamiento de -1 y busca el encallamiento de más adelante
         km_encallamiento = -1
         self.barcos.sort(key=ordenar_por_km, reverse=False)
         for barco in self.barcos:
             if barco.esta_encallado:
                 km_encallamiento = barco.km
+        # Para cada barco, revisa si está por sobre el km más grande de encallamiento
+        # Si está por encima, avanza, si no no
         for barco in self.barcos:
             if barco.km > km_encallamiento:
+                #Pide al método desplazar de barco cuánto se mueve este último
                 avanzada = barco.desplazar(self)
-                # Avanza sólo si no es un buque que está averiado
+                # Revisa si hay una avería de buque activa
                 evento_especial_buque = False
                 if barco.tipo == "Buque":
                     if barco.averia_buque > 0:
                         evento_especial_buque = True
                         barco.averia_buque -= 1
+                # Mueve el barco si corresponde e imprime su situación
                 if not evento_especial_buque:
                     barco.km += avanzada
                 if avanzada > 0 and barco.km < self.largo and not evento_especial_buque:
                     print(f"El barco {barco.nombre} avanzó hasta el km {barco.km}")
                 elif avanzada == 0 or evento_especial_buque:
                     print(f"El barco {barco.nombre} se quedó en el km {barco.km}")
-                if avanzada > 0:
-                    barco.evento_especial(self)
-
             # Vemos quién paga a quién
             # Primero el caso cuando sale del canal
             if barco.km >= self.largo:

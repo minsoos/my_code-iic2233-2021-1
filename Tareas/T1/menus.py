@@ -23,7 +23,8 @@ def menu_de_inicio():
         print("Sé que te va bien")
         print("La verdad sé que te va cabrón")
         print("pero no quiero aceptar esto al cien")
-        None
+        print("Has salido de la simulación")
+
     else:
         print("No ingresaste una opción válida")
         menu_de_inicio()
@@ -35,7 +36,7 @@ def menu_de_acciones(canal):
         print("*"*50 + "\n" + "*"*16 + " MENÚ DE ACCIONES " + "*"*16 + "\n" + "*"*50)
         print(f"\nHola, veo que eres admin de {canal.nombre}")
         print("\n[1]Mostrar riesgo de encallamiento\n[2]Desencallar barco")
-        print("[3]Simular nueva hora\n[4]Mostar estado\n[0]Volver\n")
+        print("[3]Simular nueva hora\n[4]Mostar estado\n[9]Salir de la simulación\n[0]Volver\n")
         input_del_usuario = input()
         ##  Se usará la notación acc_<funcion> para referirse
         ##  a una acción del menú de acciones
@@ -47,6 +48,10 @@ def menu_de_acciones(canal):
             acc_simular_hora(canal)
         elif input_del_usuario == "4":
             acc_mostrar_estado(canal)
+        elif input_del_usuario == "9":
+            print("Y ahora estááás")
+            print("tú sin mí, y que hago con mi amooor")
+            print("Has salido de la simulación")
         elif input_del_usuario == "0":
             menu_de_inicio()
         else:

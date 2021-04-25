@@ -8,6 +8,7 @@ def acc_simular_hora(canal):
     for barco in canal.barcos:
         if barco.esta_encallado:
             barcos_encallados.append(barco)
+    # Caso hay barcos encallados
     if len(barcos_encallados) > 0:
         barco_entrante = None
         print("\nBarcos encallados:")
@@ -15,16 +16,23 @@ def acc_simular_hora(canal):
         for barco_encallado in barcos_encallados:
             print(f"Barco {barco_encallado.nombre} encallado en km {barco_encallado.km}")
         print("-"*50 + "\n")
+    #
+    # Caso no hay barcos encallados
     else:
         barco_entrante = elegir_barco_para_entrar(canal)
+    # Ingresa un barco o no según el código de arriba
     if barco_entrante is not None:
         canal.ingresar_barco(barco_entrante)
+    # Hace avanzar a los barcos del canal
     canal.avanzar_barcos()
     canal.horas_simuladas += 1
+    # Vuelve al menú de acciones
     menus.menu_de_acciones(canal)
 
 
 def elegir_barco_para_entrar(canal):
+    # Compara barcos totales con los que están en el canal.
+    # Llena una lista con los que no lo están
     barcos_totales = manejo_de_archivos.dict_barcos()
     barcos_fuera = []
     for barco in barcos_totales:
@@ -34,12 +42,14 @@ def elegir_barco_para_entrar(canal):
                 esta_adentro = True
         if not esta_adentro:
             barcos_fuera.append(barcos_totales[barco])
+    # Pide elegir al usuario el barco que quiere ingresar al usuario
     print("Qué barco quieres meter?\n")
     print("[1]Ninguno")
     for i in range(len(barcos_fuera)):
         print(f"[{i+2}]{barcos_fuera[i].nombre}")
     print("")
     input_usuario = input()
+    # Revisa si el input es correcto, si lo es, retorna el Barco como objeto
     try:
         input_usuario = int(input_usuario)
         if input_usuario > 0:
