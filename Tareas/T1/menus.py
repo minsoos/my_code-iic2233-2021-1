@@ -1,7 +1,7 @@
 import manejo_de_archivos
 from canales import Canal ##  Sacar después, es para pruebas locales
 import parametros
-from barcos import ordenar_por_km
+from funciones_utiles import ordenar_por_km
 from simular_hora import acc_simular_hora
 
 def menu_de_inicio():
@@ -62,8 +62,6 @@ def acc_mostrar_proba(canal):
     for barco in canal.barcos:
         print(f"{barco.nombre}: {barco.prob_encallar}")
     print("\n" + "-"*50)
-    if len(canal.barcos) == 0:
-        print(" "*10 + "**Lista vacía**")
     menu_de_acciones(canal)
 
 
@@ -141,5 +139,4 @@ if __name__ == "__main__":
     #menu_de_acciones(canal_prueba)
 
 # Crear eventos especiales
-# La lista de barcos no cambia (no se descuentan barcos que están dentro)
 # Seguir probando

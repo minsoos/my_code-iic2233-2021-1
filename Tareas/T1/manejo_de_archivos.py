@@ -111,7 +111,8 @@ def dict_barcos():
                     sub_clase_barco = Buque
                 # Sabemos el tipo de barco, ahora lo instanciamos
                 barco_aux = sub_clase_barco(dict_de_kwargs)
-                dict_barcos[linea_aux[0]] = barco_aux
+                if 1 <= len(barco_aux.tripulacion) <= 3:
+                    dict_barcos[linea_aux[0]] = barco_aux
             return dict_barcos
 
 

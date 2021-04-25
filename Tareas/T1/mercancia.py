@@ -1,5 +1,6 @@
 from parametros import MULTA_PETROLEO, MULTA_ALIMENTOS, MULTA_ROPA
 
+
 class Mercancia:
     def __init__(self, numero, tipo, tiempo_expiracion, peso):
         self.numero = numero
@@ -7,9 +8,10 @@ class Mercancia:
         self.tiempo_expiracion = tiempo_expiracion
         self.peso = peso
         self.tiempo = 0
-    
+        self.caducado = False
+
     def expirar(self):
-        if self.tipo == "petroleo":
+        if self.tipo == "petróleo":
             multa = MULTA_PETROLEO
         if self.tipo == "ropa":
             multa = MULTA_ROPA
@@ -18,8 +20,9 @@ class Mercancia:
         return multa
 
     def pasa_una_hora(self):
-        if self.tiempo > self.tiempo_expiracion:
-            return expirar()
+        if self.tiempo > self.tiempo_expiracion and not self.caducado:
+            self.caducado = True
+            return self.expirar()
         else:
             return 0
         self.tiempo += 1

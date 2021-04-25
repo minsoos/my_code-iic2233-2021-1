@@ -2,10 +2,10 @@ from parametros import DINERO_INICIAL, COSTO_DESENCALLAR, PROB_BASE_DESENCALLAR
 from parametros import PONDERADOR_AVANZADO, PONDERADOR_PRINCIPIANTE
 from parametros import COBRO_USO_AVANZADO, COBRO_USO_PRINCIPIANTE
 from random import randint
-from funciones_utiles import ocurre_evento_por_probabilidad
-from barcos import ordenar_por_km
+from funciones_utiles import ocurre_evento_por_probabilidad, ordenar_por_km
 from currency_converter import CurrencyConverter
 # Info de librería extraída de https://pypi.org/project/CurrencyConverter/
+
 
 class Canal():
     def __init__(self, nombre, largo, dificultad):
@@ -36,43 +36,65 @@ class Canal():
     #    return nombres_barcos
 
     def ingresar_barco(self, barco):
-        # Revisar que no debe haber ningún barco encallado
+        # Los argumentos vienen seteados, ya que se sacan de cargar_archivos
+        print(f"El barco {barco.nombre} ingresó al canal")
+        # Se revisan los efectos especiales
+        for tripulante in barco.tripulacion:
+            if tripulante.tipo == "DCCocinero":
+                tripulante.efecto_especial(barco)
+                print("Su DCCocinero aumentó al doble la duración de sus alimentos")
+            elif tripulante.tipo == "DCCarguero":
+                tripulante.efecto_especial(barco)
+                print("Su DCCarguero aumentó la capacidad máxima del barco")
         self.barcos.append(barco)
-        barco.km = 0
-        barco.tiempo_en_canal = 0
+        # Se setea el ponderador_dificultad del barco
         barco.ponderador_dificultad = self.ponderador_dificultad
         self.n_barcos_historicos += 1
-        print(f"El barco {barco.nombre} ingresó al canal")
+        print("")
 
     def avanzar_barcos(self):
         # simula nueva hora
         # Revisa si el barco está encallado en su atributo
         # Para saber cuánto se desplaza, usa la función desplazar de barco
-        # Es llamada por simular_hora.py, acc_simular_hora()
+        # Esta función es llamada por simular_hora.py, acc_simular_hora()
         km_encallamiento = -1
         self.barcos.sort(key=ordenar_por_km, reverse=False)
         for barco in self.barcos:
             if barco.esta_encallado:
                 km_encallamiento = barco.km
-        if km_encallamiento != -1:
-            print(f"La retención más preocupante está en {km_encallamiento}")
         for barco in self.barcos:
             if barco.km > km_encallamiento:
                 avanzada = barco.desplazar(self)
-                barco.km += avanzada
-                if avanzada > 0:
+                # Avanza sólo si no es un buque que está averiado
+                evento_especial_buque = False
+                if barco.tipo == "Buque":
+                    if barco.averia_buque > 0:
+                        evento_especial_buque = True
+                        barco.averia_buque -= 1
+                if not evento_especial_buque:
+                    barco.km += avanzada
+                if avanzada > 0 and barco.km < self.largo and not evento_especial_buque:
                     print(f"El barco {barco.nombre} avanzó hasta el km {barco.km}")
-                else:
+                elif avanzada == 0 or evento_especial_buque:
                     print(f"El barco {barco.nombre} se quedó en el km {barco.km}")
+                if avanzada > 0:
+                    barco.evento_especial(self)
 
             # Vemos quién paga a quién
             # Primero el caso cuando sale del canal
             if barco.km >= self.largo:
                 self.barcos.sort(key=ordenar_por_km, reverse=False)
                 self.barcos.pop()
-                self.dinero += self.cobro_de_uso
-                self.dinero_recibido += self.cobro_de_uso
-                print(f"El barco {barco.nombre} salió del canal y pagó ${self.cobro_de_uso}USD")
+                # Caso especial de barco asaltado por piratas
+                if barco.tipo == "BarcoCarguero" and barco.senal_evento_especial:
+                    str1 = f"El barco {barco.nombre} salió del canal,"
+                    str2 = f"pero no puedo pagar :( gracias al ataque de los malditos piratas"
+                    print(str1, str2)
+                else:
+                    dinero = self.cobro_de_uso
+                    self.dinero += dinero
+                    self.dinero_recibido += dinero
+                    print(f"El barco {barco.nombre} salió del canal y pagó ${dinero}USD\n")
             # Ahora el caso en que se mantiene en el canal
             else:
                 costo = barco.costo_mantencion

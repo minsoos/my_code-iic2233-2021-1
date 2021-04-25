@@ -18,6 +18,8 @@ def ocurre_evento_por_probabilidad(probabilidad):
         else:
             return False
 
+def ordenar_por_km(barco):
+    return barco.km
 
 if __name__ == "__main__":
     print(ocurre_evento_por_probabilidad(0.5129389))
