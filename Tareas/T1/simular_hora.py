@@ -20,14 +20,20 @@ def acc_simular_hora(canal):
     # Caso no hay barcos encallados
     else:
         barco_entrante = elegir_barco_para_entrar(canal)
+        # Si retorna None, significa ninguno
+        # Si retorna 0 significa volver al menú principal
+        # En cualquier otro caso, retorna el barco que se eligió
     # Ingresa un barco o no según el código de arriba
-    if barco_entrante is not None:
-        canal.ingresar_barco(barco_entrante)
-    # Hace avanzar a los barcos del canal
-    canal.avanzar_barcos()
-    canal.horas_simuladas += 1
-    # Vuelve al menú de acciones
-    menus.menu_de_acciones(canal)
+    if barco_entrante == 0:
+        menus.menu_de_acciones(canal)
+    elif barco_entrante != 0:
+        if barco_entrante is not None:
+            canal.ingresar_barco(barco_entrante)
+        # Hace avanzar a los barcos del canal
+        canal.avanzar_barcos()
+        canal.horas_simuladas += 1
+        # Vuelve al menú de acciones
+        menus.menu_de_acciones(canal)
 
 
 def elegir_barco_para_entrar(canal):
@@ -47,19 +53,26 @@ def elegir_barco_para_entrar(canal):
     print("[1]Ninguno")
     for i in range(len(barcos_fuera)):
         print(f"[{i+2}]{barcos_fuera[i].nombre}")
+    print("[0]No simular hora y volver al menú de acciones")
     print("")
     input_usuario = input()
     # Revisa si el input es correcto, si lo es, retorna el Barco como objeto
     try:
         input_usuario = int(input_usuario)
+        if input_usuario == 0:
+            return 0
         if input_usuario > 0:
             if input_usuario == 1:
+                print("")
                 return None
             else:
                 return barcos_fuera[input_usuario-2]
         else:
-            print("La opción ingresada no es correcta, no se ingresará ningún barco")
+            print("La opción ingresada no es correcta, se vuelve al menú de acciones")
+            print("La hora no se simuló")
+            return 0
 
     except (ValueError, IndexError):
-        print("La opción ingresada no es correcta, no se ingresará ningún barco")
-        return None
+        print("La opción ingresada no es correcta, se vuelve al menú de acciones")
+        print("La hora no se simuló")
+        return 0
