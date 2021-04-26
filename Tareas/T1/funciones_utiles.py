@@ -12,7 +12,7 @@ def ocurre_evento_por_probabilidad(probabilidad):
         n_digitos = len(probabilidad)
         cota_sup = 10**len(probabilidad)
         probabilidad = int(probabilidad)
-        numero_random = random.randint(0, cota_sup)
+        numero_random = random.randint(1, cota_sup)
         if numero_random <= probabilidad:
             return True
         else:

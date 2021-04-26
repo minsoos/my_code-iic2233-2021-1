@@ -141,7 +141,7 @@ Por otro lado, los módulos que fueron creados fueron los siguientes:
 
 Realicé los siguientes supuestos:
 * En los barcos encallados no pueden ocurrir eventos
-
+* Se debe instalar la librería ```currency_converter```
 * Siempre te entregarán una moneda válida y que la librería ```currency_converter``` pueda manejar
 
 * Los archivos están en el formato indicado
@@ -151,9 +151,9 @@ Realicé los siguientes supuestos:
 * No se repite el tipo de tripulante en el barco
 
 * Un barco parado no podrá encallar ni tener eventos especiales
-* Un encallamiento salvado por el capitán se contabiliza como encallamiento en el dato de los encallamientos totales
+* Un encallamiento salvado por el capitán se contabiliza como encallamiento en el dato de los encallamientos totales, además funciona normalmente durante el turno
 * Los barcos que encallan no permiten que haya movimiento hacia atrás de ellos
-  
+
 ***
 
 ## Referencias de código externo :book:

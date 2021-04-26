@@ -34,7 +34,7 @@ def dict_mercancia():
             for linea in range(1, len(lineas)):
                 linea_aux = lineas[linea].strip().split(",")
                 l = linea_aux
-                mercancia_aux = Mercancia(int(l[0]), l[1], int(l[2]), int(l[3]))
+                mercancia_aux = Mercancia(int(l[0]), l[1], int(l[2]), int(l[3])/4)
                 dict_mercancia[int(linea_aux[0])] = mercancia_aux
             return dict_mercancia
 
