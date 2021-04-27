@@ -1,21 +1,21 @@
 # Tarea 1: DCCanal :school_satchel:
 
-  
-
-## Consideraciones generales :octocat:
-***
-Ninguna
-
-  
-
-***
-
 ## Diagrama de clases
 <p align="center">
         <img src="imagen/diagrama_de_clases.jpg" alt="diagrama">
     </a>
 </p>
 
+
+  
+
+## Consideraciones generales :octocat:
+***
+Los barcos avanzan siempre desde más atrás hacia más adelante.
+
+  
+
+***
 
   
 
@@ -51,14 +51,13 @@ No se revisará cada subítem, pero cada uno está leído y funciona como indica
 *  * <Menú acciones<sub>3.2</sub>>: Hecha completa
 *  * <Simular hora<sub>3.3</sub>>: Hecha completa
 *  * <Mostrar estado<sub>3.4</sub>>: Hecha completa
-* *  * <Mostrar estado<sub>3.4.1</sub>>: Consideración: Regresa automáticamente al menú de acciones 
+* *  * <Se puede volver al menú anterior<sub>3.4.1</sub>>: Consideración: Regresa automáticamente al menú de acciones 
 *  * <Robustez<sub>3.5</sub>>: Hecha completa
 
 
 * <Manejo de archivos<sub>4</sub>>: Hecha completa
-* * <Archivos csv<sub>4</sub>>: Hecha completa
-* * <parametros.py<sub>4</sub>>: Hecha completa
-* * <Manejo de archivos<sub>4</sub>>: Hecha completa
+* * <Archivos csv<sub>4.1</sub>>: Hecha completa
+* * <parametros.py<sub>4.2</sub>>: Hecha completa
 
 
 ## Ejecución :computer:
