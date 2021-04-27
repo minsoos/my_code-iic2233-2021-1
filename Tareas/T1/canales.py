@@ -20,6 +20,7 @@ class Canal():
         self.n_barcos_encallados = 0
         self.horas_simuladas = 0
         self.n_eventos_especiales = 0
+        self.n_barcos_que_salieron = 0
         # Fin contadores
         self.dificultad = dificultad
         if self.dificultad == "principiante":
@@ -88,6 +89,7 @@ class Canal():
             if barco.km >= self.largo:
                 self.barcos.sort(key=ordenar_por_km, reverse=False)
                 self.barcos.pop()
+                self.n_barcos_que_salieron += 1
                 # Caso especial de barco asaltado por piratas
                 if barco.tipo == "BarcoCarguero" and barco.senal_evento_especial:
                     str1 = f"El barco {barco.nombre} salió del canal,"

@@ -4,12 +4,18 @@
 
 ## Consideraciones generales :octocat:
 ***
-
 Ninguna
 
   
 
 ***
+
+## Diagrama de clases
+<p align="center">
+        <img src="imagen/diagrama_de_clases.jpg" alt="diagrama">
+    </a>
+</p>
+
 
   
 
@@ -123,7 +129,7 @@ Qué hace cada parte del programa está indicado con comentarios en el código, 
 
 3.4.2 **Canal.avanzar_barcos**: Hace avanzar a los barcos que están por delante del último barco encallado, descubriendo su desplazamiento con el método ```desplazar()``` de Barco. Verifica el evento especial de Buque e imprime la situación posicional del barco. Finalmente gestiona los pagos de acuerdo a la situación del barco, aquí verifica el evento especial de BarcoCarguero. PD: Los costos de mantención los calcula con ``` CurrencyConverter()```
 
-3.4.2.1 **Barco.desplazar()**: Calcula el desplazamiento, cobra multas por mercancía vencida y revisa si encalla, tomando en cuenta la posibilidad de usar el efecto especial del capitán. Llama al método ```evento_especial()``` de Barco.
+3.4.2.1 **Barco.desplazar()**: Cobra multas por mercancía vencida y revisa si encalla, tomando en cuenta la posibilidad de usar el efecto especial del capitán. Llama al método ```evento_especial()``` de Barco y calcula el desplazamiento.
 
 3.4.2.1.1 **Barco.evento_especial()**: Calcula con probabilidades si ocurre el evento especial. Si lo hacer, modifica las variables que debe modificar el evento especial dependiendo de cada barco, y da una señal de que ya se usó
 
@@ -217,7 +223,7 @@ Realicé los siguientes supuestos:
 
 * Los barcos que encallan no permiten que haya movimiento hacia atrás de ellos
 
-  
+* El buque averiado puede encallar mientras repara la avería, en el caso de que ambas cosas se den, la avería se sigue reparando. En ese caso, para que avance tiene dos limitantes, superar el tiempo de reparación de avería y desencallarse
 
 ***
 

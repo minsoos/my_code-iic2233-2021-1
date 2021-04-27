@@ -65,7 +65,7 @@ def acc_mostrar_proba(canal):
     print(f"\nBarcos: Probabilidad de encallar")
     print("-"*50)
     for barco in canal.barcos:
-        print(f"{barco.nombre}: {barco.prob_encallar}")
+        print(f"{barco.nombre}: {min(1, max(0, barco.prob_encallar))}")
     print("\n" + "-"*50)
     menu_de_acciones(canal)
 
@@ -121,7 +121,8 @@ def acc_mostrar_estado(canal):
     print(f"Dinero disponible: {canal.dinero}")
     print(f"Dinero gastado: {canal.dinero_gastado}")
     print(f"Dinero recibido: {canal.dinero_recibido}")
-    print(f"Número de barcos que pasaron: {canal.n_barcos_historicos}")
+    print(f"Número de barcos que han entrado: {canal.n_barcos_historicos}")
+    print(f"Número de barcos que han salido: {canal.n_barcos_que_salieron}")
     print(f"Número de barcos que encallaron: {canal.n_barcos_encallados}")
     print(f"Eventos especiales ocurridos: {canal.n_eventos_especiales}")
     if len(canal.barcos) > 0:

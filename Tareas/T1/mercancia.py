@@ -20,9 +20,10 @@ class Mercancia:
         return multa
 
     def pasa_una_hora(self):
+        self.tiempo += 1
         if self.tiempo > self.tiempo_expiracion and not self.caducado:
+            print(f"Caducó la mercancía {self.numero}, que es {self.tipo}")
             self.caducado = True
             return self.expirar()
         else:
             return 0
-        self.tiempo += 1

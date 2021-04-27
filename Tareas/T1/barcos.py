@@ -24,11 +24,6 @@ class Barco(ABC):
         self.ponderador_dificultad = None
 
     def desplazar(self, canal):
-        peso_mercancia = 0
-        for caja in self.mercancia:
-            peso_mercancia += caja.peso
-        min_1 = (self.carga_maxima - peso_mercancia - 0.3*self.pasajeros)/self.carga_maxima
-        desplazamiento = max(0.1, min(1, min_1))*self.velocidad_base
         # El valor retornado retorna a la simulación
         # Es la simulación la que tiene que comprobar qué barcos pueden avanzar o no
         # Calculamos la multa de los alimentos vencidos
@@ -60,8 +55,14 @@ class Barco(ABC):
         else:
             # Sólo si el barco avanzó, llama a su evento especial, que puede activarse o no
             self.evento_especial(canal)
+            # Calcula el desplazamiento y sus variables
+            peso_mercancia = 0
+            for caja in self.mercancia:
+                peso_mercancia += caja.peso
+            min_1 = (self.carga_maxima - peso_mercancia - 0.3*self.pasajeros)/self.carga_maxima
+            desplazamiento = max(0.1, min(1, min_1))*self.velocidad_base
             return desplazamiento
-        print("")
+            print("")
     
     def encallar(self):
         # Este método se usa sólo en la función desplazar
