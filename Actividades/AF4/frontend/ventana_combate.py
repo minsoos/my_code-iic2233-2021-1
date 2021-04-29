@@ -40,7 +40,7 @@ start=1)
             if not defendiendo:
                 self.boton_patada.setDisabled(False)
                 self.boton_frio.setDisabled(False)
-                self.cambiar_animacion_defensa()
+                self.cambiar_animacion_defensa(defendiendo)
 
     # --- Método necesario para completar la actividad (NO MODIFICAR) ---
     def cambiar_animacion_defensa(self, defendiendo):
