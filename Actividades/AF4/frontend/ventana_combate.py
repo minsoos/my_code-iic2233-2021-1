@@ -37,6 +37,7 @@ start=1)
             if defendiendo:
                 self.boton_patada.setDisabled(True)
                 self.boton_frio.setDisabled(True)
+                self.cambiar_animacion_defensa(defendiendo)
             if not defendiendo:
                 self.boton_patada.setDisabled(False)
                 self.boton_frio.setDisabled(False)

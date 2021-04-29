@@ -27,7 +27,6 @@ class VentanaInicio(QWidget):
 
     def init_gui(self, ruta_logo):
         self.imagen = QLabel(self)
-        self.imagen.setGeometry(300, 300, 300, 300)
         pixeles = QPixmap(ruta_logo)
         self.imagen.setPixmap(pixeles)
         self.imagen.resize(self.imagen.sizeHint())
