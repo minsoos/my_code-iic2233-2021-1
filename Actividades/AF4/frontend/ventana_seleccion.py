@@ -38,8 +38,10 @@ class VentanaSeleccion(QWidget):
         self.init_gui()
 
     def iniciar_combate(self):
-        # COMPLETAR
-        pass
+        n_personaje = self.spinbox_personaje.value()
+        nombre_personaje = self.diccionario_personajes[int(n_personaje)]
+        self.senal_abrir_ventana_combate.emit(self.nombre, nombre_personaje)
+        self.hide()
 
     # ----------------------------------------------------------------
     # -------------------- NO MODIFICAR DESDE ACA --------------------
@@ -97,3 +99,7 @@ class VentanaSeleccion(QWidget):
         # Método que recibe el nombre del jugador, lo guarda y muestra la ventana
         self.nombre = nombre
         self.show()
+if __name__ == "__main__":
+    app = QApplication([])
+    jeje = VentanaSeleccion()
+    sys.exit(app.exec())

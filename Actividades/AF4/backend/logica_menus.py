@@ -36,8 +36,14 @@ class LogicaCombate(QObject):
         self.timer.timeout.connect(self.timer_tick)
 
     def golpear_jugador(self):
-        # COMPLETAR
-        pass
+        if not self.jugador_defendiendo:
+            self.vida_jugador -= 20
+            if self.vida_jugador > 0:
+                dicc = {"comando": "dano_jugador", "valor": self.vida_jugador}
+            else:
+                dicc = {"comando": "perder"}
+                self.detener_combate
+            self.senal_enviar_actualizacion.emit(dicc)
 
     # ----------------------------------------------------------------
     # -------------------- NO MODIFICAR DESDE ACA --------------------

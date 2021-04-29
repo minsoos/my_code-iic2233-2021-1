@@ -18,21 +18,29 @@ class VentanaCombate(QLabel):
         self.boton_frio = QPushButton("Frio")
         self.boton_defender = QPushButton("Defender")
         self.en_accion = False
-        self.rutas = {
+        self.rutas = rutas  # Rutas de sprites
+        self.rutas_iconos = {
             f"personaje_{i}": ruta
-            for i, ruta in enumerate(rutas_iconos, start=1)
+            for i, ruta in enumerate(rutas_iconos,
+start=1)
         }
-        self.rutas_iconos = rutas_iconos
         self.estilo_botones = estilo_botones
         self.init_gui()
 
     def conectar_botones(self):
-        # COMPLETAR
-        pass
+        self.boton_defender.clicked.connect(self.metodo_defender)
+        self.boton_patada.clicked.connect(self.patear)
+        self.boton_frio.clicked.connect(self.frio)
 
     def cambiar_estado_defensa(self, defendiendo):
-        # COMPLETAR
-        pass
+        if not self.en_accion:
+            if defendiendo:
+                self.boton_patada.setDisabled(True)
+                self.boton_frio.setDisabled(True)
+            if not defendiendo:
+                self.boton_patada.setDisabled(False)
+                self.boton_frio.setDisabled(False)
+                self.cambiar_animacion_defensa()
 
     # --- Método necesario para completar la actividad (NO MODIFICAR) ---
     def cambiar_animacion_defensa(self, defendiendo):
@@ -254,7 +262,7 @@ class VentanaCombate(QLabel):
             self.enemigo.move(self.enemigo.x() + paso, self.enemigo.y())
             self.sleep(0.02)
 
-    def método_defender(self):
+    def metodo_defender(self):
         if self.en_accion:
             return
         self.senal_envio_info_backend.emit("defender")

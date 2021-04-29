@@ -43,7 +43,7 @@ if __name__ == '__main__':
     logica_combate = LogicaCombate()
     # ----------------------------
     # CONECTA LA SEÑAL PEDIDA EN LA PARTE 2 AQUI
-
+    ventana_seleccion.senal_abrir_ventana_combate.connect(ventana_combate.combatir)
     # ----------------------------
     # Conexión señales adicionales al combatir 
     logica_combate.senal_enviar_actualizacion.connect(ventana_combate.recibir_comando_actualizacion)
