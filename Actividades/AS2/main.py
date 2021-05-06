@@ -54,6 +54,7 @@ if __name__ == '__main__':
     logica_juego.senal_enviar_grilla.connect(ventana_juego.colorear_grilla_entera)
     logica_juego.senal_enviar_puntaje.connect(ventana_juego.mostrar_puntaje)
     logica_juego.senal_game_over.connect(ventana_fin_juego.mostrar_ventana)
+    logica_juego.senal_game_over.connect(ventana_juego.fin_juego)
     # FIN DE JUEGO (Parte III)
     """
     Debes completar esta sección
