@@ -48,7 +48,6 @@ class Juego(QObject):
     def actualizar_puntaje(self):
         self.puntaje += p.PUNTAJE_LINEA
         self.senal_enviar_puntaje.emit(self.puntaje)
-        print("mandé la señal para actualizar en 10")
 
     def game_over(self):
         self.mitimer.stop()
