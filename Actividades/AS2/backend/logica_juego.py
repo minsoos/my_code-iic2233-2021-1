@@ -10,6 +10,9 @@ from utils import coordenadas_figuras
 
 class Juego(QObject):
     # DEBES MODIFICAR ESTA CLASE
+    senal_enviar_grilla = pyqtSignal(dict)
+    senal_enviar_puntaje = pyqtSignal(int)
+    senal_game_over = pyqtSignal(int)
 
     def __init__(self):
         # NO MODIFICAR
@@ -26,8 +29,11 @@ class Juego(QObject):
     #ACA SE ENCUENTRAN LOS MÉTODOS A MODIFICAR
 
     def comenzar_partida(self):
-        # COMPLETAR
-       pass
+        self.enviar_bloque()
+        self.mitimer = QTimer()
+        self.mitimer.setInterval(p.TIEMPO_AVANCE)
+        self.mitimer.timeout.connect(self.avanzar_bloques)
+        self.mitimer.start()
 
     def actualizar_grilla(self):
         # COMPLETAR
@@ -37,15 +43,17 @@ class Juego(QObject):
             self.diccionario_grilla[(x, y)] = bloque.color
 
         # DESDE ACA DEBES EDITAR
-        pass
+        self.senal_enviar_grilla.emit(self.diccionario_grilla)
 
     def actualizar_puntaje(self):
-        # COMPLETAR
-        pass
+        self.puntaje += p.PUNTAJE_LINEA
+        self.senal_enviar_puntaje.emit(self.puntaje)
 
     def game_over(self):
-        # COMPLETAR
-        pass
+        self.mitimer.stop()
+        self.vaciar_grilla()
+        self.bloques = list()
+        self.senal_game_over.emit(self.puntaje)
 
     # NO MODIFICAR ESTOS MÉTODOS
     

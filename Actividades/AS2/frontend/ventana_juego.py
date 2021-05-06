@@ -29,12 +29,13 @@ class VentanaJuego(window_name, base_class):
     # ACA SE ENCUENTRAN LOS DOS MÉTODOS A MODIFICAR
 
     def mostrar_puntaje(self, puntaje):
-        # COMPLETAR
-        pass
+        self.puntaje_usuario.setText(str(puntaje))
 
     def mostrar_ventana(self, usuario):
-        # COMPLETAR
-        pass
+        self.show()
+        self.puntaje_usuario.setText("0")
+        self.nombre_usuario.setText(usuario)
+
 
     # NO MODIFICAR ESTOS MÉTODOS
 
@@ -98,6 +99,7 @@ class VentanaJuego(window_name, base_class):
 
 class VentanaFin(window_name_fin, base_class_fin):
     # DEBES MODIFICAR ESTA CLASE
+    senal_inicio = pyqtSignal()
 
     def __init__(self):
         super().__init__()
@@ -107,9 +109,9 @@ class VentanaFin(window_name_fin, base_class_fin):
         self.boton_inicio.clicked.connect(self.emitir_senal_inicio)
 
     def emitir_senal_inicio(self):
-        # COMPLETAR
-        pass
-    
+        self.hide()
+        self.senal_inicio.emit()
+
     def mostrar_ventana(self, puntaje):
         # MODIFICAR
         self.puntaje_final.setText(str(puntaje))

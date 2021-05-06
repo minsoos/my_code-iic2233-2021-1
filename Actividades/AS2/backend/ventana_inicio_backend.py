@@ -18,10 +18,10 @@ class VentanaInicioBackend(QObject):
         self.start()
     
     def verificar_usuario(self, usuario):
-        if "," in usuario and usuario != "":
-            self.senal_mensaje_error.emit()
-        else:
+        if "," not in usuario and usuario != "":
             self.senal_empezar_juego.emit(usuario)
+        else:
+            self.senal_mensaje_error.emit()           
 
     def start(self):
         # NO MODIFICAR ESTE MÉTODO

@@ -51,12 +51,14 @@ if __name__ == '__main__':
     """
     Modificar desde acá.
     """
-
+    logica_juego.senal_enviar_grilla.connect(ventana_juego.colorear_grilla_entera)
+    logica_juego.senal_enviar_puntaje.connect(ventana_juego.mostrar_puntaje)
+    logica_juego.senal_game_over.connect(ventana_fin_juego.mostrar_ventana)
     # FIN DE JUEGO (Parte III)
     """
     Debes completar esta sección
     """
-
+    ventana_fin_juego.senal_inicio.connect(ventana_inicio.mostrar_ventana)
     #NO MODIFICAR
     sys.exit(app.exec_())
     app.exec()
