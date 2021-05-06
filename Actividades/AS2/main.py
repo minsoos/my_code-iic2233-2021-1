@@ -35,10 +35,11 @@ if __name__ == '__main__':
     # DESDE ACA PUEDES MODIFICAR
 
     # SEÑALES DE VENTANA DE INICIO (Parte I)
-    """
-    Debes completar esta sección
-    """
-    
+    ventana_inicio.senal_verificar_usuario.connect(logica_inicio.verificar_usuario)
+    logica_inicio.senal_empezar_juego.connect(ventana_juego.mostrar_ventana)
+    logica_inicio.senal_empezar_juego.connect(logica_juego.comenzar_partida)
+    logica_inicio.senal_empezar_juego.connect(ventana_inicio.salir)
+    logica_inicio.senal_mensaje_error.connect(ventana_error.mostrar)
 
     # SEÑALES DE VENTANA DE JUEGO (Parte II)
     """

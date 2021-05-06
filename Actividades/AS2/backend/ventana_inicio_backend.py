@@ -7,7 +7,9 @@ from PyQt5.QtWidgets import QApplication
 
 
 class VentanaInicioBackend(QObject):
-    # DEBES MODIFICAR ESTA CLASE
+
+    senal_empezar_juego = pyqtSignal(str)
+    senal_mensaje_error = pyqtSignal()
 
     def __init__(self, ruta_cancion):
         # NO MODIFICAR ESTE MÉTODO
@@ -16,8 +18,10 @@ class VentanaInicioBackend(QObject):
         self.start()
     
     def verificar_usuario(self, usuario):
-        # DEBES MODIFICAR ESTE METODO
-        pass
+        if "," in usuario and usuario != "":
+            self.senal_mensaje_error.emit()
+        else:
+            self.senal_empezar_juego.emit(usuario)
 
     def start(self):
         # NO MODIFICAR ESTE MÉTODO
