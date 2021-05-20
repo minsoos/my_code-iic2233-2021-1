@@ -13,6 +13,7 @@ class DCCocina:
         ingredientes = self.revisar_despensa(p.ARCHIVO_INGREDIENTES)
         self.chef = DCChef(ingredientes)
 
+    @desencriptar_receta
     def leer_recetas(self, archivo):
         """
         Método que lee el archivo recetas y lo transforma en un diccionario, el cual retorna
@@ -24,6 +25,7 @@ class DCCocina:
 
         return {linea[0]: linea[1:] for linea in lista_recetas}
 
+    @ingredientes_infectados(p.PROBABILIDAD_INFECCION)
     def revisar_despensa(self, archivo: str):
         """
         Lee el archivo ingredientes y los guarda en un diccionario
@@ -37,6 +39,7 @@ class DCCocina:
 
         return {ing: int(cantidad) for ing, cantidad in lista_ingredientes}
 
+    @encriptar_receta
     def escribir_receta(self, receta):
         """
         Guarda en el csv de recetas nuevas la receta recibida
@@ -119,6 +122,8 @@ class DCChef:
     def __str__(self):
         return "DCChef"
 
+    @capa_relleno(tipo_relleno)
+    @improvisar_toppings
     def agregar_topping(self, nombre_ingrediente, torta):
         """
         Método que recibe un ingrediente, y lo agrega al final de la torta
@@ -134,6 +139,7 @@ class DCChef:
             torta.finalizada = True
             log(f"No queda suficiente {nombre_ingrediente}. Se procederá a terminar la torta.")
 
+    @revisar_ingredientes
     def cocinar_torta(self, name, receta):
         """
         Método que instancia una Torta e itera sobre los ingredientes de la receta
@@ -153,5 +159,4 @@ class DCChef:
                 current_iter += 1
             else:
                 torta.finalizada = True
-
         return torta

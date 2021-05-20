@@ -3,8 +3,8 @@ from random import uniform
 
 
 def desencriptar_receta(metodo_original):
-    def wrapper(*args, **kwargs):
-        diccionario_encriptado = metodo_original()
+    def wrapper(self, archivo):
+        diccionario_encriptado = metodo_original(self, archivo)
         for receta in diccionario_encriptado:
             ingredientes_aux = diccionario_encriptado[receta]
             for ingrediente_i in range(len(ingredientes_aux)):
@@ -16,9 +16,10 @@ def desencriptar_receta(metodo_original):
 
 def encriptar_receta(metodo_original):
     def wrapper(self, receta):
-        receta = encriptar(receta)
-        retorno = metodo_original(receta)
-        return retorno
+        print("encriptando")
+        for palabra in range(len(receta)):
+            receta[palabra] = encriptar(receta[palabra])
+        metodo_original(self, receta)
     return wrapper
 
 
@@ -29,12 +30,12 @@ def ingredientes_infectados(probabilidad_infectado):
         que pueden estar infectados, según la probabilidad dada.
          """
         def wrapper(self, archivo):
-            diccionario_despensa = metodo_original(archivo)
-            n_comparar = uniform(0,1)
+            diccionario_despensa = metodo_original(self, archivo)
+            n_comparar = uniform(0, 1)
             for ingrediente in diccionario_despensa:
                 if n_comparar < probabilidad_infectado:
                     diccionario_despensa[ingrediente] = 1
-                    print(f"{ingrediente} infectado")
+                    log(f"{ingrediente} infectado", "ingredientes")
             return diccionario_despensa
         return wrapper
     return decorador
