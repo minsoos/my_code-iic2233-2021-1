@@ -3,22 +3,22 @@ from random import uniform
 
 
 def desencriptar_receta(metodo_original):
-    """
-    Este decorador debe hacer que el método "leer_recetas" retorne las recetas desencriptadas
-    """
-
     def wrapper(*args, **kwargs):
-        pass
+        diccionario_encriptado = metodo_original()
+        for receta in diccionario_encriptado:
+            ingredientes_aux = diccionario_encriptado[receta]
+            for ingrediente_i in range(len(ingredientes_aux)):
+                ingredientes_aux[ingrediente_i] = desencriptar(ingredientes_aux[ingrediente_i])
+
+        return diccionario_encriptado
     return wrapper
 
 
 def encriptar_receta(metodo_original):
-    """
-    Este decorador debe hacer que el método "escribir_recetas" encripte las
-    recetas antes de escribirlas
-    """
-    def wrapper(*args):
-        pass
+    def wrapper(self, receta):
+        receta = encriptar(receta)
+        retorno = metodo_original(receta)
+        return retorno
     return wrapper
 
 
@@ -28,7 +28,13 @@ def ingredientes_infectados(probabilidad_infectado):
         Este decorador debe hacer que el método "revisar_despensa" elmine los ingredientes
         que pueden estar infectados, según la probabilidad dada.
          """
-        def wrapper(*args, **kwargs):
-            pass
+        def wrapper(self, archivo):
+            diccionario_despensa = metodo_original(archivo)
+            n_comparar = uniform(0,1)
+            for ingrediente in diccionario_despensa:
+                if n_comparar < probabilidad_infectado:
+                    diccionario_despensa[ingrediente] = 1
+                    print(f"{ingrediente} infectado")
+            return diccionario_despensa
         return wrapper
     return decorador
