@@ -16,7 +16,6 @@ def desencriptar_receta(metodo_original):
 
 def encriptar_receta(metodo_original):
     def wrapper(self, receta):
-        print("encriptando")
         for palabra in range(len(receta)):
             receta[palabra] = encriptar(receta[palabra])
         metodo_original(self, receta)
@@ -31,8 +30,8 @@ def ingredientes_infectados(probabilidad_infectado):
          """
         def wrapper(self, archivo):
             diccionario_despensa = metodo_original(self, archivo)
-            n_comparar = uniform(0, 1)
             for ingrediente in diccionario_despensa:
+                n_comparar = uniform(0, 1)
                 if n_comparar < probabilidad_infectado:
                     diccionario_despensa[ingrediente] = 1
                     log(f"{ingrediente} infectado", "ingredientes")

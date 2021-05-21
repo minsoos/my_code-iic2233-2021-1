@@ -6,12 +6,12 @@ from funciones import encontrar_preferencia, log
 def improvisar_toppings(metodo_original):
     def wrapper(self, ingrediente, torta):
         stock = self.ingredientes_disponibles
-        if stock[ingrediente] > 0:
-            metodo_original(self, ingrediente, torta)
-        else:
+        ingrediente_nuevo = ingrediente
+        while stock[ingrediente_nuevo] < 1:
             ingrediente_nuevo = encontrar_preferencia(ingrediente)
+        if ingrediente_nuevo != ingrediente:
             log(f"falta {ingrediente}, usaremos {ingrediente_nuevo}", "ingredientes")
-            metodo_original(self, ingrediente_nuevo, torta)
+        metodo_original(self, ingrediente_nuevo, torta)
     return wrapper
 
 def capa_relleno(tipo_relleno):
