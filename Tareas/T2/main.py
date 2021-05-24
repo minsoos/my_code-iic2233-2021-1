@@ -1,0 +1,1 @@
+###Hay que crear el ranking.txt si no existe
