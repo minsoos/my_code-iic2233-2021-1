@@ -6,8 +6,9 @@ from PyQt5.QtWidgets import QLabel, QApplication, QPushButton, QWidget, QLineEdi
 from PyQt5.QtGui import QPixmap, QIcon
 import sys
 import parametros as p
-from personajes import Homero
+from personajes import Homero, Lisa
 from os import path
+from random import randint
 
 class VentanaJuego(QWidget):
 
@@ -15,12 +16,19 @@ class VentanaJuego(QWidget):
     senal_salir_juego = pyqtSignal()
     senal_tecla_presionada = pyqtSignal(str, tuple)
 
-    def __init__(self, personaje_ingresado=Homero()):
+    def __init__(self, personaje_ingresado=Lisa()):
         super().__init__()
+        # Atributos de la ventana
         self.tamano_ventana = (500, 500)
         self.personaje = personaje_ingresado
-        self.rutas_personajes = p.RUTA_PERSONAJES
-        self.rutas_imagenes = p.RUTA_IMAGENES_JUEGO
+        self.rutas_personajes = p.RUTAS_PERSONAJES
+        self.rutas_imagenes = p.RUTAS_IMAGENES_JUEGO
+        self.__posicion_personaje = (0,0)
+        self.posiciones_obstaculos = set()
+        self.generador_de_objetos = QTimer()
+        self.generador_de_objetos.timeout.connect(self.generar_objeto)
+        self.generador_de_objetos.setInterval()
+        # Dar propiedades a la ventana
         self.size = (self.tamano_ventana)
         self.resize(*self.tamano_ventana)
         self.setWindowTitle("Ventana de Juego")
@@ -40,26 +48,38 @@ class VentanaJuego(QWidget):
         self.show()
 
     @property
-    def pos_label_personaje(self):
-        return self.__pos_label_personaje
+    def posicion_personaje(self):
+        return self.__posicion_personaje
 
-    @pos_label_personaje.setter
-    def pos_label_personaje(self, lugar):
+    @posicion_personaje.setter
+    def posicion_personaje(self, lugar):
         '''
-        Recibe señal de tecla presionada
+        Cambia la posición del personaje
         '''
-        self.__pos_label_personaje = lugar
-        self.__label_personaje.move(*lugar)
+        obstaculizado = False
+        for obstaculo in self.posiciones_obstaculos:
+            if obstaculo[0]-3 <= lugar[0] <= obstaculo[0]+15 or\
+                obstaculo[1]-3 <= lugar[1] <= obstaculo[1]+15:
+                obstaculizado = True
+        if not obstaculizado:
+            self.__posicion_personaje = lugar
+            self.__label_personaje.move(*lugar)
+
+    def generador_objeto(self):
+        '''
+        Este método genera un objeto cuando lo llama
+        el QTimer
+        '''
 
     def mover_personaje(self, lugar):
-        self.pos_label_personaje = lugar
+        self.posicion_personaje = lugar
 
     def keyPressEvent(self, tecla):
         '''
         Envía señal a tecla_presionada
         '''
         tecla = "w" if tecla.key() == Qt.Key_W else "s" if tecla.key() == Qt.Key_S else "d" if tecla.key() == Qt.Key_D  else "a" if tecla.key() == Qt.Key_A else "nada"
-        self.senal_tecla_presionada.emit(tecla, self.pos_label_personaje)
+        self.senal_tecla_presionada.emit(tecla, self.posicion_personaje)
         
     def conexiones(self):
         self.personaje.senal_actualizar_animacion.connect(self.actualizar_personaje)
@@ -101,19 +121,18 @@ class VentanaJuego(QWidget):
 
     def init_gui(self):
         """
-        Inicia la interfaz de la ventana
+        Crea la interfaz de la ventana
         """
-        
-
         # ---- Definicion de la barra superior ----
         
-        # Logo
+        # Logo superior izq
         self.label_logo = QLabel(self)
         pixeles = QPixmap(self.rutas_imagenes['logo'])
         pixeles = pixeles.scaled(self.tamano_ventana[0]/10, self.tamano_ventana[1]/10, QtCore.Qt.KeepAspectRatio)
         self.label_logo.setPixmap(pixeles)
         self.label_logo.setScaledContents(True)
-        #Definición de mapa
+
+        #Mapa por el que se mueve el jugador
         self.mapa = QLabel(self)
         pixeles = QPixmap(self.rutas_imagenes['mapa_planta'])
         pixeles = pixeles.scaled(self.tamano_ventana[0], self.tamano_ventana[1], QtCore.Qt.KeepAspectRatio)
@@ -124,7 +143,6 @@ class VentanaJuego(QWidget):
         
         # vida
         self.label_vida = QLabel("Vida:", self)
-        
         # Tiempo
         self.label_tiempo = QLabel("Tiempo", self)
         # items buenos
@@ -145,15 +163,15 @@ class VentanaJuego(QWidget):
 
         #
         layout_principal = QVBoxLayout()
+        contenedor_info_y_logo = QHBoxLayout()  # Contenedor de la info superior
         contenedor_info = QVBoxLayout()
         contenedor_info_superior = QHBoxLayout()
         contenedor_info_inferior = QHBoxLayout()
         contenedor_info.addLayout(contenedor_info_superior)
         contenedor_info.addLayout(contenedor_info_inferior)
-        contenedor_info_y_logo = QHBoxLayout()  # Contenedor de la info superior
-        
+        contenedor_info_y_logo.addLayout(contenedor_info)
 
-        #--------------------------------------
+        #agregar datos
         contenedor_info_superior.addWidget(self.label_vida)
         contenedor_info_inferior.addWidget(self.label_tiempo)
         contenedor_info_superior.addWidget(self.label_items_buenos)
@@ -162,16 +180,12 @@ class VentanaJuego(QWidget):
         contenedor_info_inferior.addWidget(self.label_puntaje)
         contenedor_info_superior.addWidget(self.boton_pausar)
         contenedor_info_inferior.addWidget(self.boton_salir)
-        
-        ###
-        ###Layouts
-        contenedor_info_y_logo.addLayout(contenedor_info)
-        #
+        #Terminar layout superior (barra de progreso)
         contenedor_info_y_logo.addStretch()
         contenedor_info_y_logo.addWidget(self.label_logo)
         contenedor_info_y_logo.addLayout(contenedor_info)
         contenedor_info_y_logo.addStretch()
-        
+        #Terminar layout principal
         layout_principal.addStretch()
         layout_principal.addLayout(contenedor_info_y_logo)
         layout_principal.addWidget(self.mapa)
@@ -180,19 +194,44 @@ class VentanaJuego(QWidget):
         self.init_gui_objetos_y_personaje()
     
     def init_gui_objetos_y_personaje(self):
+        #Personaje
         self.__label_personaje = QLabel(self)
         if self.personaje.nombre in self.rutas_personajes.keys():
             ruta_inicial = self.rutas_personajes[self.personaje.nombre]
             pixeles = QPixmap(path.join(ruta_inicial, "up_3.png"))
-            pixeles = pixeles.scaled(self.tamano_ventana[0]/8, self.tamano_ventana[1]/8,\
-                QtCore.Qt.KeepAspectRatio)
+            #pixeles = pixeles.scaled(self.tamano_ventana[0]/8, self.tamano_ventana[1]/8,\
+                #QtCore.Qt.KeepAspectRatio)
             self.__label_personaje.setPixmap(pixeles)
-            self.pos_label_personaje = (80, 300)
+            self.posicion_personaje = (80, 300)
             self.personaje.timer.start()
         else:
             raise ValueError("Este personaje no existe")
-        #
-        
+        # ------------------Obstaculos
+        rutas_obstaculos = p.RUTAS_OBSTACULOS_PLANTA
+        for _ in range(3):
+            tupla = (randint(5, self.tamano_ventana[0]-5), randint(200, self.tamano_ventana[0]-5))
+            self.posiciones_obstaculos.add(tupla)
+        lista_posiciones_obstaculos = list(self.posiciones_obstaculos)
+        self.label_obstaculo1 = QLabel(self)
+        pixeles = QPixmap(rutas_obstaculos["1"])
+        pixeles = pixeles.scaled(self.tamano_ventana[0]/100, self.tamano_ventana[1]/1000, QtCore.Qt.KeepAspectRatio)
+        self.label_obstaculo1.setPixmap(pixeles)
+        self.label_obstaculo1.setScaledContents(True)
+        self.label_obstaculo1.move(*lista_posiciones_obstaculos[0])
+        self.label_obstaculo2 = QLabel(self)
+        pixeles = QPixmap(rutas_obstaculos["2"])
+        pixeles = pixeles.scaled(self.tamano_ventana[0]/100, self.tamano_ventana[1]/100, QtCore.Qt.KeepAspectRatio)
+        self.label_obstaculo2.setPixmap(pixeles)
+        self.label_obstaculo2.setScaledContents(True)
+        self.label_obstaculo2.move(*lista_posiciones_obstaculos[1])
+        self.label_obstaculo3 = QLabel(self)
+        pixeles = QPixmap(rutas_obstaculos["3"])
+        pixeles = pixeles.scaled(self.tamano_ventana[0]/100, self.tamano_ventana[1]/100, QtCore.Qt.KeepAspectRatio)
+        self.label_obstaculo3.setPixmap(pixeles)
+        self.label_obstaculo3.setScaledContents(True)
+        self.label_obstaculo3.move(*lista_posiciones_obstaculos[1])
+        print(self.posiciones_obstaculos)
+        # ----------------------
         # Label nombre jugador
         #self.label_nombre = QLabel()
         #font = QFont()
@@ -235,7 +274,7 @@ class VentanaJuego(QWidget):
         ## Imagenes jugadores
         #self.jugador = QLabel(self)
         #self.jugador.setFixedSize(91.75 * 1.1, 187.5 * 1.1)
-        #self.gif_jugador = QMovie(self.rutas['jugador'])
+        #self.gif_jugador = QMovie(self.RUTASs['jugador'])
         #self.jugador.setMovie(self.gif_jugador)
         #self.jugador.setScaledContents(True)
         #self.gif_jugador.start()
@@ -243,7 +282,7 @@ class VentanaJuego(QWidget):
 #
         #self.enemigo = QLabel(self)
         #self.enemigo.setFixedSize(91.75 * 1.1, 187.5 * 1.1)
-        #self.enemigo.setPixmap(QPixmap(self.rutas['enemigo']))
+        #self.enemigo.setPixmap(QPixmap(self.RUTASs['enemigo']))
         #self.enemigo.setScaledContents(True)
 #
         #self.enemigo.move(540, 270)

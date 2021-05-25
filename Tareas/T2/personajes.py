@@ -18,7 +18,7 @@ class Personaje(QObject):
         self.timer = QTimer()
         self.timer.timeout.connect(self.animacion)
         self.timer.setInterval(1000*0.1)
-        self.ruta_personajes = p.RUTA_PERSONAJES
+        self.rutas_personajes = p.RUTAS_PERSONAJES
     @property
     def vida(self):
         return self.__vida
@@ -56,7 +56,7 @@ class Personaje(QObject):
         else:
             raise ValueError("raro en animación")
         archivo = f"{self.moviendo}_{self.transicion_animacion}.png"
-        nuevo_label = path.join(self.ruta_personajes[self.nombre], archivo)
+        nuevo_label = path.join(self.rutas_personajes[self.nombre], archivo)
         self.senal_actualizar_animacion.emit(nuevo_label)
 
 
@@ -84,8 +84,8 @@ class Personaje(QObject):
                 imagen = "right_2.png"
             else:
                 raise ValueError("algo raro, recibidor de mover")
-            ruta_movimiento = path.join(self.ruta_personajes[self.nombre], imagen)
-            self.senal_actualizar_animacion.emit(ruta_movimiento)
+            rutas_movimiento = path.join(self.rutas_personajes[self.nombre], imagen)
+            self.senal_actualizar_animacion.emit(rutas_movimiento)
 
 class Homero(Personaje):
     def __init__(self) -> None:
