@@ -21,7 +21,7 @@ class VentanaJuego(QWidget):
     def __init__(self, personaje_ingresado=Krusty()):
         super().__init__()
         # Atributos de la ventana
-        self.tamano_ventana = (900, 700)
+        self.tamano_ventana = (900, 800)
         self.personaje = personaje_ingresado
         self.rutas_personajes = p.RUTAS_PERSONAJES
         self.rutas_imagenes = p.RUTAS_IMAGENES_JUEGO
@@ -32,6 +32,8 @@ class VentanaJuego(QWidget):
         # Dar propiedades a la ventana
         self.size = (self.tamano_ventana)
         self.resize(*self.tamano_ventana)
+        self.setMaximumSize(*self.tamano_ventana)
+        self.setMinimumSize(*self.tamano_ventana)
         self.setWindowTitle("Ventana de Juego")
         #Label vida jugador
         #Label número de ronda
@@ -257,8 +259,8 @@ class VentanaJuego(QWidget):
             self.__label_personaje.setScaledContents(True)
             puede_pasar = False
             while not puede_pasar:
-                nueva_pos = (randint(0,self.tamano_ventana[0]),\
-                    randint(300, self.tamano_ventana[1]))
+                nueva_pos = (randint(0,self.tamano_ventana[0]-20),\
+                    randint(300, self.tamano_ventana[1]-20))
                 self.posicion_personaje = nueva_pos
                 obstaculizado = False
                 lugar_personaje = self.__label_personaje.geometry()
