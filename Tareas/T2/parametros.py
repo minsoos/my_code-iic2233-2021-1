@@ -39,6 +39,11 @@ RUTAS_OBSTACULOS_PLANTA = {
     "2": join(RUTASS_MADRE["planta"], "Obstaculo2.png"),
     "3": join(RUTASS_MADRE["planta"], "Obstaculo3.png")
 }
+RUTAS_OBJETOS_PLANTA = {
+    "veneno": join("sprites", "Objetos", "Veneno.png"),
+    "dona": join("sprites", "Objetos", "Dona.png"),
+    "donax2": join("sprites", "Objetos", "DonaX2.png")
+}
 #Objetos#########revisar
 #APARICION_{DIFICULTAD} = None
 #TIEMPO_OBJETO_{DIFICULTAD} = None
