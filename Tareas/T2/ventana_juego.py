@@ -259,7 +259,7 @@ class VentanaJuego(QWidget):
             self.__label_personaje.setScaledContents(True)
             puede_pasar = False
             while not puede_pasar:
-                nueva_pos = (randint(0,self.tamano_ventana[0]-20),\
+                nueva_pos = (randint(0,self.tamano_ventana[0]-50),\
                     randint(300, self.tamano_ventana[1]-20))
                 self.posicion_personaje = nueva_pos
                 obstaculizado = False
