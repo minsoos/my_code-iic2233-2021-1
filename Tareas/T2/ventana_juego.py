@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QLabel, QApplication, QPushButton, QWidget, QLineEdi
 from PyQt5.QtGui import QPixmap, QIcon
 import sys
 import parametros as p
-from personajes import Homero, Lisa, Moe, Krusty
+from personajes import Gorgory, Homero, Lisa, Moe, Krusty
 from os import path
 from random import randint
 

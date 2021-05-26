@@ -17,7 +17,7 @@ class Personaje(QObject):
         self.label_personaje_posible = None
         self.labels_obstaculos = None
         self.rectangulo_juego = rectangulo_juego
-        self.velocidad = None
+        self.velocidad = p.VELOCIDAD_PRUEBA
         self.posicion = None
         self.limites_posicion = None
         self.timer = QTimer()
@@ -77,13 +77,13 @@ class Personaje(QObject):
         '''
         print("en moverse")
         if self.moviendo == "up":
-            nueva_pos = (self.posicion[0], self.posicion[1] - 3)
+            nueva_pos = (self.posicion[0], self.posicion[1] - self.velocidad)
         elif self.moviendo == "down":
-            nueva_pos = (self.posicion[0], self.posicion[1] + 3)
+            nueva_pos = (self.posicion[0], self.posicion[1] + self.velocidad)
         elif self.moviendo == "left":
-            nueva_pos = (self.posicion[0] - 3, self.posicion[1])
+            nueva_pos = (self.posicion[0] - self.velocidad, self.posicion[1])
         elif self.moviendo == "right":
-            nueva_pos = (self.posicion[0] + 3, self.posicion[1])
+            nueva_pos = (self.posicion[0] + self.velocidad, self.posicion[1])
         rect = self.rectangulo_juego
         self.label_personaje_posible = self.label_personaje
         self.label_personaje_posible.move(*nueva_pos)
