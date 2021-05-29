@@ -6,11 +6,11 @@ from os import path
 class Personaje(QObject):
 
     senal_mover_personaje = pyqtSignal(tuple)
-    senal_actualizar_animacion= pyqtSignal(str)
+    senal_actualizar_animacion = pyqtSignal(str)
 
     def __init__(self, rectangulo_juego=(10,290,850,435)) -> None:
         super().__init__()
-        self.__vida = 1
+        self.__vida = 100
         self.moviendo = "up"
         self.transicion_animacion = "3"
         self.label_personaje = None
@@ -45,9 +45,6 @@ class Personaje(QObject):
         recibe una tecla apretada, si está entre wasd modifica
         self.moviendo, sino, no hace nada
         '''
-        print(self.posicion)
-        for label in self.labels_obstaculos:
-            print(label.x(),label.y())
         if tecla == "w":
             movimiento = "up"
         elif tecla == "s":

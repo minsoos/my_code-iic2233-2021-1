@@ -83,17 +83,15 @@ class VentanaJuego(QWidget):
         '''
         Envía señal a tecla_presionada
         '''
-        tecla = "w" if tecla.key() == Qt.Key_W else "s" if tecla.key() == Qt.Key_S \
-            else "d" if tecla.key() == Qt.Key_D  else "a" if tecla.key() == Qt.Key_A else "nada"
+        if tecla.key() == Qt.Key_A:
+            tecla = "a"
+        elif tecla.key() == Qt.Key_D:
+            tecla = "d"
+        elif tecla.key() == Qt.Key_S:
+            tecla = "s"
+        elif tecla.key() == Qt.Key_W:
+            tecla = "w"
         if tecla in "asdw":
-            if tecla == "a":
-                self.orientacion_personaje = "left"
-            elif tecla == "d":
-                self.orientacion_personaje = "right"
-            elif tecla == "s":
-                self.orientacion_personaje = "down"
-            elif tecla == "w":
-                self.orientacion_personaje = "right"
             self.senal_tecla_presionada_mover.emit(tecla)
         else:
             self.senal_tecla_presionada_cheat.emit(tecla)
