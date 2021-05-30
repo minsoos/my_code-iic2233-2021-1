@@ -245,16 +245,16 @@
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="comboBox">
+          <widget class="QComboBox" name="dificultad">
            <property name="editable">
             <bool>false</bool>
            </property>
            <property name="currentText">
-            <string>Principiante</string>
+            <string>Intro</string>
            </property>
            <item>
             <property name="text">
-             <string>Principiante</string>
+             <string>Intro</string>
             </property>
            </item>
            <item>
@@ -459,9 +459,6 @@
       </widget>
      </item>
     </layout>
-    <zorder>horizontalLayoutWidget</zorder>
-    <zorder>horizontalLayoutWidget_2</zorder>
-    <zorder>label_fondo</zorder>
    </widget>
    <widget class="QLabel" name="fondo_celeste">
     <property name="geometry">

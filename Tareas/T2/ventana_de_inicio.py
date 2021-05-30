@@ -59,6 +59,9 @@ class VentanaInicio(nombre_inicio, padre_inicio):
         y esconde la ventana
         '''
         self.hide()
+    
+    def mostrar(self):
+        self.show()
 
 
 class VentanaError(nombre_error, padre_error):
