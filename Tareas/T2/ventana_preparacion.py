@@ -145,7 +145,7 @@ class VentanaPreparacion(nombre_preparacion, padre_preparacion):
                 print(a)
                 self.senal_solicitud_entrar_edificio.emit(edificio, a)
     
-    def respuesta_entrar_a_juego(self, respuesta):
+    def ocultar_ventana(self, respuesta):
         if respuesta:
             self.hide()
             self.label_personaje.move(*p.POSICION_INICIAL_VENTANA_PREPARACION)
@@ -180,7 +180,7 @@ class LogicaVentanaPreparacion(QObject):
     # Se envía número de ronda, puntaje acumulado, ítems buenos, malos y vida; en ese orden
     senal_actualizar_animacion_personaje = pyqtSignal(str)
     senal_actualizar_movimiento_personaje = pyqtSignal(tuple)
-    senal_respuesta_entrar_a_edificio = pyqtSignal(bool)
+    senal_ocultar_ventana = pyqtSignal(bool)
     senal_abrir_ventana_juego = pyqtSignal(str, Personaje, int, str)
     # Se envía edificio, personaje, número de ronda y dificultad; en ese orden
     senal_abrir_ventana_error = pyqtSignal()
@@ -195,7 +195,8 @@ class LogicaVentanaPreparacion(QObject):
         super().__init__()
         self.dificultad = "intro"
 
-    def iniciar_nueva_partida(self):
+    def iniciar_nueva_partida(self, nombre):
+        self.nombre_de_usuario = nombre
         self.numero_de_ronda = 1
         self.puntaje_acumulado = 0
         self.items_buenos = 0
@@ -277,7 +278,7 @@ class LogicaVentanaPreparacion(QObject):
             self.senal_abrir_ventana_error.emit()
 
     def entrar_a_juego(self, edificio, dificultad):
-        self.senal_respuesta_entrar_a_edificio.emit(True)
+        self.senal_ocultar_ventana.emit(True)
         for personaje in self.personajes:
             persona = self.personajes[personaje]
             persona.senal_mover_personaje.disconnect()
@@ -312,6 +313,16 @@ class LogicaVentanaPreparacion(QObject):
         self.senal_actualizar_info_ventana.emit(a, b, c, d, e)
         self.senal_mostrar_ventana.emit()
         self.conexiones()
+    
+    def guardar_y_salir(self, puntaje, i_buenos, i_malos):
+        self.volver_a_ventana(puntaje, i_buenos, i_malos)
+        self.senal_ocultar_ventana.emit(True)
+        self.escribir_ranking()
+    
+    def escribir_ranking(self):
+        with open(p.RUTAS_RANKING["ventana"], "a", encoding="UTF-8") as archivo:
+            archivo.write(f"{self.nombre_de_usuario},{self.puntaje_acumulado}")
+
 
 
 def hook(type_error, traceback):
@@ -337,8 +348,8 @@ if __name__ == "__main__":
     logica_ventana_preparacion.senal_actualizar_movimiento_personaje.connect(conexion_n)
     conexion_n = logica_ventana_preparacion.movimiento_de_personaje_solicitado
     ventana_preparacion.senal_tecla_presionada_mover.connect(conexion_n)
-    conexion_n = ventana_preparacion.respuesta_entrar_a_juego
-    logica_ventana_preparacion.senal_respuesta_entrar_a_edificio.connect(conexion_n)
+    conexion_n = ventana_preparacion.ocultar_ventana
+    logica_ventana_preparacion.senal_ocultar_ventana.connect(conexion_n)
     conexion_n = logica_ventana_preparacion.revision_solicitud_entrada_a_edificio
     ventana_preparacion.senal_solicitud_entrar_edificio.connect(conexion_n)
     logica_ventana_preparacion.senal_abrir_ventana_error.connect(ventana_mapa_errado.mostrar)

@@ -64,6 +64,7 @@ class LogicaVentanaPostRonda(QObject):
     senal_inicializar = pyqtSignal(int, int, int, int, bool)
     senal_abrir_inicio = pyqtSignal()
     senal_volver_preparacion = pyqtSignal(int, int, int)
+    senal_guardar_progreso = pyqtSignal(int, int, int)
 
     def __init__(self) -> None:
         super().__init__()
@@ -75,19 +76,26 @@ class LogicaVentanaPostRonda(QObject):
         '''
         Te saca del programa
         '''
-        QCoreApplication.instance().quit()
+        self.guardar_progreso()
+        QApplication.quit()
 
     def salir_a_inicio(self):
         '''
         Te lleva a la ventana de inicio y cierra la actual
         '''
+        self.guardar_progreso()
         self.senal_abrir_inicio.emit()
+        self.hide()
 
     def continuar_juego(self):
         '''
         Te lleva a la ventana de preparación y cierra la actual
         '''
         self.senal_volver_preparacion.emit(self.puntaje, self.i_buenos, self.i_malos)
+        self.hide()
+    
+    def guardar_progreso(self):
+        self.senal_guardar_progreso.emit(self.puntaje, self.i_buenos, self.i_malos)
     
     def inicializar_ventana(self, puntaje, i_buenos, i_malos, vida):
         vida = vida * 100

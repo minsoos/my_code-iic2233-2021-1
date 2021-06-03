@@ -109,7 +109,7 @@ class LogicaVentanaRanking(QObject):
         y usuarios de los mejores jugadores. La posición n de la 
         lista corresponde a la n+1 en el ranking 
         '''
-        with open("ranking.txt", encoding="UTF-8") as archivo:
+        with open(p.RUTAS_RANKING["ventana"], encoding="UTF-8") as archivo:
             lista = archivo.readlines()
             lista = map(lambda x: list(x.strip().split(",")), lista)
             lista = list(map(lambda x: (x[0], x[1]+" pts."), lista))

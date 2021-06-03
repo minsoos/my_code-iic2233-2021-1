@@ -91,5 +91,6 @@ if __name__ == "__main__":
     ventana_post_ronda.senal_salir_inicio.connect(logica_post_ronda.salir_a_inicio)
     logica_post_ronda.senal_volver_preparacion.connect(logica_ventana_preparacion.volver_a_ventana)
     logica_post_ronda.senal_abrir_inicio.connect(ventana_inicio.mostrar)
+    logica_post_ronda.senal_guardar_progreso.connect(logica_ventana_preparacion.guardar_y_salir)
 
     app.exec()

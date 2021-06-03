@@ -56,7 +56,7 @@ class VentanaJuego(nombre, padre):
         #Boton_pausar
         self.boton_pausar.clicked.connect(self.metodo_boton_pausar)
         #Boton_salir
-        self.boton_salir.clicked.connect(self.metodo_boton_pausar)
+        self.boton_salir.clicked.connect(self.metodo_boton_salir)
         #ítems
         self.label_items_buenos.setText("0")
         self.label_items_malos.setText("0")
@@ -456,8 +456,9 @@ class LogicaVentanaJuego(QObject):
 
     def salir_juego(self):
         '''
-        Este método cierra el programa
+        Este método cierra el programa por el botón
         '''
+        QApplication.quit()
 
 
     def cheats(self, teclas):
