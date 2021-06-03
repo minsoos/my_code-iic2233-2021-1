@@ -40,6 +40,8 @@ class VentanaJuego(nombre, padre):
         self.rectangulo_mapa = p.RECTANGULO_TABLERO_JUEGO
         # Dar propiedades a la ventana
         self.setWindowTitle("Ventana de Juego")
+        self.label_personaje = QLabel(self)
+
         self.init_gui()
 
     def init_gui(self):
@@ -57,10 +59,7 @@ class VentanaJuego(nombre, padre):
         self.boton_pausar.clicked.connect(self.metodo_boton_pausar)
         #Boton_salir
         self.boton_salir.clicked.connect(self.metodo_boton_salir)
-        #ítems
-        self.label_items_buenos.setText("0")
-        self.label_items_malos.setText("0")
-        self.label_puntaje.setText("0")
+        
 
     # --------------------- Desde acá, se empieza a inicializar la ventana
     # --------------------- configurándola de acuerdo a cómo sea llamada
@@ -75,6 +74,9 @@ class VentanaJuego(nombre, padre):
         self.label_ronda.setText(str(n_ronda))
         self.dificultad = dificultad
         self.pausa = False
+        self.label_items_buenos.setText("0")
+        self.label_items_malos.setText("0")
+        self.label_puntaje.setText("0")
         self.senal_pedir_crear_obstaculos.emit()
         self.cargar_datos(tiempo)
     
@@ -100,7 +102,6 @@ class VentanaJuego(nombre, padre):
 
     def init_gui_objetos_y_personaje(self):
         #Personaje
-        self.label_personaje = QLabel(self)
         if self.personaje.nombre in self.rutas_personajes.keys():
             ruta_inicial = self.rutas_personajes[self.personaje.nombre]
             pixeles = QPixmap(path.join(ruta_inicial, "up_3.png"))
@@ -138,6 +139,15 @@ class VentanaJuego(nombre, padre):
     def esconder_ventana(self):
         self.hide()
         self.desconexiones()
+        for obstaculo in self.obstaculos:
+            obstaculo.hide()
+        for objeto in self.lista_objetos:
+            try:
+                objeto.hide()
+            except AttributeError:
+                pass
+        self.obstaculos = []
+        self.lista_objetos = []
         
     def desconexiones(self):
         self.personaje.senal_actualizar_animacion.disconnect()

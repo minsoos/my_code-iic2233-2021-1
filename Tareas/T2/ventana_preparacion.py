@@ -57,6 +57,9 @@ class VentanaPreparacion(nombre_preparacion, padre_preparacion):
         self.label_personaje.show()
         #
         self.configuracion_radio_buttons()
+        #
+        self.setFocusPolicy(Qt.StrongFocus)
+        # Fuente: https://programtalk.com/python-examples/PyQt5.QtCore.Qt.StrongFocus/
 
     def cargar_edificios(self):
         self.edificios = dict()
@@ -93,6 +96,8 @@ class VentanaPreparacion(nombre_preparacion, padre_preparacion):
     # ------------------- Desde aquí se trabaja el cambio de personaje
 
     def solicitud_cambiar_personaje(self):
+        print("solicitaste cambiar el personaje")
+        self.label_personaje.show()
         if self.boton_homero.isChecked():
             self.senal_solicitud_cambiar_personaje.emit("homero")
         elif self.boton_lisa.isChecked():
@@ -119,8 +124,11 @@ class VentanaPreparacion(nombre_preparacion, padre_preparacion):
             tecla = "s"
         elif tecla.key() == Qt.Key_W:
             tecla = "w"
-        if tecla in "asdw":
-            self.senal_tecla_presionada_mover.emit(tecla)
+        try:
+            if tecla in "asdw":
+                self.senal_tecla_presionada_mover.emit(tecla)
+        except TypeError:
+            pass
 
     def actualizar_movimiento_personaje(self, posicion):
         self.label_personaje.move(*posicion)
@@ -149,7 +157,7 @@ class VentanaPreparacion(nombre_preparacion, padre_preparacion):
         if respuesta:
             self.hide()
             self.label_personaje.move(*p.POSICION_INICIAL_VENTANA_PREPARACION)
-    
+
     def mostrar_ventana(self):
         self.show()
 
@@ -303,14 +311,16 @@ class LogicaVentanaPreparacion(QObject):
         self.items_buenos += i_buenos
         self.items_malos += i_malos
         self.posicion_personaje = p.POSICION_INICIAL_VENTANA_PREPARACION
+        self.inicializar_mapa_en_personaje()
         #
         a = self.numero_de_ronda
         b = self.puntaje_acumulado
         c = self.items_buenos
         d = self.items_malos
-        e = self.personaje_actual
-        self.personaje_actual.vida*100
+        e = self.personaje_actual.vida * 100
         self.senal_actualizar_info_ventana.emit(a, b, c, d, e)
+        # Esto es para "iniciar al personaje" artificialmente, se mueve un espacio hacia arriba
+        self.movimiento_de_personaje_solicitado("w")
         self.senal_mostrar_ventana.emit()
         self.conexiones()
     
@@ -320,8 +330,8 @@ class LogicaVentanaPreparacion(QObject):
         self.escribir_ranking()
     
     def escribir_ranking(self):
-        with open(p.RUTAS_RANKING["ventana"], "a", encoding="UTF-8") as archivo:
-            archivo.write(f"{self.nombre_de_usuario},{self.puntaje_acumulado}")
+        with open(p.RUTA_RANKING, "a", encoding="UTF-8") as archivo:
+            archivo.write(f"\n{self.nombre_de_usuario},{self.puntaje_acumulado}")
 
 
 

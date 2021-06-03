@@ -22,7 +22,7 @@ RECTANGULO_TABLERO_JUEGO = (5, 245, 1063, 619-251+10)
 
 #Configuración rondas
 DURACION_INTRO = 90
-DURACION_AVANZADA = 30
+DURACION_AVANZADA = 10
 
 #cheatscodes
 VIDA_TRAMPA = None
@@ -37,7 +37,7 @@ RUTA_FOTO_POSTRONDA = join("sprites", "foto_postronda.jpg")
 # fuente: https://www.buzzfeed.com/mx/mireyagonzalez/memes-de-la-peda
 RUTA_LOGO_INICIO = join("sprites", "logo_inicio.png")
 RUTA_LOGO_RANKING = join("sprites", "logo_ranking.png")
-RUTAS_RANKING = join("ranking.txt")
+RUTA_RANKING = join("ranking.txt")
 
 #---------------------- Designer
 

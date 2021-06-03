@@ -50,12 +50,15 @@ class VentanaPostRonda(nombre, padre):
         self.show()
     
     def metodo_salir(self):
+        self.hide()
         self.senal_salir.emit()
     
     def metodo_salir_inicio(self):
+        self.hide()
         self.senal_salir_inicio.emit()
     
     def metodo_continuar(self):
+        self.hide()
         self.senal_continuar.emit()
 
 
@@ -85,14 +88,13 @@ class LogicaVentanaPostRonda(QObject):
         '''
         self.guardar_progreso()
         self.senal_abrir_inicio.emit()
-        self.hide()
+        
 
     def continuar_juego(self):
         '''
         Te lleva a la ventana de preparación y cierra la actual
         '''
         self.senal_volver_preparacion.emit(self.puntaje, self.i_buenos, self.i_malos)
-        self.hide()
     
     def guardar_progreso(self):
         self.senal_guardar_progreso.emit(self.puntaje, self.i_buenos, self.i_malos)

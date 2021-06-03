@@ -57,8 +57,8 @@ if __name__ == "__main__":
     logica_ventana_preparacion.senal_actualizar_movimiento_personaje.connect(conexion_n)
     conexion_n = logica_ventana_preparacion.movimiento_de_personaje_solicitado
     ventana_preparacion.senal_tecla_presionada_mover.connect(conexion_n)
-    conexion_n = ventana_preparacion.respuesta_entrar_a_juego
-    logica_ventana_preparacion.senal_respuesta_entrar_a_edificio.connect(conexion_n)
+    conexion_n = ventana_preparacion.ocultar_ventana
+    logica_ventana_preparacion.senal_ocultar_ventana.connect(conexion_n)
     conexion_n = logica_ventana_preparacion.revision_solicitud_entrada_a_edificio
     ventana_preparacion.senal_solicitud_entrar_edificio.connect(conexion_n)
     logica_ventana_preparacion.senal_abrir_ventana_error.connect(ventana_mapa_errado.mostrar)

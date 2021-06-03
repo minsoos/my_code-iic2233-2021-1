@@ -62,7 +62,7 @@ class VentanaRanking(nombre, padre):
     def actualizar(self, lista):
         for i in range(len(lista)):
             self.usuarios_top[i+1].setText(lista[i][0])
-            self.puntajes_top[i+1].setText(lista[i][1])
+            self.puntajes_top[i+1].setText(f"{lista[i][1]} ptos.")
 
 
 class FormularioPodio():
@@ -109,10 +109,10 @@ class LogicaVentanaRanking(QObject):
         y usuarios de los mejores jugadores. La posición n de la 
         lista corresponde a la n+1 en el ranking 
         '''
-        with open(p.RUTAS_RANKING["ventana"], encoding="UTF-8") as archivo:
+        with open(p.RUTA_RANKING, encoding="UTF-8") as archivo:
             lista = archivo.readlines()
             lista = map(lambda x: list(x.strip().split(",")), lista)
-            lista = list(map(lambda x: (x[0], x[1]+" pts."), lista))
+            lista = list(map(lambda x: (x[0], int(x[1])), lista))
         lista.sort(key=f.ordenar_por_puntaje, reverse=True)
         self.cargar_lugares(lista)
 
