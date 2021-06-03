@@ -12,6 +12,8 @@ from random import randint
 from PyQt5 import uic
 import funciones as f
 from ventana_postronda import VentanaPostRonda, LogicaVentanaPostRonda
+from time import time
+from collections import deque
 
 nombre, padre = uic.loadUiType(p.DISENO_VENTANA_JUEGO)
 
@@ -25,6 +27,8 @@ class VentanaJuego(nombre, padre):
     senal_pedir_objeto = pyqtSignal()
     senal_pedir_crear_obstaculos = pyqtSignal()
     senal_objeto_tocado = pyqtSignal(int)
+    senal_personaje_movido = pyqtSignal(tuple)
+    senal_acabar_juego = pyqtSignal()
 
     def __init__(self):
         super().__init__()
@@ -41,6 +45,8 @@ class VentanaJuego(nombre, padre):
         # Dar propiedades a la ventana
         self.setWindowTitle("Ventana de Juego")
         self.label_personaje = QLabel(self)
+        self.label_gorgory = QLabel(self)
+        self.label_gorgory.setScaledContents(True)
 
         self.init_gui()
 
@@ -79,6 +85,7 @@ class VentanaJuego(nombre, padre):
         self.label_puntaje.setText("0")
         self.senal_pedir_crear_obstaculos.emit()
         self.cargar_datos(tiempo)
+        self.label_gorgory.setGeometry(-300, -300, 30, 50)
     
     def cargar_datos(self, tiempo):
         #Mapa por el que se mueve el jugador
@@ -154,7 +161,6 @@ class VentanaJuego(nombre, padre):
         self.personaje.senal_mover_personaje.disconnect()
         self.senal_tecla_presionada_mover.disconnect()
 
-
     @property
     def posicion_personaje(self):
         return self.__posicion_personaje
@@ -166,6 +172,7 @@ class VentanaJuego(nombre, padre):
         '''
         self.__posicion_personaje = lugar
         self.label_personaje.move(*lugar)
+        self.senal_personaje_movido.emit(lugar)
         self.personaje.label_personaje = self.label_personaje
         rect_personaje = self.label_personaje.geometry()
         posicion_sacar = None
@@ -180,6 +187,9 @@ class VentanaJuego(nombre, padre):
             objeto_sacado.hide()
             self.lista_objetos[posicion_sacar] = None
             self.senal_objeto_tocado.emit(posicion_sacar)
+        rect_gorgory = self.label_gorgory.geometry()
+        if rect_personaje.intersects(rect_gorgory):
+            self.senal_acabar_juego.emit()
 
 
 
@@ -255,7 +265,6 @@ class VentanaJuego(nombre, padre):
         self.label_personaje.setPixmap(pixeles)
     
     def pasar_tiempo(self, tiempo):
-        print("\npasa el tiempooo\n")
         self.barra_tiempo.setValue(tiempo)
 
     def metodo_boton_pausar(self):
@@ -275,6 +284,17 @@ class VentanaJuego(nombre, padre):
         Este método envía una señal a salir_juego del backend
         '''
         self.senal_salir_juego.emit()
+    
+    def mover_gorgory(self, posicion):
+        self.label_gorgory.move(*posicion)
+        rect_personaje = self.label_personaje.geometry()
+        rect_gorgory = self.label_gorgory.geometry()
+        if rect_personaje.intersects(rect_gorgory):
+            self.senal_acabar_juego.emit()
+    
+    def animacion_gorgory(self, path_dado):
+        pixeles = QPixmap(path_dado)
+        self.label_gorgory.setPixmap(pixeles)
 
 
 class LogicaVentanaJuego(QObject):
@@ -290,6 +310,8 @@ class LogicaVentanaJuego(QObject):
     senal_pasar_tiempo = pyqtSignal(int)
     senal_esconder_ventana = pyqtSignal()
     senal_abrir_ventana_post_ronda = pyqtSignal(int, int, int, float)
+    senal_mover_gorgory = pyqtSignal(tuple)
+    senal_animacion_gorgory = pyqtSignal(str)
     #
     # senales_objetos
 
@@ -313,8 +335,11 @@ class LogicaVentanaJuego(QObject):
         self.puntaje = 0
         self.edificio = edificio
         self.personaje = personaje
+        self.gorgory = Gorgory(dificultad)
         self.objetos = []
         self.pausa = False
+        self.horario_actual = time()
+        self.terminado = False
         # Tiempo que dura la ventana
         if dificultad == "intro":
             tiempo = p.DURACION_INTRO
@@ -326,6 +351,7 @@ class LogicaVentanaJuego(QObject):
         r = self.rectangulo_mapa
         pos = (randint(r[0], r[0] + r[2]), randint(r[1], r[1] + r[3]))
         self.personaje.inicializador_de_mapa("juego", self.rectangulo_mapa, pos, dificultad)
+        self.gorgory.posicion = pos
         self.senal_inicializar_ventana.emit(edificio, personaje, numero_ronda, dificultad, tiempo)
         self.generador = f.Generador_de_objetos(self.personaje.nombre, dificultad)
         # Reloj de ventana
@@ -339,6 +365,9 @@ class LogicaVentanaJuego(QObject):
     def conexiones(self):
         self.generador.senal_entregar_objeto.connect(self.recibir_objeto)
         self.personaje.senal_no_vida.connect(self.terminar_juego)
+        self.gorgory.senal_animacion_gorgory.connect(self.animacion_gorgory)
+        self.gorgory.senal_mover_gorgory.connect(self.mover_gorgory)
+        self.gorgory.start()
 
     def recibir_objeto(self, objeto):
         self.objetos.append(objeto)
@@ -361,7 +390,6 @@ class LogicaVentanaJuego(QObject):
     def desaparecer_objeto(self, indice):
         print("empieza desaparecer")
         self.objetos[indice].senal_desaparecer.disconnect()
-        print("largo en backend", len(self.objetos))
         self.senal_desaparecer_objeto.emit(indice)
 
     def generar_obstaculos(self):
@@ -437,6 +465,7 @@ class LogicaVentanaJuego(QObject):
             for objeto in self.objetos:
                 objeto.pausar()
             self.pausa = True
+            self.gorgory.pausar()
         else:
             self.tiempo_juego.start()
             self.generador.iniciar()
@@ -444,25 +473,39 @@ class LogicaVentanaJuego(QObject):
             for objeto in self.objetos:
                 objeto.reanudar()
             self.pausa = False
-    
+            self.gorgory.pausar()
+
+    def gorgory_intersectado(self):
+        self.personaje.vida = 0
+        self.terminar_juego()
+
     def terminar_juego(self):
         '''
         Este método se encarga de, cuando es llamado,
         salir del juego y llevar a la ventana post ronda
         '''
-        self.tiempo_juego.stop()
-        self.generador.parar()
-        self.personaje.timer.stop()
-        for objeto in self.objetos:
-            objeto.pausar()
-        self.pausa = True
-        self.senal_esconder_ventana.emit()
-        #
-        a = self.puntaje
-        b = self.items_buenos
-        c = self.items_malos
-        d = self.personaje.vida
-        self.senal_abrir_ventana_post_ronda.emit(a, b, c, d)
+        if not self.terminado:
+            print("terminado")
+            self.terminado = True
+            self.tiempo_juego.stop()
+            self.generador.parar()
+            self.personaje.timer.stop()
+            self.gorgory.timer.stop()
+            self.gorgory.senal_animacion_gorgory.disconnect()
+            self.gorgory.senal_mover_gorgory.disconnect()
+
+            for objeto in self.objetos:
+                objeto.pausar()
+            self.pausa = True
+            self.senal_esconder_ventana.emit()
+            #
+            a = self.puntaje
+            b = self.items_buenos
+            c = self.items_malos
+            d = self.personaje.vida
+            self.senal_abrir_ventana_post_ronda.emit(a, b, c, d)
+        else:
+            print("traté de terminar el juego, pero no se pudo")
 
     def salir_juego(self):
         '''
@@ -477,6 +520,16 @@ class LogicaVentanaJuego(QObject):
         '''
         pass
 
+    # -------------------- Lo de aquí en adelante es para Gorgory
+
+    def guardar_posicion_personaje(self, posicion):
+        self.gorgory.recibir_posicion(posicion)
+
+    def animacion_gorgory(self, path_dado):
+        self.senal_animacion_gorgory.emit(path_dado)
+
+    def mover_gorgory(self, posicion):
+        self.senal_mover_gorgory.emit(posicion)
 
 if __name__ == "__main__":
     app = QApplication([])
@@ -496,6 +549,7 @@ if __name__ == "__main__":
     logica_juego.senal_enviar_actualizacion_tablero.connect(ventana_juego.actualizar_tablero)
     logica_juego.senal_pasar_tiempo.connect(ventana_juego.pasar_tiempo)
     logica_juego.senal_esconder_ventana.connect(ventana_juego.esconder_ventana)
+    ventana_juego.senal_personaje_movido.connect(logica_juego.guardar_posicion_personaje)
     logica_juego.abrir_juego("bar", Moe(), 1, "intro")
     ########
     ventana_post_ronda = VentanaPostRonda()

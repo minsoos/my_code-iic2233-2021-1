@@ -24,6 +24,7 @@ class VentanaPreparacion(nombre_preparacion, padre_preparacion):
     senal_solicitud_cambiar_personaje = pyqtSignal(str)
     senal_tecla_presionada_mover = pyqtSignal(str)
     senal_solicitud_entrar_edificio = pyqtSignal(str, str)
+    senal_boton_salir = pyqtSignal()
 
     def __init__(self) -> None:
         super().__init__()
@@ -53,6 +54,7 @@ class VentanaPreparacion(nombre_preparacion, padre_preparacion):
         self.label_personaje.setGeometry(*p.POSICION_INICIAL_VENTANA_PREPARACION, 20, 40)
         self.label_personaje.setScaledContents(True)
         self.nombre_personaje = None
+        self.boton_salir.clicked.connect(self.metodo_boton_salir)
         #nombre personaje
         self.label_personaje.show()
         #
@@ -161,6 +163,8 @@ class VentanaPreparacion(nombre_preparacion, padre_preparacion):
     def mostrar_ventana(self):
         self.show()
 
+    def metodo_boton_salir(self):
+        self.senal_boton_salir.emit()
 
 class VentanaMapaErrado(nombre_error, padre_error):
 
@@ -174,7 +178,7 @@ class VentanaMapaErrado(nombre_error, padre_error):
 
     def mostrar(self):
         tiempo_nuevo = time()
-        if tiempo_nuevo - self.tiempo_antiguo > 5:
+        if tiempo_nuevo - self.tiempo_antiguo > 1:
             self.tiempo_antiguo = tiempo_nuevo
             self.show()
     
@@ -330,8 +334,12 @@ class LogicaVentanaPreparacion(QObject):
         self.escribir_ranking()
     
     def escribir_ranking(self):
-        with open(p.RUTA_RANKING, "a", encoding="UTF-8") as archivo:
-            archivo.write(f"\n{self.nombre_de_usuario},{self.puntaje_acumulado}")
+        if self.puntaje_acumulado > 0:
+            with open(p.RUTA_RANKING, "a", encoding="UTF-8") as archivo:
+                archivo.write(f"{self.nombre_de_usuario},{self.puntaje_acumulado}\n")
+    
+    def boton_salir_presionado(self):
+        self.guardar_y_salir(0, 0, 0)
 
 
 
@@ -382,7 +390,7 @@ if __name__ == "__main__":
     logica_juego.senal_enviar_actualizacion_tablero.connect(ventana_juego.actualizar_tablero)
     logica_juego.senal_pasar_tiempo.connect(ventana_juego.pasar_tiempo)
     logica_juego.senal_esconder_ventana.connect(ventana_juego.esconder_ventana)
-
-    logica_ventana_preparacion.iniciar_nueva_partida()
+    logica_ventana_preparacion.iniciar_nueva_partida("yowwwwwwwswwwwwww")
+    
 
     sys.exit(app.exec())

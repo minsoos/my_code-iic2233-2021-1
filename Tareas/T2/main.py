@@ -9,6 +9,7 @@ from ventana_de_inicio import VentanaError, VentanaInicio, LogicaVentanaInicio
 from ventana_preparacion import VentanaPreparacion, LogicaVentanaPreparacion, VentanaMapaErrado
 from ventana_juego import VentanaJuego, LogicaVentanaJuego
 from ventana_postronda import VentanaPostRonda, LogicaVentanaPostRonda
+from musica import Musica
 ###Hay que crear el ranking.txt si no existe
 
 
@@ -24,6 +25,8 @@ if __name__ == "__main__":
     # --------------------------Ventana inicio
     ventana_inicio = VentanaInicio()
     logica_ventana_inicio = LogicaVentanaInicio()
+    musica = Musica()
+    musica.timer.start()
     # Señales
     ventana_inicio.senal_solicitar_partida.connect(logica_ventana_inicio.comprobar_alfanum)
     ventana_inicio.senal_abrir_ranking.connect(logica_ventana_inicio.requerimiento_ver_ranking)
@@ -63,6 +66,8 @@ if __name__ == "__main__":
     ventana_preparacion.senal_solicitud_entrar_edificio.connect(conexion_n)
     logica_ventana_preparacion.senal_abrir_ventana_error.connect(ventana_mapa_errado.mostrar)
     logica_ventana_preparacion.senal_mostrar_ventana.connect(ventana_preparacion.mostrar_ventana)
+    ventana_preparacion.senal_boton_salir.connect(logica_ventana_preparacion.boton_salir_presionado)
+    ventana_preparacion.senal_boton_salir.connect(ventana_inicio.mostrar)
     # ---------------------------- Ventana juego
     ventana_juego = VentanaJuego()
     logica_juego = LogicaVentanaJuego()
@@ -81,6 +86,10 @@ if __name__ == "__main__":
     logica_juego.senal_enviar_actualizacion_tablero.connect(ventana_juego.actualizar_tablero)
     logica_juego.senal_pasar_tiempo.connect(ventana_juego.pasar_tiempo)
     logica_juego.senal_esconder_ventana.connect(ventana_juego.esconder_ventana)
+    ventana_juego.senal_personaje_movido.connect(logica_juego.guardar_posicion_personaje)
+    logica_juego.senal_mover_gorgory.connect(ventana_juego.mover_gorgory)
+    logica_juego.senal_animacion_gorgory.connect(ventana_juego.animacion_gorgory)
+    ventana_juego.senal_acabar_juego.connect(logica_juego.gorgory_intersectado)
     # ----------------------------- Ventana postronda
     ventana_post_ronda = VentanaPostRonda()
     logica_post_ronda = LogicaVentanaPostRonda()

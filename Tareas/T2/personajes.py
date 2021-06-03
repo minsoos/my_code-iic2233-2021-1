@@ -1,10 +1,12 @@
 from abc import ABC
 from ntpath import join
-from PyQt5.QtCore import QObject, pyqtSignal, QTimer, QEventLoop, Qt
+from PyQt5.QtCore import QObject, QThread, pyqtSignal, QTimer, QEventLoop, Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QLabel
 import parametros as p
 from os import path
+from time import sleep, time
+from collections import deque
 
 class Personaje(QObject):
 
@@ -171,7 +173,128 @@ class Moe(Personaje):
         self.nombre = "moe"
         super().__init__()
 
-class Gorgory(Personaje):
+# -------------------------------- Desde aquí empieza gorgory
+
+
+class CronometroSegundos(QObject):
+
     def __init__(self) -> None:
+        super().__init__()
+        self.segundos = 0
+        self.pausado = False
+        self.timer = QTimer()
+        self.timer.setInterval(10)
+        self.timer.timeout.connect(self.pasar_tiempo)
+        self.timer.start()
+
+    def pasar_tiempo(self):
+        self.segundos += 0.01
+
+    def pausar(self):
+        if self.pausado:
+            self.timer.start()
+            print("cronometro reanudado")
+            self.pausado = False
+        else:
+            self.timer.stop()
+            print("cronometro pausado")
+            self.pausado = True
+
+
+class Gorgory(QThread):
+
+    senal_mover_gorgory = pyqtSignal(tuple)
+    senal_animacion_gorgory = pyqtSignal(str)
+    senal_pedir_actualizacion = pyqtSignal()
+
+    def __init__(self, dificultad) -> None:
         self.nombre = "gorgory"
         super().__init__()
+        self.moviendo = "up"
+        self.transicion_animacion = "3"
+        self.velocidad = p.VELOCIDAD_PRUEBA
+        self.posicion = None
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.animacion)
+        self.timer.setInterval(1000*0.1)
+        self.timer.start()
+        self.empezo = False
+        self.rutas_personajes = p.RUTAS_PERSONAJES
+        self.tiempo_de_pausa = 0
+        if dificultad == "intro":
+            self.delay = p.TIEMPO_DELAY_INTRO
+        elif dificultad == "avanzada":
+            self.delay = p.TIEMPO_DELAY_AVANZADA
+        #
+        self.posiciones_historicas = deque()
+        self.pausa = False
+        self.cronometro = CronometroSegundos()
+        self.horario_actual = self.cronometro.segundos
+    
+    def recibir_posicion(self, posicion):
+        horario_antiguo = self.horario_actual
+        self.horario_actual = self.cronometro.segundos
+        tiempo_intermedio = self.horario_actual - horario_antiguo
+        self.posiciones_historicas.append((tiempo_intermedio, posicion))
+
+    def pausar(self):
+        if self.pausa:
+            self.pausa = False
+            self.timer.start()
+            self.cronometro.pausar()
+        elif not self.pausa:
+            self.pausa = True
+            self.timer.stop()
+            self.cronometro.pausar()
+
+    def run(self):
+        while self.cronometro.segundos < self.delay:
+            print("dormido")
+            sleep(1)
+        self.empezo = True
+        print(f"empezó gorgory, con un delay de {self.delay}")
+        while len(self.posiciones_historicas) > 0:
+            if not self.pausa:
+                argumento = self.posiciones_historicas.popleft()
+                tiempo_intermedio = argumento[0]
+                posicion = argumento[1]
+                sleep(tiempo_intermedio)
+                if posicion[1] - self.posicion[1] < 0:
+                    movimiento = "up"
+                elif posicion[1] - self.posicion[1] > 0:
+                    movimiento = "down"
+                elif posicion[0] - self.posicion[0] < 0:
+                    movimiento = "left"
+                elif posicion[0] - self.posicion[0] > 0:
+                    movimiento = "right"
+                if movimiento != self.moviendo:
+                    self.moviendo = movimiento
+                    if movimiento == "up":
+                        imagen = "up_3.png"
+                    elif movimiento == "down":
+                        imagen = "down_3.png"
+                    elif movimiento == "left":
+                        imagen = "left_2.png"
+                    elif movimiento == "right":
+                        imagen = "right_2.png"
+                    else:
+                        raise ValueError("algo raro, recibidor de mover")
+                    rutas_movimiento = path.join(self.rutas_personajes[self.nombre], imagen)
+                    self.senal_animacion_gorgory.emit(rutas_movimiento)
+                self.posicion = posicion
+                self.senal_mover_gorgory.emit(posicion)
+
+    def animacion(self):
+        if self.transicion_animacion == "3":
+            self.transicion_animacion = "2"
+        elif self.transicion_animacion == "2":
+            self.transicion_animacion = "1"
+        elif self.transicion_animacion == "1":
+            self.transicion_animacion = "3"
+        else:
+            raise ValueError("raro en animación")
+        archivo = f"{self.moviendo}_{self.transicion_animacion}.png"
+        nuevo_label = path.join(self.rutas_personajes[self.nombre], archivo)
+        if self.empezo:
+            self.senal_animacion_gorgory.emit(nuevo_label)
+

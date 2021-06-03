@@ -292,6 +292,13 @@
            </item>
           </layout>
          </item>
+         <item>
+          <widget class="QPushButton" name="boton_salir">
+           <property name="text">
+            <string>Salir a inicio</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
       </layout>

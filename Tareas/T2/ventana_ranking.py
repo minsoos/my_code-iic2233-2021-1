@@ -61,6 +61,8 @@ class VentanaRanking(nombre, padre):
 
     def actualizar(self, lista):
         for i in range(len(lista)):
+            if i > 4:
+                break
             self.usuarios_top[i+1].setText(lista[i][0])
             self.puntajes_top[i+1].setText(f"{lista[i][1]} ptos.")
 

@@ -8,7 +8,8 @@ PONDERADOR_VIDA_HOMERO = None
 VELOCIDAD_LISA = None
 PONDERADOR_TIEMPO_LISA = -8
 VELOCIDAD_PRUEBA = 8
-
+TIEMPO_DELAY_AVANZADA = 5
+TIEMPO_DELAY_INTRO = 3
 # ------------ PARAMETROS DE LAS VENTANAS
 
 POSICION_INICIAL_VENTANA_PREPARACION = (50, 550)
@@ -38,6 +39,7 @@ RUTA_FOTO_POSTRONDA = join("sprites", "foto_postronda.jpg")
 RUTA_LOGO_INICIO = join("sprites", "logo_inicio.png")
 RUTA_LOGO_RANKING = join("sprites", "logo_ranking.png")
 RUTA_RANKING = join("ranking.txt")
+RUTA_MUSICA = join("canciones", "musica.wav")
 
 #---------------------- Designer
 
