@@ -1,9 +1,9 @@
 from PyQt5 import uic
 import parametros as p
 from PyQt5.QtWidgets import QLabel, QHBoxLayout, QVBoxLayout, QPushButton, QProgressBar, QMessageBox
-from PyQt5.QtCore import QObject, pyqtSignal, QTimer, QEventLoop, Qt
+from PyQt5.QtCore import QObject, pyqtSignal, QTimer, QEventLoop, Qt, QMimeData
 from PyQt5 import QtCore
-from PyQt5.QtGui import QPixmap, QMovie, QFont
+from PyQt5.QtGui import QPixmap, QMovie, QFont, QDrag
 from PyQt5.QtWidgets import QLabel, QApplication, QPushButton, QWidget, QLineEdit, QRadioButton, QSpinBox, QCheckBox, QHBoxLayout, QVBoxLayout, QGridLayout
 from PyQt5.QtGui import QPixmap, QIcon
 import sys
@@ -13,6 +13,7 @@ from os import path
 from random import randint
 from time import time
 from ventana_juego import VentanaJuego, LogicaVentanaJuego
+from labels_drag_drop import DragLabel, DropLabel
 
 nombre_preparacion, padre_preparacion = uic.loadUiType(p.DISENO_VENTANA_PREPARACION)
 nombre_error, padre_error = uic.loadUiType(p.DISENO_VENTANA_MAPA_ERRADO)
@@ -21,7 +22,7 @@ nombre_error, padre_error = uic.loadUiType(p.DISENO_VENTANA_MAPA_ERRADO)
 class VentanaPreparacion(nombre_preparacion, padre_preparacion):
 
     senal_iniciar_nueva_partida = pyqtSignal()
-    senal_solicitud_cambiar_personaje = pyqtSignal(str)
+    senal_solicitud_cambiar_personaje = pyqtSignal(str, tuple)
     senal_tecla_presionada_mover = pyqtSignal(str)
     senal_solicitud_entrar_edificio = pyqtSignal(str, str)
     senal_boton_salir = pyqtSignal()
@@ -42,13 +43,47 @@ class VentanaPreparacion(nombre_preparacion, padre_preparacion):
         self.tamano_ventana = (self.height(), self.width())
         # Configuración de labels del archivo ui
         self.dic_paths = p.RUTAS_VENTANA_PREPARACION
-        self.label_boton_lisa.setPixmap(QPixmap(self.dic_paths["lisa"]))
-        self.label_boton_homero.setPixmap(QPixmap(self.dic_paths["homero"]))
-        self.label_boton_moe.setPixmap(QPixmap(self.dic_paths["moe"]))
-        self.label_boton_krusty.setPixmap(QPixmap(self.dic_paths["krusty"]))
         self.label_logo.setPixmap(QPixmap(self.dic_paths["logo"]))
-        self.label_fondo.setPixmap(QPixmap(self.dic_paths["fondo"]))
         self.cargar_edificios()
+        #### -------------------------
+        # Transparencia sacado de fuente:
+        # https://stackoverflow.com/questions/9952553/transpaprent-qlabel/10038177
+        self.label_lisa = DragLabel(self, "lisa")
+        # self.label_lisa.setAttribute(Qt.WA_TranslucentBackground, True)
+        self.label_lisa.setPixmap(QPixmap(self.dic_paths["lisa"]))
+        self.label_lisa.setScaledContents(True)
+        self.label_lisa.setGeometry(30, 40, -50, -50)
+        self.layout_lisa.addWidget(self.label_lisa)
+        self.label_lisa.setMaximumSize(60, 70)
+
+        self.label_homero = DragLabel(self, "homero")
+        # self.label_homero.setAttribute(Qt.WA_TranslucentBackground, True)
+        self.label_homero.setPixmap(QPixmap(self.dic_paths["homero"]))
+        self.label_homero.setScaledContents(True)
+        self.layout_homero.addWidget(self.label_homero)
+        self.label_homero.setMaximumSize(60, 70)
+
+        self.label_krusty = DragLabel(self, "krusty")
+        # self.label_lisa.setAttribute(Qt.WA_TranslucentBackground, True)
+        self.label_krusty.setPixmap(QPixmap(self.dic_paths["krusty"]))
+        self.label_krusty.setScaledContents(True)
+        self.layout_krusty.addWidget(self.label_krusty)
+        self.label_krusty.setMaximumSize(60, 70)
+
+        self.label_moe = DragLabel(self, "moe")
+        # self.label_moe.setAttribute(Qt.WA_TranslucentBackground, True)
+        self.label_moe.setPixmap(QPixmap(self.dic_paths["moe"]))
+        self.label_moe.setScaledContents(True)
+        self.layout_moe.addWidget(self.label_moe)
+        self.label_moe.setMaximumSize(60, 70)
+
+        self.label_fondo = DropLabel("", self)
+        self.label_fondo.setPixmap(QPixmap(self.dic_paths["fondo"]))
+        self.label_fondo.setMinimumHeight(416)
+        self.label_fondo.setMaximumHeight(416)
+        self.label_fondo.setScaledContents(True)
+        self.layout_principal.addWidget(self.label_fondo)
+        #### -----------------------
         # Label personaje
         self.label_personaje = QLabel(self)
         self.label_personaje.setGeometry(*p.POSICION_INICIAL_VENTANA_PREPARACION, 20, 40)
@@ -77,12 +112,17 @@ class VentanaPreparacion(nombre_preparacion, padre_preparacion):
             self.edificios[i] = label
 
     def configuracion_radio_buttons(self):
-        self.boton_homero.toggled.connect(self.solicitud_cambiar_personaje)
-        self.boton_lisa.toggled.connect(self.solicitud_cambiar_personaje)
-        self.boton_moe.toggled.connect(self.solicitud_cambiar_personaje)
-        self.boton_krusty.toggled.connect(self.solicitud_cambiar_personaje)
+        # self.boton_homero.toggled.connect(self.solicitud_cambiar_personaje)
+        # self.boton_lisa.toggled.connect(self.solicitud_cambiar_personaje)
+        # self.boton_moe.toggled.connect(self.solicitud_cambiar_personaje)
+        # self.boton_krusty.toggled.connect(self.solicitud_cambiar_personaje)
+        self.label_fondo.senal_poner_personaje.connect(self.prueba_poner_personaje)
+        pass
 
     # -------------------- Hasta aquí llega la inicialización
+
+    def prueba_poner_personaje(self, nombre, posicion):
+        self.solicitud_cambiar_personaje(nombre, posicion)
 
     def actualizar_info(self, ronda, puntaje, i_buenos, i_malos, vida):
         '''
@@ -97,17 +137,11 @@ class VentanaPreparacion(nombre_preparacion, padre_preparacion):
 
     # ------------------- Desde aquí se trabaja el cambio de personaje
 
-    def solicitud_cambiar_personaje(self):
-        print("solicitaste cambiar el personaje")
-        self.label_personaje.show()
-        if self.boton_homero.isChecked():
-            self.senal_solicitud_cambiar_personaje.emit("homero")
-        elif self.boton_lisa.isChecked():
-            self.senal_solicitud_cambiar_personaje.emit("lisa")
-        elif self.boton_moe.isChecked():
-            self.senal_solicitud_cambiar_personaje.emit("moe")
-        elif self.boton_krusty.isChecked():
-            self.senal_solicitud_cambiar_personaje.emit("krusty")
+    def solicitud_cambiar_personaje(self, nombre, posicion):
+        if nombre in ("homero, lisa, krusty, moe"):
+            print("solicitaste cambiar el personaje")
+            self.label_personaje.show()
+            self.senal_solicitud_cambiar_personaje.emit(nombre, posicion)
         else:
             raise ValueError("el boton apretado no ta")
     
@@ -158,7 +192,7 @@ class VentanaPreparacion(nombre_preparacion, padre_preparacion):
     def ocultar_ventana(self, respuesta):
         if respuesta:
             self.hide()
-            self.label_personaje.move(*p.POSICION_INICIAL_VENTANA_PREPARACION)
+            self.label_personaje.move(*p.POSICION_DESAPARECER_PERSONAJE)
 
     def mostrar_ventana(self):
         self.show()
@@ -178,7 +212,7 @@ class VentanaMapaErrado(nombre_error, padre_error):
 
     def mostrar(self):
         tiempo_nuevo = time()
-        if tiempo_nuevo - self.tiempo_antiguo > 1:
+        if tiempo_nuevo - self.tiempo_antiguo > p.TIEMPO_ENTRE_MENSAJES_DE_ERROR:
             self.tiempo_antiguo = tiempo_nuevo
             self.show()
     
@@ -214,7 +248,7 @@ class LogicaVentanaPreparacion(QObject):
         self.items_buenos = 0
         self.items_malos = 0
         self.personaje_actual = None
-        self.posicion_personaje = p.POSICION_INICIAL_VENTANA_PREPARACION
+        self.posicion_personaje = None
         self.personajes = {
             "homero": Homero(),
             "lisa": Lisa(),
@@ -241,22 +275,24 @@ class LogicaVentanaPreparacion(QObject):
         e = self.personaje_actual.vida*100
         self.senal_actualizar_info_ventana.emit(a, b, c, d, e)
 
-    def cambiar_personaje(self, personaje):
+    def cambiar_personaje(self, personaje, posicion):
         personaje = self.personajes[personaje]
         if not self.personaje_actual is None:
             # Acá paramos el QTimer del personaje anterior
             self.personaje_actual.timer.stop()
         self.personaje_actual = personaje
-        self.inicializar_mapa_en_personaje()
+        self.posicion_personaje = posicion
+        self.inicializar_mapa_en_personaje(posicion)
         self.actualizar_info_ventana()
+        self.movimiento_de_personaje_solicitado("w")
         self.personaje_actual.timer.start()
     
-    def inicializar_mapa_en_personaje(self):
+    def inicializar_mapa_en_personaje(self, posicion):
         '''
         Le da los argumentos del mapa a personaje
         '''
         a = p.RECTANGULO_TABLERO_PREPARACION
-        b = self.posicion_personaje
+        b = posicion
         c = self.dificultad
         self.personaje_actual.inicializador_de_mapa("preparacion", a, b, c)
 
@@ -303,33 +339,34 @@ class LogicaVentanaPreparacion(QObject):
     
     # ----------------------------------- Otros
 
-    def cheat_aumentar_vida(self, teclas):
+    def cheats(self, nombre_cheat):
         '''
         Comprueba si se ejecutó el cheat de aumentar vida
         y lo ejecuta
         '''
+        if nombre_cheat == "aumento vida":
+            self.personaje_actual.vida += p.VIDA_TRAMPA
+            self.actualizar_info_ventana()
+        else:
+            raise ValueError("Error en cheats")
     # ---------------------------------- Volver a ventana
     def volver_a_ventana(self, puntaje, i_buenos, i_malos):
         self.numero_de_ronda += 1
         self.puntaje_acumulado += puntaje
         self.items_buenos += i_buenos
         self.items_malos += i_malos
-        self.posicion_personaje = p.POSICION_INICIAL_VENTANA_PREPARACION
-        self.inicializar_mapa_en_personaje()
+        self.inicializar_mapa_en_personaje(p.POSICION_DESAPARECER_PERSONAJE)
         #
-        a = self.numero_de_ronda
-        b = self.puntaje_acumulado
-        c = self.items_buenos
-        d = self.items_malos
-        e = self.personaje_actual.vida * 100
-        self.senal_actualizar_info_ventana.emit(a, b, c, d, e)
+        self.actualizar_info_ventana()
         # Esto es para "iniciar al personaje" artificialmente, se mueve un espacio hacia arriba
-        self.movimiento_de_personaje_solicitado("w")
         self.senal_mostrar_ventana.emit()
         self.conexiones()
     
-    def guardar_y_salir(self, puntaje, i_buenos, i_malos):
-        self.volver_a_ventana(puntaje, i_buenos, i_malos)
+    def guardar_puntuacion(self, puntaje, i_buenos, i_malos):
+        self.numero_de_ronda += 1
+        self.puntaje_acumulado += puntaje
+        self.items_buenos += i_buenos
+        self.items_malos += i_malos
         self.senal_ocultar_ventana.emit(True)
         self.escribir_ranking()
     
@@ -339,7 +376,7 @@ class LogicaVentanaPreparacion(QObject):
                 archivo.write(f"{self.nombre_de_usuario},{self.puntaje_acumulado}\n")
     
     def boton_salir_presionado(self):
-        self.guardar_y_salir(0, 0, 0)
+        self.guardar_puntuacion(0, 0, 0)
 
 
 

@@ -3,18 +3,21 @@ from PyQt5 import uic
 
 # -------------------Personajes
 
-VELOCIDAD_HOMERO = None
-PONDERADOR_VIDA_HOMERO = None
-VELOCIDAD_LISA = None
-PONDERADOR_TIEMPO_LISA = -8
-VELOCIDAD_PRUEBA = 8
+VELOCIDAD_HOMERO = 8
+PONDERADOR_VIDA_HOMERO = 0.5
+VELOCIDAD_LISA = 8
+PONDERADOR_TIEMPO_LISA = 5
+VELOCIDAD_MOE = 8
+VELOCIDAD_KRUSTY = 8
 TIEMPO_DELAY_AVANZADA = 5
-TIEMPO_DELAY_INTRO = 3
+TIEMPO_DELAY_INTRO = 10
 # ------------ PARAMETROS DE LAS VENTANAS
 
 POSICION_INICIAL_VENTANA_PREPARACION = (50, 550)
-RECTANGULO_TABLERO_PREPARACION = (8, 480, 870, 155)
+RECTANGULO_TABLERO_PREPARACION = (8, 520, 870, 115)
 RECTANGULO_TABLERO_JUEGO = (5, 245, 1063, 619-251+10)
+TIEMPO_ENTRE_MENSAJES_DE_ERROR = 2
+POSICION_DESAPARECER_PERSONAJE = (-50, -50)
 
 
 
@@ -22,11 +25,18 @@ RECTANGULO_TABLERO_JUEGO = (5, 245, 1063, 619-251+10)
 #TIEMPO_DELAY_{DIFICULTAD} = None
 
 #Configuración rondas
-DURACION_INTRO = 90
+DURACION_INTRO = 80
 DURACION_AVANZADA = 10
 
+# ---------------------- Objetos
+
+TIEMPO_OBJETO_INTRO = 15
+TIEMPO_OBJETO_AVANZADA = 20
+APARICION_INTRO = 1
+APARICION_AVANZADA = 5
+
 #cheatscodes
-VIDA_TRAMPA = None
+VIDA_TRAMPA = 0.35
 
 #--------------------------- Paths
 
@@ -50,7 +60,7 @@ DISENO_VENTANA_PREPARACION = join("assets", "ventana_preparacion.ui")
 DISENO_VENTANA_MAPA_ERRADO = join("assets", "ventana_mapa_errado.ui")
 DISENO_VENTANA_JUEGO = join("assets", "ventana_juego.ui")
 DISENO_VENTANA_POSTRONDA = join("assets", "ventana_postronda.ui")
-
+DISENO_VENTANA_PREPARACION_ANTIGUA = join("assets", "ventana_preparacion_antigua.ui")
 # ------------------- Diccionario de rutas
 
 RUTAS_MADRE = {
@@ -148,12 +158,6 @@ RUTAS_OBSTACULOS = {
 
 # ------------------ Termina obstáculos
 
-# ---------------------- Objetos
-
-TIEMPO_OBJETO_INTRO = 10
-TIEMPO_OBJETO_AVANZADA = 20
-APARICION_INTRO = 5
-APARICION_AVANZADA = 5
 
 #Objetos normales
 

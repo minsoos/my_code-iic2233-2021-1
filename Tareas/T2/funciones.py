@@ -72,7 +72,6 @@ class Objeto(QObject):
             if self.vencido:
                 self.timer.stop()
             else:
-                print(f"\n{self.tipo} desaparecida")
                 self.senal_desaparecer.emit(self.posicion_en_lista)
                 vencido = True
         self.tiempo_pasado +=1
@@ -88,9 +87,12 @@ class Generador_de_objetos(QObject):
         self.dificultad = dificultad
         self.timer = QTimer()
         if dificultad == "intro":
-            self.timer.setInterval(p.APARICION_INTRO*1000)
+            periodo = p.APARICION_INTRO*1000
         elif dificultad == "avanzada":
-            self.timer.setInterval(p.APARICION_AVANZADA*1000)
+            periodo = p.APARICION_AVANZADA*1000
+        if self.personaje == "moe":
+            periodo /= 2
+        self.timer.setInterval(periodo)
         self.timer.timeout.connect(self.generar_objeto)
         self.lista_objetos = []
         self.timer.start()

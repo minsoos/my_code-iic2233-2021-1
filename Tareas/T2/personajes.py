@@ -25,7 +25,7 @@ class Personaje(QObject):
         #self.label_personaje_posible.setPixmap(pixeles)
         self.labels_obstaculos = None
         self.rectangulo_juego = None
-        self.velocidad = p.VELOCIDAD_PRUEBA
+        self.velocidad = None
         self.posicion = None
         self.timer = QTimer()
         self.timer.timeout.connect(self.animacion)
@@ -106,8 +106,9 @@ class Personaje(QObject):
                 # (lo que implicaría revisar obstáculos, o no)
                 # Si no se está en juego, retorna True
                 self.posicion = nueva_pos
-                #print(nueva_pos)
                 self.senal_mover_personaje.emit(self.posicion)
+        else:
+            print(f"no puede pasar, no está entre {rect[0]} y {rect[0] + rect[2]} o {rect[1]} y {rect[1] + rect[3]}, está en {nueva_pos}")
 
     def puede_pasar_en_juego(self, nueva_pos):
         '''
@@ -157,21 +158,25 @@ class Homero(Personaje):
     def __init__(self) -> None:
         self.nombre = "homero"
         super().__init__()
+        self.velocidad = p.VELOCIDAD_HOMERO
 
 class Lisa(Personaje):
     def __init__(self) -> None:
         self.nombre = "lisa"
         super().__init__()
+        self.velocidad = p.VELOCIDAD_LISA
 
 class Krusty(Personaje):
     def __init__(self) -> None:
         self.nombre = "krusty"
         super().__init__()
+        self.velocidad = p.VELOCIDAD_KRUSTY
 
 class Moe(Personaje):
     def __init__(self) -> None:
         self.nombre = "moe"
         super().__init__()
+        self.velocidad = p.VELOCIDAD_MOE
 
 # -------------------------------- Desde aquí empieza gorgory
 
@@ -207,12 +212,11 @@ class Gorgory(QThread):
     senal_animacion_gorgory = pyqtSignal(str)
     senal_pedir_actualizacion = pyqtSignal()
 
-    def __init__(self, dificultad) -> None:
+    def __init__(self, dificultad, nombre_adversario) -> None:
         self.nombre = "gorgory"
         super().__init__()
         self.moviendo = "up"
         self.transicion_animacion = "3"
-        self.velocidad = p.VELOCIDAD_PRUEBA
         self.posicion = None
         self.timer = QTimer()
         self.timer.timeout.connect(self.animacion)
@@ -222,9 +226,12 @@ class Gorgory(QThread):
         self.rutas_personajes = p.RUTAS_PERSONAJES
         self.tiempo_de_pausa = 0
         if dificultad == "intro":
-            self.delay = p.TIEMPO_DELAY_INTRO
+            tiempo_delay = p.TIEMPO_DELAY_INTRO
         elif dificultad == "avanzada":
-            self.delay = p.TIEMPO_DELAY_AVANZADA
+            tiempo_delay = p.TIEMPO_DELAY_AVANZADA
+        if nombre_adversario == "krusty":
+            tiempo_delay *= 2
+        self.delay = tiempo_delay
         #
         self.posiciones_historicas = deque()
         self.pausa = False

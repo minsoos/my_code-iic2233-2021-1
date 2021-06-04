@@ -26,7 +26,6 @@ if __name__ == "__main__":
     ventana_inicio = VentanaInicio()
     logica_ventana_inicio = LogicaVentanaInicio()
     musica = Musica()
-    musica.timer.start()
     # Señales
     ventana_inicio.senal_solicitar_partida.connect(logica_ventana_inicio.comprobar_alfanum)
     ventana_inicio.senal_abrir_ranking.connect(logica_ventana_inicio.requerimiento_ver_ranking)
@@ -40,6 +39,7 @@ if __name__ == "__main__":
     logica_ventana_ranking = LogicaVentanaRanking()
     # Señales
     ventana_inicio.senal_abrir_ranking.connect(ventana_ranking.mostrar)
+    ventana_inicio.senal_abrir_ranking.connect(musica.empezar)
     ventana_ranking.senal_pedir_actualizar.connect(logica_ventana_ranking.extraer_lugares)
     logica_ventana_ranking.senal_cargar_puntajes.connect(ventana_ranking.actualizar)
     # ----------------------------- Ventana preparación partida
@@ -49,6 +49,7 @@ if __name__ == "__main__":
     # Señales
     conexion_n = logica_ventana_preparacion.iniciar_nueva_partida
     logica_ventana_inicio.senal_inicio_partida.connect(conexion_n)
+    logica_ventana_inicio.senal_inicio_partida.connect(musica.empezar)
     conexion_n = logica_ventana_preparacion.iniciar_nueva_partida
     conexion_n = ventana_preparacion.actualizar_info
     logica_ventana_preparacion.senal_actualizar_info_ventana.connect(conexion_n)
@@ -68,16 +69,20 @@ if __name__ == "__main__":
     logica_ventana_preparacion.senal_mostrar_ventana.connect(ventana_preparacion.mostrar_ventana)
     ventana_preparacion.senal_boton_salir.connect(logica_ventana_preparacion.boton_salir_presionado)
     ventana_preparacion.senal_boton_salir.connect(ventana_inicio.mostrar)
+    ventana_preparacion.senal_boton_salir.connect(musica.empezar)
     # ---------------------------- Ventana juego
     ventana_juego = VentanaJuego()
     logica_juego = LogicaVentanaJuego()
     logica_ventana_preparacion.senal_abrir_ventana_juego.connect(logica_juego.abrir_juego)
+    logica_ventana_preparacion.senal_abrir_ventana_juego.connect(musica.empezar)
     ventana_juego.senal_pausa_juego.connect(logica_juego.pausa_juego)
+    ventana_juego.senal_pausa_juego.connect(musica.pausar)
     ventana_juego.senal_salir_juego.connect(logica_juego.salir_juego)
+    ventana_juego.senal_salir_juego.connect(musica.empezar)
+    ventana_juego.senal_salir_juego.connect(ventana_inicio.mostrar)
     ventana_juego.senal_tecla_presionada_cheat.connect(logica_juego.cheats)
     logica_juego.senal_generar_objeto.connect(ventana_juego.recibir_objeto)
     ventana_juego.senal_pedir_objeto.connect(logica_juego.generar_objeto)
-    #Esto lo hice hoy, 29/05/21
     logica_juego.senal_inicializar_ventana.connect(ventana_juego.inicializar)
     logica_juego.senal_dar_obstaculos.connect(ventana_juego.crear_obstaculos)
     ventana_juego.senal_pedir_crear_obstaculos.connect(logica_juego.generar_obstaculos)
@@ -94,12 +99,15 @@ if __name__ == "__main__":
     ventana_post_ronda = VentanaPostRonda()
     logica_post_ronda = LogicaVentanaPostRonda()
     logica_juego.senal_abrir_ventana_post_ronda.connect(logica_post_ronda.inicializar_ventana)
+    logica_juego.senal_abrir_ventana_post_ronda.connect(musica.empezar)
     logica_post_ronda.senal_inicializar.connect(ventana_post_ronda.inicializar_ventana)
     ventana_post_ronda.senal_continuar.connect(logica_post_ronda.continuar_juego)
     ventana_post_ronda.senal_salir.connect(logica_post_ronda.salir)
     ventana_post_ronda.senal_salir_inicio.connect(logica_post_ronda.salir_a_inicio)
     logica_post_ronda.senal_volver_preparacion.connect(logica_ventana_preparacion.volver_a_ventana)
+    logica_post_ronda.senal_volver_preparacion.connect(musica.empezar)
     logica_post_ronda.senal_abrir_inicio.connect(ventana_inicio.mostrar)
-    logica_post_ronda.senal_guardar_progreso.connect(logica_ventana_preparacion.guardar_y_salir)
+    logica_post_ronda.senal_abrir_inicio.connect(musica.empezar)
+    logica_post_ronda.senal_guardar_progreso.connect(logica_ventana_preparacion.guardar_puntuacion)
 
     app.exec()

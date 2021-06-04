@@ -86,6 +86,9 @@ class VentanaJuego(nombre, padre):
         self.senal_pedir_crear_obstaculos.emit()
         self.cargar_datos(tiempo)
         self.label_gorgory.setGeometry(-300, -300, 30, 50)
+        self.antepenultima_letra = "z"
+        self.penultima_letra = "z"
+        self.ultima_letra = "z"
     
     def cargar_datos(self, tiempo):
         #Mapa por el que se mueve el jugador
@@ -176,6 +179,7 @@ class VentanaJuego(nombre, padre):
         self.personaje.label_personaje = self.label_personaje
         rect_personaje = self.label_personaje.geometry()
         posicion_sacar = None
+        
         for indice, objeto in enumerate(self.lista_objetos):
             if objeto is not None:
                 rect_obj = objeto.geometry()
@@ -200,23 +204,42 @@ class VentanaJuego(nombre, padre):
         '''
         Envía señal a tecla_presionada
         '''
+        movimiento = False
+        self.antepenultima_letra = self.penultima_letra
+        self.penultima_letra = self.ultima_letra
         if not self.pausa:
             if tecla.key() == Qt.Key_A:
                 movimiento = True
-                tecla = "a"
+                self.ultima_letra = "a"
             elif tecla.key() == Qt.Key_D:
                 movimiento = True
-                tecla = "d"
+                self.ultima_letra = "d"
             elif tecla.key() == Qt.Key_S:
                 movimiento = True
-                tecla = "s"
+                self.ultima_letra = "s"
             elif tecla.key() == Qt.Key_W:
                 movimiento = True
-                tecla = "w"
-            if movimiento:
-                self.senal_tecla_presionada_mover.emit(tecla)
+                self.ultima_letra = "w"
+        if movimiento:
+            self.senal_tecla_presionada_mover.emit(self.ultima_letra)
+        else:
+            if tecla.key() == Qt.Key_V:
+                self.ultima_letra = "v"
+            elif tecla.key() == Qt.Key_I:
+                self.ultima_letra = "i"
+            elif tecla.key() == Qt.Key_D:
+                self.ultima_letra = "d"
+            elif tecla.key() == Qt.Key_N:
+                self.ultima_letra = "n"
+            elif tecla.key() == Qt.Key_P:
+                self.ultima_letra = "p"
             else:
-                self.senal_tecla_presionada_cheat.emit(tecla)
+                self.ultima_letra = "z"
+            if self.ultima_letra == "p":
+                self.metodo_boton_pausar()
+            else:
+                combinacion = self.ultima_letra + self.penultima_letra + self.antepenultima_letra
+                self.senal_tecla_presionada_cheat.emit(combinacion)
 
     def recibir_objeto(self, path_, posicion):
         objeto_auxiliar = QLabel(self)
@@ -224,9 +247,10 @@ class VentanaJuego(nombre, padre):
         objeto_auxiliar.setPixmap(QPixmap(path_))
         objeto_auxiliar.setGeometry(*posicion, 30, 40)
         objeto_auxiliar.setScaledContents(True)
+        objetos = set(filter(lambda x: x is not None, self.lista_objetos))
         rect_aux = objeto_auxiliar.geometry()
         algo_intersectado = False
-        for cosa in (self.obstaculos): # Reemplazar self.obstaculos con
+        for cosa in (set(self.obstaculos) | objetos): # Reemplazar self.obstaculos con
             rect_cosa = cosa.geometry()
             if rect_aux.intersects(rect_cosa):
                 algo_intersectado = True
@@ -241,16 +265,13 @@ class VentanaJuego(nombre, padre):
     def desaparecer_objeto(self, indice):
         objeto = self.lista_objetos[indice]
         self.lista_objetos[indice] = None
-        print("largo en frontend", len(self.lista_objetos))
         objeto.hide()
-        print("Termina desaparecer")
 
     def actualizar_tablero(self, i_buenos, i_malos, vida, puntaje):
         '''
         este método actualiza los labels de 
         la partida cuando se llama
         '''
-        print("se actualizó el tablero")
         self.label_items_buenos.setText(f"{i_buenos}")
         self.label_items_malos.setText(f"{i_malos}")
         self.label_puntaje.setText(f"{puntaje}")
@@ -331,15 +352,18 @@ class LogicaVentanaJuego(QObject):
         Además carga los objetos
         '''
         self.items_buenos = 0
+        self.items_normales = 0
         self.items_malos = 0
         self.puntaje = 0
         self.edificio = edificio
         self.personaje = personaje
-        self.gorgory = Gorgory(dificultad)
+        self.gorgory = Gorgory(dificultad, self.personaje.nombre)
         self.objetos = []
         self.pausa = False
         self.horario_actual = time()
         self.terminado = False
+        self.habilidad_especial_homero = False
+        self.habilidad_homero_ultima_vez = 0
         # Tiempo que dura la ventana
         if dificultad == "intro":
             tiempo = p.DURACION_INTRO
@@ -388,7 +412,6 @@ class LogicaVentanaJuego(QObject):
         self.senal_generar_objeto.emit(path_objeto, posicion)
     
     def desaparecer_objeto(self, indice):
-        print("empieza desaparecer")
         self.objetos[indice].senal_desaparecer.disconnect()
         self.senal_desaparecer_objeto.emit(indice)
 
@@ -399,7 +422,10 @@ class LogicaVentanaJuego(QObject):
             while misma_posicion:
                 misma_posicion = False
                 r = self.rectangulo_mapa
-                nuevo_obstaculo = (randint(r[0], r[0] + r[2]), randint(r[1], r[1] + r[3]))
+                nuevo_obstaculo = (randint(r[0], r[0] + r[2]), randint(r[1] + 5, r[1] + r[3] + 5))
+                # Se hace un ajuste de +5, ya que los límites están hecho de acuerdo a donde se
+                # puede mover el personaje, y como los obstáculos son más pequeños, sus patas
+                # no alcanzan a estar dentro del mapa
                 for obstaculo in self.posiciones_obstaculos:
                     if (obstaculo[0] - nuevo_obstaculo[0])**2 <= 160**2 and\
                         (obstaculo[1] - nuevo_obstaculo[1])**2 <= 160**2:
@@ -418,14 +444,28 @@ class LogicaVentanaJuego(QObject):
         que_hacer = objeto.dar_efecto()
         if objeto.tipo == "peligroso":
             self.items_malos += 1
-        else:
+        elif objeto.tipo == "x2" or objeto.tipo == "vida":
             self.items_buenos += 1
+        else:
+            self.items_normales += 1
         if que_hacer[0] == "vida":
             self.personaje.vida += que_hacer[1]
         elif que_hacer[0] == "puntaje":
             self.puntaje += que_hacer[1]
         else:
             raise ValueError("error al sumar objeto")
+        if self.personaje.nombre == "homero" and self.items_normales % 10 == 0:
+            if self.items_normales != 0 and self.items_normales != self.habilidad_homero_ultima_vez:
+                self.habilidad_homero_ultima_vez = self.items_normales
+                self.habilidad_especial_homero = True
+                self.personaje.vida += p.PONDERADOR_VIDA_HOMERO
+        if self.habilidad_especial_homero and objeto.tipo == "peligroso":
+            self.habilidad_especial_homero = False
+            self.items_malos = 0
+        elif self.habilidad_especial_homero and (objeto.tipo == "x2" or objeto.tipo == "vida"):
+            self.habilidad_especial_homero = False
+            self.items_buenos -= 1
+
         self.enviar_actualizacion_tablero()
 
     def enviar_actualizacion_tablero(self):
@@ -485,7 +525,6 @@ class LogicaVentanaJuego(QObject):
         salir del juego y llevar a la ventana post ronda
         '''
         if not self.terminado:
-            print("terminado")
             self.terminado = True
             self.tiempo_juego.stop()
             self.generador.parar()
@@ -499,7 +538,7 @@ class LogicaVentanaJuego(QObject):
             self.pausa = True
             self.senal_esconder_ventana.emit()
             #
-            a = self.puntaje
+            a = self.puntaje * self.personaje.vida
             b = self.items_buenos
             c = self.items_malos
             d = self.personaje.vida
@@ -514,11 +553,15 @@ class LogicaVentanaJuego(QObject):
         QApplication.quit()
 
 
-    def cheats(self, teclas):
+    def cheats(self, combinacion):
         '''
         Comprueba si se ejecutó algún cheat, y los ejecuta
         '''
-        pass
+        if "v" in combinacion and "i" in combinacion and "d" in combinacion:
+            self.personaje.vida += p.VIDA_TRAMPA
+            self.enviar_actualizacion_tablero()
+        elif "v" in combinacion and "i" in combinacion and "n" in combinacion:
+            self.terminar_juego()
 
     # -------------------- Lo de aquí en adelante es para Gorgory
 
@@ -559,6 +602,5 @@ if __name__ == "__main__":
     ventana_post_ronda.senal_continuar.connect(logica_post_ronda.continuar_juego)
     ventana_post_ronda.senal_salir.connect(logica_post_ronda.salir)
     ventana_post_ronda.senal_salir_inicio.connect(logica_post_ronda.salir_a_inicio)
-    logica_juego.terminar_juego()
     ####
     sys.exit(app.exec())

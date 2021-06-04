@@ -138,10 +138,10 @@
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_5">
          <property name="leftMargin">
-          <number>50</number>
+          <number>30</number>
          </property>
          <property name="rightMargin">
-          <number>0</number>
+          <number>20</number>
          </property>
          <item alignment="Qt::AlignBottom">
           <widget class="QLabel" name="label_12">

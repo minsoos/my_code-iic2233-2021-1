@@ -1,6 +1,6 @@
 import parametros as p
 from PyQt5.QtWidgets import QLabel, QHBoxLayout, QVBoxLayout, QPushButton, QProgressBar
-from PyQt5.QtCore import QObject, QTime, pyqtSignal, QTimer, QEventLoop, Qt
+from PyQt5.QtCore import QObject, QThread, QTime, pyqtSignal, QTimer, QEventLoop, Qt
 from PyQt5 import QtCore
 from PyQt5.QtGui import QPixmap, QMovie, QFont
 from PyQt5.QtWidgets import QLabel, QApplication, QPushButton, QWidget, QLineEdit, QRadioButton, QSpinBox, QCheckBox, QHBoxLayout, QVBoxLayout, QGridLayout
@@ -17,22 +17,30 @@ from collections import deque
 from PyQt5 import QtCore, QtMultimedia
 
 
-class Musica(QObject):
+class Musica(QThread):
     # Base de actividad AS2
 
     def __init__(self):
         super().__init__()
         self.ruta_cancion = p.RUTA_MUSICA
-        self.timer = QTimer()
-        self.timer.setInterval(1000*128)
-        self.timer.timeout.connect(self.comenzar)
-        self.comenzar()
-        self.timer.start()
+        # self.timer = QTimer()
+        # self.timer.setInterval(1000*128)
+        # self.timer.timeout.connect(self.comenzar)
+        # self.comenzar()
+        # self.timer.start()
+        self.empezar()
+        self.pausado = False
 
-    def comenzar(self):
-        try:
-            self.cancion = QtMultimedia.QSound(self.ruta_cancion)
-            self.cancion.Loop()
+    def empezar(self, *args, **kwargs):
+        self.cancion = QtMultimedia.QSound(self.ruta_cancion)
+        self.cancion.setLoops(-1)
+        # Fuente: https://www.programmersought.com/article/37923092494/
+        self.cancion.play()
+    
+    def pausar(self):
+        if self.pausado:
+            self.pausado = False
             self.cancion.play()
-        except Exception as error:
-            print('No se pudo iniciar la cancion', error)
+        else:
+            self.pausado = True
+            self.cancion.stop()
