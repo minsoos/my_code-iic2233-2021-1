@@ -114,6 +114,7 @@ class VentanaJuego(nombre, padre):
             self.label_personaje.setGeometry(*posicion, *tamano)
             self.label_personaje.setScaledContents(True)
             #label configurado, ahora vemos la posición
+            # ---------------Revisa que no tope con los obstáculos
             puede_pasar = False
             r = self.rectangulo_mapa
             while not puede_pasar:
@@ -127,6 +128,7 @@ class VentanaJuego(nombre, padre):
                         obstaculizado = True
                 if not obstaculizado:
                     puede_pasar = True
+            # -------------------------
             self.personaje.posicion = self.posicion_personaje
             self.personaje.label_personaje = self.label_personaje
             self.personaje.timer.start()
@@ -158,7 +160,7 @@ class VentanaJuego(nombre, padre):
         self.personaje.label_personaje = self.label_personaje
         rect_personaje = self.label_personaje.geometry()
         posicion_sacar = None
-        
+        # ----------------------- Revisa si topa con algún objeto para sacarlo
         for indice, objeto in enumerate(self.lista_objetos):
             if objeto is not None:
                 rect_obj = objeto.geometry()
@@ -170,6 +172,7 @@ class VentanaJuego(nombre, padre):
             objeto_sacado.hide()
             self.lista_objetos[posicion_sacar] = None
             self.senal_objeto_tocado.emit(posicion_sacar)
+        # --------------------- Revisa si topa con Gorgory
         rect_gorgory = self.label_gorgory.geometry()
         if rect_personaje.intersects(rect_gorgory):
             self.senal_acabar_juego.emit()
@@ -234,6 +237,9 @@ class VentanaJuego(nombre, padre):
         objeto_auxiliar.setGeometry(*posicion, *p.TAMANO_OBJETOS)
         objeto_auxiliar.setScaledContents(True)
         objetos = set(filter(lambda x: x is not None, self.lista_objetos))
+
+        # ------------- Revisa si el objeto topa, si lo hace, pide otra pos. al backend
+
         rect_aux = objeto_auxiliar.geometry()
         algo_intersectado = False
         for cosa in (set(self.obstaculos) | objetos): # Reemplazar self.obstaculos con

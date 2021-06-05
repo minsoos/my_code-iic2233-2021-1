@@ -1,13 +1,6 @@
-from PyQt5 import uic
 import parametros as p
-from PyQt5.QtWidgets import QLabel, QHBoxLayout, QVBoxLayout, QPushButton, QProgressBar
-from PyQt5.QtCore import QObject, pyqtSignal, QTimer, QEventLoop, Qt
-from PyQt5 import QtCore
-from PyQt5.QtGui import QPixmap, QMovie, QFont
-from PyQt5.QtWidgets import QLabel, QApplication, QPushButton, QWidget, QLineEdit, QRadioButton, QSpinBox, QCheckBox, QHBoxLayout, QVBoxLayout, QGridLayout
-from PyQt5.QtGui import QPixmap, QIcon
-import parametros as p
-import backend.funciones as f
+from PyQt5.QtCore import QObject, pyqtSignal
+import backend.utils as f
 
 
 class LogicaVentanaRanking(QObject):

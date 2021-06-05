@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QApplication
 import parametros as p
 from backend.personajes import Personaje, Gorgory
 from random import randint
-import backend.funciones as f
+import backend.utils as f
 
 
 class LogicaVentanaJuego(QObject):

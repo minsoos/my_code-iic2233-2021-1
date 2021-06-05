@@ -1,7 +1,7 @@
-from PyQt5.QtCore import QObject, pyqtSignal, QTimer, QEventLoop, Qt, QThread
-from time import sleep
+from PyQt5.QtCore import QObject, pyqtSignal, QTimer
 import parametros as p
 import random
+
 
 def ordenar_por_puntaje(objeto):
     '''
@@ -14,7 +14,7 @@ def ordenar_por_puntaje(objeto):
 class Objeto(QObject):
 
     senal_desaparecer = pyqtSignal(int)
-    
+
     def __init__(self, tipo, nombre_personaje, dificultad) -> None:
         super().__init__()
         self.tipo = tipo
@@ -146,4 +146,3 @@ class Generador_de_objetos(QObject):
 
         # Entrega al objeto al backend del juego
         self.senal_entregar_objeto.emit(objeto)
-

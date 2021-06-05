@@ -1,10 +1,6 @@
 import parametros as p
 from PyQt5.QtCore import QObject, pyqtSignal
-from PyQt5.QtGui import QPixmap
-import parametros as p
 from backend.personajes import Homero, Lisa, Moe, Krusty, Personaje
-from random import randint
-from time import time
 
 
 class LogicaVentanaPreparacion(QObject):
