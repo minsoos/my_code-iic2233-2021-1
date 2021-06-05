@@ -91,6 +91,8 @@ class Personaje(QObject):
         cambia el atributo posicion, llama
          y emite cambiar_posicion
         '''
+        if not self.timer.isActive():
+            self.timer.start()
         if self.moviendo == "up":
             nueva_pos = (self.posicion[0], self.posicion[1] - self.velocidad)
         elif self.moviendo == "down":
@@ -139,6 +141,7 @@ class Personaje(QObject):
         archivo = f"{self.moviendo}_{self.transicion_animacion}.png"
         nuevo_label = path.join(self.rutas_personajes[self.nombre], archivo)
         self.senal_actualizar_animacion.emit(nuevo_label)
+        self.timer.stop()
 
 
 
@@ -255,10 +258,8 @@ class Gorgory(QThread):
 
     def run(self):
         while self.cronometro.segundos < self.delay:
-            print("dormido")
-            sleep(1)
+            sleep(0.1)
         self.empezo = True
-        print(f"empezó gorgory, con un delay de {self.delay}")
         while len(self.posiciones_historicas) > 0:
             if not self.pausa:
                 argumento = self.posiciones_historicas.popleft()

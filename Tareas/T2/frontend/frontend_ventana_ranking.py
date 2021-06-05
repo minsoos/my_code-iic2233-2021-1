@@ -1,15 +1,9 @@
 from PyQt5 import uic
 import parametros as p
-from PyQt5.QtWidgets import QLabel, QHBoxLayout, QVBoxLayout, QPushButton, QProgressBar
-from PyQt5.QtCore import QObject, pyqtSignal, QTimer, QEventLoop, Qt
-from PyQt5 import QtCore
-from PyQt5.QtGui import QPixmap, QMovie, QFont
-from PyQt5.QtWidgets import QLabel, QApplication, QPushButton, QWidget, QLineEdit, QRadioButton, QSpinBox, QCheckBox, QHBoxLayout, QVBoxLayout, QGridLayout
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QPixmap, QIcon
-import sys
 import parametros as p
 from os import path
-from random import randint
 
 nombre, padre = uic.loadUiType(p.DISENO_VENTANA_RANKING)
 
@@ -22,6 +16,7 @@ class VentanaRanking(nombre, padre):
         super().__init__()
         self.setupUi(self)
         self.setWindowTitle("Ventana de Ranking")
+        self.setWindowIcon(QIcon(p.RUTA_LOGO_INICIO))
         '''
         Front-end de la ventana mostrando los 5 mejores
         puntajes del juego

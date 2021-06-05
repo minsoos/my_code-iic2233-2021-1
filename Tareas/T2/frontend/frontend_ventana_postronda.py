@@ -1,12 +1,6 @@
-from PyQt5.QtWidgets import QLabel, QHBoxLayout, QVBoxLayout, QPushButton, QProgressBar
-from PyQt5.QtCore import QObject, pyqtSignal, QTimer, QEventLoop, Qt
-from PyQt5 import QtCore
-from PyQt5.QtGui import QPixmap, QMovie, QFont
-from PyQt5.QtWidgets import QLabel, QApplication, QPushButton, QWidget, QLineEdit, QRadioButton, QSpinBox, QCheckBox, QHBoxLayout, QVBoxLayout, QGridLayout
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QPixmap, QIcon
-import sys
 import parametros as p
-from random import randint
 from PyQt5 import uic
 
 nombre, padre = uic.loadUiType(p.DISENO_VENTANA_POSTRONDA)
@@ -23,6 +17,7 @@ class VentanaPostRonda(nombre, padre):
         super().__init__()
         self.setupUi(self)
         self.setWindowTitle("Ventana de preparación")
+        self.setWindowIcon(QIcon(p.RUTA_LOGO_INICIO))
         '''
         Esta ventana contendrá la información del juego que acaba
         de ocurrir, podrá elegir salir a la ventana de inicio o

@@ -1,17 +1,9 @@
-from PyQt5.QtWidgets import QLabel, QHBoxLayout, QVBoxLayout, QPushButton, QProgressBar
-from PyQt5.QtCore import QObject, pyqtSignal, QTimer, QEventLoop, Qt
-from PyQt5 import QtCore
-from PyQt5.QtGui import QPixmap, QMovie, QFont
-from PyQt5.QtWidgets import QLabel, QApplication, QPushButton, QWidget, QLineEdit, QRadioButton, QSpinBox, QCheckBox, QHBoxLayout, QVBoxLayout, QGridLayout
-from PyQt5.QtGui import QPixmap, QIcon
-import sys
+from PyQt5.QtCore import QObject, pyqtSignal, QTimer
+from PyQt5.QtWidgets import QApplication
 import parametros as p
-from backend.personajes import Personaje, Homero, Lisa, Moe, Gorgory, Krusty
+from backend.personajes import Personaje, Gorgory
 from random import randint
-from PyQt5 import uic
 import backend.funciones as f
-from time import time
-from collections import deque
 
 
 class LogicaVentanaJuego(QObject):
@@ -160,6 +152,8 @@ class LogicaVentanaJuego(QObject):
         else:
             raise ValueError("error al sumar objeto")
 
+        # ---------------------- Habilidad homero
+
         if self.personaje.nombre == "homero" and self.items_normales % 10 == 0:
             if self.items_normales != 0 and self.items_normales != self.habilidad_homero_ultima_vez:
                 self.habilidad_homero_ultima_vez = self.items_normales
@@ -171,6 +165,8 @@ class LogicaVentanaJuego(QObject):
         elif self.habilidad_especial_homero and (objeto.tipo == "x2" or objeto.tipo == "vida"):
             self.habilidad_especial_homero = False
             self.items_buenos -= 1
+
+        # ----------------------- 
 
         self.enviar_actualizacion_tablero()
 
@@ -302,7 +298,6 @@ class LogicaVentanaJuego(QObject):
         Este método cierra el programa por el botón
         '''
         QApplication.quit()
-
 
     def cheats(self, combinacion):
         '''

@@ -1,7 +1,6 @@
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtCore import pyqtSignal, Qt
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QIcon
 import parametros as p
 from os import path
 from random import randint
@@ -26,11 +25,12 @@ class VentanaJuego(nombre, padre):
         super().__init__()
         self.setupUi(self)
         self.setWindowTitle("Ventana de Juego")
+        self.setWindowIcon(QIcon(p.RUTA_LOGO_INICIO))
         # Atributos de la ventana
         self.personaje = None
         self.rutas_personajes = p.RUTAS_PERSONAJES
         self.rutas_imagenes = p.RUTAS_IMAGENES_JUEGO
-        self.__posicion_personaje = (0, 0)
+        self.__posicion_personaje = (p.POSICION_DESAPARECER_PERSONAJE)
         self.lista_objetos = []
         self.obstaculos = []
         self.rectangulo_mapa = p.RECTANGULO_TABLERO_JUEGO
@@ -77,7 +77,11 @@ class VentanaJuego(nombre, padre):
         self.label_puntaje.setText("0")
 
         self.senal_pedir_crear_obstaculos.emit()
-        self.cargar_datos(tiempo)
+        #Mapa por el que se mueve el jugador
+        self.label_mapa.setPixmap(QPixmap(self.rutas_imagenes[f"mapa_{self.edificio}"]))
+        self.barra_vida.setValue(self.personaje.vida * 100) # Vida del personaje
+        self.barra_tiempo.setRange(0, tiempo) # Barra tiempo
+        self.barra_tiempo.setValue(tiempo)
 
         posicion = p.POSICION_DESAPARECER_PERSONAJE
         tamano = p.TAMANO_PERSONAJES_JUEGO
@@ -87,35 +91,27 @@ class VentanaJuego(nombre, padre):
         # Seteamos las letras como una que no nos sirva para nada
         self.antepenultima_letra = "z"
         self.penultima_letra = "z"
-        self.ultima_letra = "z"
-    
-    def cargar_datos(self, tiempo):
-        #Mapa por el que se mueve el jugador
-        self.label_mapa.setPixmap(QPixmap(self.rutas_imagenes[f"mapa_{self.edificio}"]))
-        # Vida del personaje
-        self.barra_vida.setValue(self.personaje.vida * 100)
-        # Barra tiempo
-        self.barra_tiempo.setRange(0, tiempo)
-        self.barra_tiempo.setValue(tiempo)
+        self.ultima_letra = "z"        
 
-        
     def crear_obstaculos(self, lista):
         for ruta, posicion in lista:
             label_obstaculo_n = QLabel(self)
             label_obstaculo_n.setPixmap(QPixmap(ruta))
             label_obstaculo_n.setScaledContents(True)
-            label_obstaculo_n.setGeometry(*posicion, 30, 40)
+            label_obstaculo_n.setGeometry(*posicion, *p.TAMANO_OBSTACULOS)
             self.obstaculos.append(label_obstaculo_n)
         self.personaje.labels_obstaculos = self.obstaculos
-        self.init_gui_objetos_y_personaje()
+        self.init_gui_personaje()
 
-    def init_gui_objetos_y_personaje(self):
+    def init_gui_personaje(self):
         #Personaje
         if self.personaje.nombre in self.rutas_personajes.keys():
             ruta_inicial = self.rutas_personajes[self.personaje.nombre]
             pixeles = QPixmap(path.join(ruta_inicial, "up_3.png"))
             self.label_personaje.setPixmap(pixeles)
-            self.label_personaje.setGeometry(0, 0, 30, 50)
+            posicion = p.POSICION_DESAPARECER_PERSONAJE
+            tamano = p.TAMANO_PERSONAJES_JUEGO
+            self.label_personaje.setGeometry(*posicion, *tamano)
             self.label_personaje.setScaledContents(True)
             #label configurado, ahora vemos la posición
             puede_pasar = False
@@ -145,23 +141,7 @@ class VentanaJuego(nombre, padre):
         self.senal_tecla_presionada_mover.connect(self.personaje.recibidor_de_mover)
 
     # ----------------- Aquí termina la pseudo inicialización
-    def esconder_ventana(self):
-        self.hide()
-        self.desconexiones()
-        for obstaculo in self.obstaculos:
-            obstaculo.hide()
-        for objeto in self.lista_objetos:
-            try:
-                objeto.hide()
-            except AttributeError:
-                pass
-        self.obstaculos = []
-        self.lista_objetos = []
-        
-    def desconexiones(self):
-        self.personaje.senal_actualizar_animacion.disconnect()
-        self.personaje.senal_mover_personaje.disconnect()
-        self.senal_tecla_presionada_mover.disconnect()
+    # ----------------- Mover el personaje
 
     @property
     def posicion_personaje(self):
@@ -194,10 +174,10 @@ class VentanaJuego(nombre, padre):
         if rect_personaje.intersects(rect_gorgory):
             self.senal_acabar_juego.emit()
 
-
-
     def mover_personaje(self, lugar):
         self.posicion_personaje = lugar
+
+    # ------------------ Evento de tecla presionada
 
     def keyPressEvent(self, tecla):
         '''
@@ -241,12 +221,17 @@ class VentanaJuego(nombre, padre):
             else:
                 combinacion = self.ultima_letra + self.penultima_letra + self.antepenultima_letra
                 self.senal_tecla_presionada_cheat.emit(combinacion)
+    
+    # ------------------------ objetos
 
     def recibir_objeto(self, path_, posicion):
+        '''
+        Crea el objeto
+        '''
         objeto_auxiliar = QLabel(self)
         #print(path_)
         objeto_auxiliar.setPixmap(QPixmap(path_))
-        objeto_auxiliar.setGeometry(*posicion, 30, 40)
+        objeto_auxiliar.setGeometry(*posicion, *p.TAMANO_OBJETOS)
         objeto_auxiliar.setScaledContents(True)
         objetos = set(filter(lambda x: x is not None, self.lista_objetos))
         rect_aux = objeto_auxiliar.geometry()
@@ -268,6 +253,8 @@ class VentanaJuego(nombre, padre):
         self.lista_objetos[indice] = None
         objeto.hide()
 
+    # ---------------------------- Actualización de datos
+
     def actualizar_tablero(self, i_buenos, i_malos, vida, puntaje):
         '''
         este método actualiza los labels de 
@@ -281,13 +268,16 @@ class VentanaJuego(nombre, padre):
     def actualizar_personaje(self, path_dado):
         '''
         este método actualiza los labels de 
-        personaje cuando se llama
+        personaje cuando se llama, crea el efecto
+        de animación
         '''
         pixeles = QPixmap(path_dado)
         self.label_personaje.setPixmap(pixeles)
     
     def pasar_tiempo(self, tiempo):
         self.barra_tiempo.setValue(tiempo)
+    
+    # ---------------------- Pausa
 
     def metodo_boton_pausar(self):
         '''
@@ -301,11 +291,7 @@ class VentanaJuego(nombre, padre):
             self.boton_pausar.setText("Pausar")
             self.pausa = False
 
-    def metodo_boton_salir(self):
-        '''
-        Este método envía una señal a salir_juego del backend
-        '''
-        self.senal_salir_juego.emit()
+    # ---------------------- Gorgory
     
     def mover_gorgory(self, posicion):
         self.label_gorgory.move(*posicion)
@@ -317,3 +303,29 @@ class VentanaJuego(nombre, padre):
     def animacion_gorgory(self, path_dado):
         pixeles = QPixmap(path_dado)
         self.label_gorgory.setPixmap(pixeles)
+    
+    # ------------------------ Para salir del juego
+
+    def metodo_boton_salir(self):
+        '''
+        Este método envía una señal a salir_juego del backend
+        '''
+        self.senal_salir_juego.emit()
+
+    def esconder_ventana(self):
+        self.hide()
+        self.desconexiones()
+        for obstaculo in self.obstaculos:
+            obstaculo.hide()
+        for objeto in self.lista_objetos:
+            try:
+                objeto.hide()
+            except AttributeError:
+                pass
+        self.obstaculos = []
+        self.lista_objetos = []
+        
+    def desconexiones(self):
+        self.personaje.senal_actualizar_animacion.disconnect()
+        self.personaje.senal_mover_personaje.disconnect()
+        self.senal_tecla_presionada_mover.disconnect()

@@ -27,14 +27,14 @@ TAMANO_OBJETOS = (30, 40)
 #TIEMPO_DELAY_{DIFICULTAD} = None
 
 #Configuración rondas
-DURACION_INTRO = 80
+DURACION_INTRO = 60
 DURACION_AVANZADA = 10
 
 # ---------------------- Objetos
 
-TIEMPO_OBJETO_INTRO = 15
+TIEMPO_OBJETO_INTRO = 10
 TIEMPO_OBJETO_AVANZADA = 20
-APARICION_INTRO = 3
+APARICION_INTRO = 2
 APARICION_AVANZADA = 5
 
 #cheatscodes
@@ -42,35 +42,35 @@ VIDA_TRAMPA = 0.35
 
 #--------------------------- Paths
 
-RUTA_CEREBRO_HOMERO = join("sprites", "cerebro_homero.jpg")
+RUTA_CEREBRO_HOMERO = join("frontend", "sprites", "cerebro_homero.jpg")
 # fuente: https://www.vix.com/es/series/189634/me-dijeron-lento-las-13-mejores-conversaciones-que-homero-tuvo-con-su-cerebro
-RUTA_ESTRANGULACION = join("sprites", "homero_estrangulando_a_bart.jpg")
+RUTA_ESTRANGULACION = join("frontend", "sprites", "homero_estrangulando_a_bart.jpg")
 # fuente: https://lanetaneta.com/lo-peor-que-homer-simpson-ha-hecho-clasificado-screenrant/
-RUTA_FOTO_POSTRONDA = join("sprites", "foto_postronda.jpg")
+RUTA_FOTO_POSTRONDA = join("frontend", "sprites", "foto_postronda.jpg")
 # fuente: https://www.buzzfeed.com/mx/mireyagonzalez/memes-de-la-peda
-RUTA_LOGO_INICIO = join("sprites", "logo_inicio.png")
-RUTA_LOGO_RANKING = join("sprites", "logo_ranking.png")
+RUTA_LOGO_INICIO = join("frontend", "sprites", "logo_inicio.png")
+RUTA_LOGO_RANKING = join("frontend", "sprites", "logo_ranking.png")
 RUTA_RANKING = join("ranking.txt")
 RUTA_MUSICA = join("canciones", "musica.wav")
 
 #---------------------- Designer
 
-DISENO_VENTANA_INICIO = join("assets", "ventana_inicio.ui")
-DISENO_VENTANA_ERROR = join("assets", "ventana_de_error.ui")
-DISENO_VENTANA_RANKING = join("assets", "ventana_ranking.ui")
-DISENO_VENTANA_PREPARACION = join("assets", "ventana_preparacion.ui")
-DISENO_VENTANA_MAPA_ERRADO = join("assets", "ventana_mapa_errado.ui")
-DISENO_VENTANA_JUEGO = join("assets", "ventana_juego.ui")
-DISENO_VENTANA_POSTRONDA = join("assets", "ventana_postronda.ui")
-DISENO_VENTANA_PREPARACION_ANTIGUA = join("assets", "ventana_preparacion_antigua.ui")
+DISENO_VENTANA_INICIO = join("frontend", "assets", "ventana_inicio.ui")
+DISENO_VENTANA_ERROR = join("frontend", "assets", "ventana_de_error.ui")
+DISENO_VENTANA_RANKING = join("frontend", "assets", "ventana_ranking.ui")
+DISENO_VENTANA_PREPARACION = join("frontend", "assets", "ventana_preparacion.ui")
+DISENO_VENTANA_MAPA_ERRADO = join("frontend", "assets", "ventana_mapa_errado.ui")
+DISENO_VENTANA_JUEGO = join("frontend", "assets", "ventana_juego.ui")
+DISENO_VENTANA_POSTRONDA = join("frontend", "assets", "ventana_postronda.ui")
+DISENO_VENTANA_PREPARACION_ANTIGUA = join("frontend", "assets", "ventana_preparacion_antigua.ui")
 # ------------------- Diccionario de rutas
 
 RUTAS_MADRE = {
-    "planta": join("sprites", "Mapa", "Planta_nuclear"),
-    "krustyland": join("sprites", "Mapa", "Krustyland"),
-    "bar": join("sprites", "Mapa", "Bar"),
-    "preparacion": join("sprites", "Mapa", "Mapa_Preparación"),
-    "primaria": join("sprites", "Mapa", "Primaria")
+    "planta": join("frontend", "sprites", "Mapa", "Planta_nuclear"),
+    "krustyland": join("frontend", "sprites", "Mapa", "Krustyland"),
+    "bar": join("frontend", "sprites", "Mapa", "Bar"),
+    "preparacion": join("frontend", "sprites", "Mapa", "Mapa_Preparación"),
+    "primaria": join("frontend", "sprites", "Mapa", "Primaria")
 }
 RUTAS_IMAGENES_JUEGO = {
     "mapa_planta": join(RUTAS_MADRE["planta"], "Mapa.png"),
@@ -81,19 +81,19 @@ RUTAS_IMAGENES_JUEGO = {
     "mapa_primaria": join(RUTAS_MADRE["primaria"], "Mapa.png")
 }
 RUTAS_PERSONAJES = {
-    "homero": join("sprites", "Personajes", "Homero"),
-    "lisa": join("sprites", "Personajes", "Lisa"),
-    "krusty": join("sprites", "Personajes", "Krusty"),
-    "gorgory": join("sprites", "Personajes", "Gorgory"),
-    "moe": join("sprites", "Personajes", "Moe")
+    "homero": join("frontend", "sprites", "Personajes", "Homero"),
+    "lisa": join("frontend", "sprites", "Personajes", "Lisa"),
+    "krusty": join("frontend", "sprites", "Personajes", "Krusty"),
+    "gorgory": join("frontend", "sprites", "Personajes", "Gorgory"),
+    "moe": join("frontend", "sprites", "Personajes", "Moe")
 }
 
 
 RUTAS_VENTANA_PREPARACION = {
-    "homero": join("sprites", "Personajes", "Homero", "down_3.png"),
-    "lisa": join("sprites", "Personajes", "Lisa", "down_1.png"),
-    "krusty": join("sprites", "Personajes", "Krusty", "down_1.png"),
-    "moe": join("sprites", "Personajes", "Moe", "down_1.png"),
+    "homero": join("frontend", "sprites", "Personajes", "Homero", "down_3.png"),
+    "lisa": join("frontend", "sprites", "Personajes", "Lisa", "down_1.png"),
+    "krusty": join("frontend", "sprites", "Personajes", "Krusty", "down_1.png"),
+    "moe": join("frontend", "sprites", "Personajes", "Moe", "down_1.png"),
     "logo": RUTA_LOGO_INICIO,
     "fondo": join(RUTAS_MADRE["preparacion"], "Fondo.png"),
     "planta": join(RUTAS_MADRE["preparacion"],"PlantaNuclear.png"),
@@ -105,24 +105,24 @@ RUTAS_VENTANA_PREPARACION = {
 # -------------------------- Objetos
 
 RUTAS_OBJETOS_HOMERO = {
-    "normal": join("sprites", "Objetos", "Dona.png"),
-    "x2": join("sprites", "Objetos", "DonaX2.png")
+    "normal": join("frontend", "sprites", "Objetos", "Dona.png"),
+    "x2": join("frontend", "sprites", "Objetos", "DonaX2.png")
 }
 RUTAS_OBJETOS_LISA = {
-    "normal": join("sprites", "Objetos", "Saxofon.png"),
-    "x2": join("sprites", "Objetos", "SaxofonX2.png")
+    "normal": join("frontend", "sprites", "Objetos", "Saxofon.png"),
+    "x2": join("frontend", "sprites", "Objetos", "SaxofonX2.png")
 }
 RUTAS_OBJETOS_MOE = {
-    "normal": join("sprites", "Objetos", "Cerveza.png"),
-    "x2": join("sprites", "Objetos", "CervezaX2.png")
+    "normal": join("frontend", "sprites", "Objetos", "Cerveza.png"),
+    "x2": join("frontend", "sprites", "Objetos", "CervezaX2.png")
 }
 RUTAS_OBJETOS_KRUSTY = {
-    "normal": join("sprites", "Objetos", "Krusty.png"),
-    "x2": join("sprites", "Objetos", "KrustyX2.png")
+    "normal": join("frontend", "sprites", "Objetos", "Krusty.png"),
+    "x2": join("frontend", "sprites", "Objetos", "KrustyX2.png")
 }
 RUTAS_OBJETOS = {
-    "peligroso": join("sprites", "Objetos", "Veneno.png"),
-    "vida": join("sprites", "Objetos", "Corazon.png"),
+    "peligroso": join("frontend", "sprites", "Objetos", "Veneno.png"),
+    "vida": join("frontend", "sprites", "Objetos", "Corazon.png"),
     "homero": RUTAS_OBJETOS_HOMERO,
     "lisa": RUTAS_OBJETOS_LISA,
     "moe": RUTAS_OBJETOS_MOE,
@@ -162,17 +162,15 @@ RUTAS_OBSTACULOS = {
 
 
 #Objetos normales
-
+PROB_NORMAL = 0.6
 PUNTOS_OBJETO_NORMAL = 20
-PROB_NORMAL = 0.3
 
 #Objetos buenos
 
-PROB_BUENO = 0.4
+PROB_BUENO = 0.2
 PONDERADOR_CORAZON = 0.4
 
 #Objetos peligrosos
-
+PROB_VENENO = 0.2
 PONDERADOR_VENENO = 0.3
-PROB_VENENO = 0.3
 # ------------ Para que funcione, las probabilidades deben sumar 1

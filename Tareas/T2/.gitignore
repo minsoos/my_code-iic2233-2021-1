@@ -13,7 +13,9 @@ ventana_preparacion_antigua.ui
 diseno_base_principal.ui
 no_backend_ventana_juego.py
 no_frontend_ventana_juego.py
-sprites
+Mapa
+Objetos
+Personajes
 canciones
 *.txt
 *.idea

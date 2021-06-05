@@ -1,14 +1,8 @@
 from PyQt5 import uic
 import parametros as p
-from PyQt5.QtWidgets import QLabel, QHBoxLayout, QVBoxLayout, QPushButton, QProgressBar
-from PyQt5.QtCore import QObject, pyqtSignal, QTimer, QEventLoop, Qt
-from PyQt5 import QtCore
-from PyQt5.QtGui import QPixmap, QMovie, QFont
-from PyQt5.QtWidgets import QLabel, QApplication, QPushButton, QWidget, QLineEdit, QRadioButton, QSpinBox, QCheckBox, QHBoxLayout, QVBoxLayout, QGridLayout
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QPixmap, QIcon
-import sys
 import parametros as p
-from random import randint
 
 nombre_inicio, padre_inicio = uic.loadUiType(p.DISENO_VENTANA_INICIO)
 nombre_error, padre_error = uic.loadUiType(p.DISENO_VENTANA_ERROR)
@@ -28,6 +22,7 @@ class VentanaInicio(nombre_inicio, padre_inicio):
         super().__init__()
         self.setupUi(self)
         self.setWindowTitle("Ventana de inicio")
+        self.setWindowIcon(QIcon(p.RUTA_LOGO_INICIO))
         self.boton_ver_ranking.clicked.connect(self.metodo_abrir_ranking)
         self.boton_iniciar_partida.clicked.connect(self.metodo_iniciar_partida)
         self.logo_dona.setPixmap(QPixmap(p.RUTA_LOGO_INICIO))

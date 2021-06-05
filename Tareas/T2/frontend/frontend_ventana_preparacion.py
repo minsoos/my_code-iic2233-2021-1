@@ -2,9 +2,7 @@ from PyQt5 import uic
 import parametros as p
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtCore import pyqtSignal, Qt
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QLabel
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QIcon
 import parametros as p
 from time import time
 from frontend.labels_drag_drop import DragLabel, DropLabel
@@ -26,6 +24,7 @@ class VentanaPreparacion(nombre_preparacion, padre_preparacion):
         super().__init__()
         self.setupUi(self)
         self.setWindowTitle("Ventana de preparación")
+        self.setWindowIcon(QIcon(p.RUTA_LOGO_INICIO))
         '''
         Front end de la ventana donde el jugador puede elegir
         su personaje (por defecto viene homero), además de su
