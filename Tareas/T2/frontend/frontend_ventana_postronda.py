@@ -6,11 +6,8 @@ from PyQt5.QtWidgets import QLabel, QApplication, QPushButton, QWidget, QLineEdi
 from PyQt5.QtGui import QPixmap, QIcon
 import sys
 import parametros as p
-from personajes import Personaje, Homero, Lisa, Moe, Gorgory, Krusty
-from os import path
 from random import randint
 from PyQt5 import uic
-import funciones as f
 
 nombre, padre = uic.loadUiType(p.DISENO_VENTANA_POSTRONDA)
 
@@ -25,6 +22,7 @@ class VentanaPostRonda(nombre, padre):
     def __init__(self) -> None:
         super().__init__()
         self.setupUi(self)
+        self.setWindowTitle("Ventana de preparación")
         '''
         Esta ventana contendrá la información del juego que acaba
         de ocurrir, podrá elegir salir a la ventana de inicio o
@@ -60,53 +58,3 @@ class VentanaPostRonda(nombre, padre):
     def metodo_continuar(self):
         self.hide()
         self.senal_continuar.emit()
-
-
-class LogicaVentanaPostRonda(QObject):
-
-    senal_inicializar = pyqtSignal(int, int, int, int, bool)
-    senal_abrir_inicio = pyqtSignal()
-    senal_volver_preparacion = pyqtSignal(int, int, int)
-    senal_guardar_progreso = pyqtSignal(int, int, int)
-
-    def __init__(self) -> None:
-        super().__init__()
-        '''
-        Este es el backend de la ventana post ronda
-        '''
-
-    def salir(self):
-        '''
-        Te saca del programa
-        '''
-        self.guardar_progreso()
-        QApplication.quit()
-
-    def salir_a_inicio(self):
-        '''
-        Te lleva a la ventana de inicio y cierra la actual
-        '''
-        self.guardar_progreso()
-        self.senal_abrir_inicio.emit()
-        
-
-    def continuar_juego(self):
-        '''
-        Te lleva a la ventana de preparación y cierra la actual
-        '''
-        self.senal_volver_preparacion.emit(self.puntaje, self.i_buenos, self.i_malos)
-    
-    def guardar_progreso(self):
-        self.senal_guardar_progreso.emit(self.puntaje, self.i_buenos, self.i_malos)
-    
-    def inicializar_ventana(self, puntaje, i_buenos, i_malos, vida):
-        vida = vida * 100
-        self.vida = vida
-        self.puntaje = puntaje
-        self.i_buenos = i_buenos
-        self.i_malos = i_malos
-        if vida > 0:
-            perdio = False
-        else:
-            perdio = True
-        self.senal_inicializar.emit(puntaje, i_buenos, i_malos, vida, perdio)

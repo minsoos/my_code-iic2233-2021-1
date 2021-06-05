@@ -1,20 +1,6 @@
 import parametros as p
-from PyQt5.QtWidgets import QLabel, QHBoxLayout, QVBoxLayout, QPushButton, QProgressBar
-from PyQt5.QtCore import QObject, QThread, QTime, pyqtSignal, QTimer, QEventLoop, Qt
-from PyQt5 import QtCore
-from PyQt5.QtGui import QPixmap, QMovie, QFont
-from PyQt5.QtWidgets import QLabel, QApplication, QPushButton, QWidget, QLineEdit, QRadioButton, QSpinBox, QCheckBox, QHBoxLayout, QVBoxLayout, QGridLayout
-from PyQt5.QtGui import QPixmap, QIcon
-import sys
-from personajes import Personaje, Homero, Lisa, Moe, Gorgory, Krusty
-from os import path
-from random import randint
-from PyQt5 import uic
-import funciones as f
-from ventana_postronda import VentanaPostRonda, LogicaVentanaPostRonda
-from time import time
-from collections import deque
-from PyQt5 import QtCore, QtMultimedia
+from PyQt5.QtCore import QThread
+from PyQt5 import QtMultimedia
 
 
 class Musica(QThread):

@@ -65,26 +65,3 @@ class DropLabel(QLabel):
             # print(f"No puedes entrar, porque estás en {pos}")
             pass
 
-# Fuente: https://stackoverflow.com/questions/55636860/drag-and-drop-qlabels-with-pyqt5-pixmap-and-text
-
-class DraggableLabel(QLabel):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.setText(args[0])
-        self._text = None
-        self.setAcceptDrops(True)
-        print("my text in init ", self.text())
-
-
-    def setPixmap(self, pixmap):
-        if pixmap.isNull():
-            self._text = None
-        else:
-            self._text = self.text()
-        super().setPixmap(pixmap)
-
-    def text(self):
-        if self._text:
-            return self._text
-        return super().text()
-

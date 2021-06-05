@@ -1,12 +1,9 @@
-from abc import ABC
-from ntpath import join
-from PyQt5.QtCore import QObject, QThread, pyqtSignal, QTimer, QEventLoop, Qt
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QLabel
+from PyQt5.QtCore import QObject, QThread, pyqtSignal, QTimer
 import parametros as p
-from os import path
-from time import sleep, time
+from time import sleep
 from collections import deque
+from os import path
+
 
 class Personaje(QObject):
 
@@ -20,23 +17,16 @@ class Personaje(QObject):
         self.moviendo = "up"
         self.transicion_animacion = "3"
         self.label_personaje = None
-        #pixeles = QPixmap(join(p.RUTAS_PERSONAJES["homero"],"up_1.png"))
-        self.label_personaje_posible = None
-        #self.label_personaje_posible.setPixmap(pixeles)
+        self.label_personaje_posible = None # Se utiliza para hacer pruebas con él
         self.labels_obstaculos = None
         self.rectangulo_juego = None
         self.velocidad = None
         self.posicion = None
+
         self.timer = QTimer()
         self.timer.timeout.connect(self.animacion)
         self.timer.setInterval(1000*0.1)
         self.rutas_personajes = p.RUTAS_PERSONAJES
-
-    def inicializador_de_mapa(self, tipo_tablero, rectangulo_juego, posicion_inicial, dificultad):
-        self.tipo_tablero = tipo_tablero
-        self.rectangulo_juego =rectangulo_juego
-        self.posicion = posicion_inicial
-        self.dificultad = dificultad
 
     @property
     def vida(self):
@@ -55,12 +45,18 @@ class Personaje(QObject):
         else:
             raise ValueError("La vida no se seteó bien")
 
+    def inicializador_de_mapa(self, tipo_tablero, rectangulo_juego, posicion_inicial, dificultad):
+        self.tipo_tablero = tipo_tablero
+        self.rectangulo_juego =rectangulo_juego
+        self.posicion = posicion_inicial
+        self.dificultad = dificultad
 
     def recibidor_de_mover(self, tecla):
         '''
         recibe una tecla apretada, si está entre wasd modifica
         self.moviendo, sino, no hace nada
         '''
+        # Da el movimiento de acuerdo a la letra presionada
         if tecla == "w":
             movimiento = "up"
         elif tecla == "s":
@@ -69,6 +65,10 @@ class Personaje(QObject):
             movimiento = "left"
         elif tecla == "d":
             movimiento = "right"
+        else:
+            raise ValueError("En personaje")
+
+        # Cambia la orientación del personaje si es distinta a la actual
         if movimiento != self.moviendo:
             self.moviendo = movimiento
             if movimiento == "up":
@@ -83,6 +83,7 @@ class Personaje(QObject):
                 raise ValueError("algo raro, recibidor de mover")
             rutas_movimiento = path.join(self.rutas_personajes[self.nombre], imagen)
             self.senal_actualizar_animacion.emit(rutas_movimiento)
+
         self.moverse()
 
     def moverse(self):
@@ -98,17 +99,12 @@ class Personaje(QObject):
             nueva_pos = (self.posicion[0] - self.velocidad, self.posicion[1])
         elif self.moviendo == "right":
             nueva_pos = (self.posicion[0] + self.velocidad, self.posicion[1])
-        rect = self.rectangulo_juego
-        if rect[0] < nueva_pos[0] < rect[0] + rect[2] and\
-            rect[1] < nueva_pos[1] < rect[1] + rect[3]:
+
+        r = self.rectangulo_juego
+        if r[0] < nueva_pos[0] < r[0] + r[2] and r[1] < nueva_pos[1] < r[1] + r[3]:
             if self.puede_pasar_en_juego(nueva_pos):
-                # Esta función revisa si se está en un juego
-                # (lo que implicaría revisar obstáculos, o no)
-                # Si no se está en juego, retorna True
                 self.posicion = nueva_pos
                 self.senal_mover_personaje.emit(self.posicion)
-        else:
-            print(f"no puede pasar, no está entre {rect[0]} y {rect[0] + rect[2]} o {rect[1]} y {rect[1] + rect[3]}, está en {nueva_pos}")
 
     def puede_pasar_en_juego(self, nueva_pos):
         '''
@@ -243,6 +239,9 @@ class Gorgory(QThread):
         self.horario_actual = self.cronometro.segundos
         tiempo_intermedio = self.horario_actual - horario_antiguo
         self.posiciones_historicas.append((tiempo_intermedio, posicion))
+    
+    def dar_posicion_inicial(self, posicion):
+        self.posicion = posicion
 
     def pausar(self):
         if self.pausa:

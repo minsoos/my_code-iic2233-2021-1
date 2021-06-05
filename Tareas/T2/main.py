@@ -1,16 +1,20 @@
+from math import log
 import sys
-from ventana_preparacion import LogicaVentanaPreparacion, VentanaPreparacion
-from ventana_ranking import LogicaVentanaRanking, VentanaRanking
 
 from PyQt5.QtWidgets import QApplication
 
 import parametros as p
-from ventana_de_inicio import VentanaError, VentanaInicio, LogicaVentanaInicio
-from ventana_preparacion import VentanaPreparacion, LogicaVentanaPreparacion, VentanaMapaErrado
-from ventana_juego import VentanaJuego, LogicaVentanaJuego
-from ventana_postronda import VentanaPostRonda, LogicaVentanaPostRonda
-from musica import Musica
-###Hay que crear el ranking.txt si no existe
+from frontend.frontend_ventana_inicio import VentanaError, VentanaInicio
+from backend.backend_ventana_inicio import LogicaVentanaInicio
+from frontend.frontend_ventana_ranking import VentanaRanking
+from backend.backend_ventana_ranking import LogicaVentanaRanking
+from frontend.frontend_ventana_preparacion import VentanaPreparacion, VentanaMapaErrado
+from backend.backend_ventana_preparacion import LogicaVentanaPreparacion
+from frontend.frontend_ventana_juego import VentanaJuego
+from backend.backend_ventana_juego import LogicaVentanaJuego
+from frontend.frontend_ventana_postronda import VentanaPostRonda
+from backend.backend_ventana_postronda import LogicaVentanaPostRonda
+from backend.musica import Musica
 
 
 def hook(type_error, traceback):
@@ -70,6 +74,7 @@ if __name__ == "__main__":
     ventana_preparacion.senal_boton_salir.connect(logica_ventana_preparacion.boton_salir_presionado)
     ventana_preparacion.senal_boton_salir.connect(ventana_inicio.mostrar)
     ventana_preparacion.senal_boton_salir.connect(musica.empezar)
+    ventana_preparacion.senal_cheat.connect(logica_ventana_preparacion.cheats)
     # ---------------------------- Ventana juego
     ventana_juego = VentanaJuego()
     logica_juego = LogicaVentanaJuego()
@@ -95,6 +100,14 @@ if __name__ == "__main__":
     logica_juego.senal_mover_gorgory.connect(ventana_juego.mover_gorgory)
     logica_juego.senal_animacion_gorgory.connect(ventana_juego.animacion_gorgory)
     ventana_juego.senal_acabar_juego.connect(logica_juego.gorgory_intersectado)
+    ##### ------------------------------ no pescar señales comentadas
+    # logica_juego.senal_crear_personaje.connect(ventana_juego.inicializar_personaje)
+    # logica_juego.senal_actualizar_personaje.connect(ventana_juego.actualizar_personaje)
+    # logica_juego.senal_mover_personaje.connect(ventana_juego.mover_personaje)
+    # ventana_juego.senal_tecla_presionada_mover.connect(logica_juego.tecla_presionada_mover)
+    # logica_juego.senal_generar_objeto.connect(ventana_juego.recibir_objeto)
+    # logica_juego.senal_objeto_tocado.connect(ventana_juego.objeto_tocado)
+    ##### --------------------------- 
     # ----------------------------- Ventana postronda
     ventana_post_ronda = VentanaPostRonda()
     logica_post_ronda = LogicaVentanaPostRonda()
