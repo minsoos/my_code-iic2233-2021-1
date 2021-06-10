@@ -39,6 +39,6 @@ if __name__ == "__main__":
     else:
         print("Aún no encuentras a los líderes\n")
 
-    # Descomenta si deseas hacer el bonus:
+    #Descomenta si deseas hacer el bonus:
     # peligro = minima_peligrosidad(*lugares_con_lideres)
     # print("El camino de menor peligro es de una peligrosidad de:", peligrosidad, "\n")
