@@ -25,9 +25,15 @@ def construir_nodo_chismoso(nombre, diccionario_mafiosos):
 
 
 def encontrar_secretario(nodo):
-    # Recorre la lista ligada hasta encontrar el secretario
-    # COMPLETAR
-    pass
+    mafioso_actual = nodo
+    print(f"{mafioso_actual.nombre}: {mafioso_actual.frase}")
+    if mafioso_actual.frase == p.frase_secretario:
+        return mafioso_actual
+    elif mafioso_actual.conocido is None:
+        return None
+    else:
+        return encontrar_secretario(mafioso_actual.conocido)
+
 
 
 if __name__ == "__main__":

@@ -23,7 +23,7 @@ class NodoLugar:
         texto = ""
         nombres = ", ".join([habitante.nombre for habitante in self.mafiosos])
         texto += f"En {self.nombre} se encuentran los mafiosos {nombres}.\n"
-        conexiones = ", ".join([f"{conexion.vecino} de peso {conexion.peso}"
+        conexiones = ", ".join([f"{conexion.vecino.nombre} de peso {conexion.peso}"
                                 for conexion in self.conexiones])
         texto += f"Desde aqui puedes ir a {conexiones}.\n"
         return texto
@@ -32,7 +32,15 @@ class NodoLugar:
 def crear_grafo(dic_lugares, conexiones):
     # COMPLETAR
     # Crea los nodos, teniendo en cuenta sus mafiosos, las conexiones y sus pesos
-    pass
+    dict_nodos = {}
+    for lugar in dic_lugares:
+        nodo = NodoLugar(lugar)
+        nodo.mafiosos = dic_lugares[lugar]
+        dict_nodos[nodo.nombre] = nodo
+    for conexion in conexiones:
+        dict_nodos[conexion[0]].agregar_conexion(dict_nodos[conexion[1]], conexion[2])
+        dict_nodos[conexion[1]].agregar_conexion(dict_nodos[conexion[0]], conexion[2])
+    return nodo
 
 
 if __name__ == "__main__":
