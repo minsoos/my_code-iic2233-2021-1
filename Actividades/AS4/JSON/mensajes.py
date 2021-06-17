@@ -73,7 +73,7 @@ def decodificar_mensaje(dict_):
     if mensaje.fecha > FECHA_ACTUAL:
         mensaje.sospechoso = True
 
-    mensaje.grupos[mensaje.grupo] = mensaje
+    mensaje.grupos[mensaje.grupo].append(mensaje)
 
 
 
