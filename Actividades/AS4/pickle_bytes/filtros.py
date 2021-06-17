@@ -19,8 +19,9 @@ def obtener_paquete_secreto():
         bytes: resultado de serializar la instancia de FilterBox, corresponde
             al paquete secreto
     """
-    # Debes completar esta función
-    pass
+    my_filter_box = FilterBox()
+    bytes_ = setstate(my_filter_box)
+    return bytes_
 
 
 class FilterBox:
@@ -65,7 +66,18 @@ class FilterBox:
          2- Se cambian los keys del dicccinario_metodo al string en reversa.
         :return: dict
         """
-        pass
+        diccionario = self.__dict__.copy()
+        
+        lista = list(map(lambda x,y: (x,y) in self.diccionario.keys(),\
+            self.diccionario.values()))
+
+        diccionario["TOP_SECRET"] = lista
+
+        for filtro in self.diccionario_filtros:
+            diccionario.pop(filtro)
+            diccionario[filtro[::-1]] = self.filtro_bomba
+
+        return diccionario
 
     def __setstate__(self, state):
         pass

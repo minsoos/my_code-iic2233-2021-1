@@ -18,8 +18,15 @@ def tuplas_desde_bytes(bytes_):
     Retorna:
         list[tuple[int]]: lista de tuplas separadas
     """
-    # Debes modificar esta función
-    pass
+    lista_final = []
+    for i in range(0, len(bytes_), 4):
+        pixel = bytes_[i:i+4]
+        lista_i = []
+        for byte in pixel:
+            lista_i.append(byte)
+        lista_final.append(tuple(lista_i))
+        
+    return lista_final
 
 
 def bytes_desde_tuplas(tuplas):
@@ -33,8 +40,16 @@ def bytes_desde_tuplas(tuplas):
     Retorna:
         bytearray: bytes resultantes de juntar las información de las tuplas
     """
-    # Debes modificar esta función
-    pass
+    bytearray_final = bytearray()
+    
+    for tupla in (tuplas):
+        bytearray_i = bytearray()
+        for entero in tupla:
+            bytearray_i.append(entero)
+
+        bytearray_final.extend(bytearray_i)
+    
+    return bytearray_final
 
 
 def recuperar_contenido(ruta):
@@ -42,8 +57,27 @@ def recuperar_contenido(ruta):
     Recibe una ruta referente al archivo corrompido, tu tienes que sobreescrivir ese mismo archivo
     despues de corrigirlo con el algoritimo mencionado en el Enunciado.
     """
-    # Debes modificar esta función
-    pass
+    with open(ruta, "rb") as archivo:
+        contenido = archivo.read()
+    contenido = bytearray(contenido)
+    bytearray_final = bytearray()
+
+    for pos_i, byte_i in enumerate(contenido):
+        byte_1 = byte_i // 2
+        byte_2 = byte_i % 2
+
+        if pos_i % 2 == 1:
+            bytearray_final.append(byte_1)
+            bytearray_final.append(byte_2)
+        elif pos_i % 2 == 0:
+            bytearray_final.append(byte_2)
+            bytearray_final.append(byte_1)
+        else:
+            raise ValueError("error en recuperar_contenido")
+
+    return bytearray_final
+    
+    
 
 
 def organizar_bmp(info_bytes):
