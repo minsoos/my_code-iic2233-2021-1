@@ -61,7 +61,7 @@ def decodificar_mensaje(dict_):
     Retorna:
         Mensaje: instancia construída a partir de la información del diccionario
     """
-    dict_["fecha"] = string_a_fecha(dict["fecha"])
+    dict_["fecha"] = string_a_fecha(dict_["fecha"])
     mensaje = Mensaje(**dict_)
 
     palabras_sospechosas = ("DCCaua", "WhatsApp", "DCChatApp", "filtro", "filtros", "filter")
@@ -73,7 +73,7 @@ def decodificar_mensaje(dict_):
     if mensaje.fecha > FECHA_ACTUAL:
         mensaje.sospechoso = True
 
-    Mensaje.grupos[mensaje.grupo] = mensaje
+    mensaje.grupos[mensaje.grupo] = mensaje
 
 
 
@@ -91,7 +91,7 @@ def cargar_mensajes(path):
     """
     # COMPLETAR
     with open(path) as archivo:
-        diccionario = json.load(archivo, hook_object=decodificar_mensaje)
+        diccionario = json.load(archivo, object_hook=decodificar_mensaje)
     return diccionario
 
 
