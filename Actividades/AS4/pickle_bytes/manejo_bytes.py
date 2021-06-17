@@ -52,28 +52,49 @@ def bytes_desde_tuplas(tuplas):
     return bytearray_final
 
 
-def recuperar_contenido(ruta):
+def recuperar_contenido(bytearray_):
     """
     Recibe una ruta referente al archivo corrompido, tu tienes que sobreescrivir ese mismo archivo
     despues de corrigirlo con el algoritimo mencionado en el Enunciado.
     """
-    with open(ruta, "rb") as archivo:
-        contenido = archivo.read()
-    contenido = bytearray(contenido)
+    contenido = bytearray_
     bytearray_final = bytearray()
 
-    for pos_i, byte_i in enumerate(contenido):
-        byte_1 = byte_i // 2
-        byte_2 = byte_i % 2
-
-        if pos_i % 2 == 1:
-            bytearray_final.append(byte_1)
-            bytearray_final.append(byte_2)
-        elif pos_i % 2 == 0:
-            bytearray_final.append(byte_2)
-            bytearray_final.append(byte_1)
+    impar = True
+    for byte_i in range(0, len(contenido), 2):
+        primer_byte = contenido[byte_i]
+        segundo_byte = contenido[byte_i + 1]
+        if impar:
+            if primer_byte == 0:
+                byte = segundo_byte * 2
+            elif primer_byte == 1:
+                byte = segundo_byte * 2 +1
+            else:
+                raise ValueError("error en contenido")
         else:
-            raise ValueError("error en recuperar_contenido")
+            if segundo_byte == 0:
+                byte = primer_byte * 2
+            elif segundo_byte == 1:
+                byte = primer_byte * 2 +1
+            else:
+                raise ValueError("error en contenido")
+        
+        bytearray_final += bytes(byte)
+
+        impar = not impar
+
+
+
+    # for pos_i, byte_i in enumerate(contenido):
+
+    #     if pos_i % 2 == 1:
+    #         bytearray_final.append(byte_1)
+    #         bytearray_final.append(byte_2)
+    #     elif pos_i % 2 == 0:
+    #         bytearray_final.append(byte_2)
+    #         bytearray_final.append(byte_1)
+    #     else:
+    #         raise ValueError("error en recuperar_contenido")
 
     return bytearray_final
     

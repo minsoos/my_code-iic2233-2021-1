@@ -20,7 +20,7 @@ def obtener_paquete_secreto():
             al paquete secreto
     """
     my_filter_box = FilterBox()
-    bytes_ = setstate(my_filter_box)
+    bytes_ = pickle.dumps(my_filter_box)
     return bytes_
 
 
@@ -68,19 +68,29 @@ class FilterBox:
         """
         diccionario = self.__dict__.copy()
         
-        lista = list(map(lambda x,y: (x,y) in self.diccionario.keys(),\
-            self.diccionario.values()))
+        lista = list(map(lambda x, y: (x, y), self.diccionario_filtros.keys(),\
+            self.diccionario_filtros.values()))
 
         diccionario["TOP_SECRET"] = lista
 
         for filtro in self.diccionario_filtros:
-            diccionario.pop(filtro)
-            diccionario[filtro[::-1]] = self.filtro_bomba
+            diccionario["diccionario_filtros"].pop(filtro)
+            diccionario["diccionario_filtros"][filtro[::-1]] = self.filtro_bomba
 
         return diccionario
 
     def __setstate__(self, state):
-        pass
+        top_secret = state.pop("TOP_SECRET")
+
+        for llave in state["diccionario_filtros"]:
+            for tupla in top_secret:
+                if tupla[0] == llave[::-1]:
+                    llave_nueva = tupla[1]
+
+            state["diccionario_filtros"].pop(llave)
+            state["diccionario_filtros"][llave[::-1]] = llave_nueva
+
+        self.diccionario_filtros = state
 
     # //-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//-//
     # \\                          MÉTODOS IMPORTANTES                         \\

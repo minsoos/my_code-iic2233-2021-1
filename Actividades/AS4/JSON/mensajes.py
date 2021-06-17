@@ -61,7 +61,18 @@ def decodificar_mensaje(dict_):
     Retorna:
         Mensaje: instancia construída a partir de la información del diccionario
     """
-    # COMPLETAR
+    dict_["fecha"] = string_a_fecha(dict["fecha"])
+    mensaje = Mensaje(**dict_)
+
+    palabras_sospechosas = ("DCCaua", "WhatsApp", "DCChatApp", "filtro", "filtros", "filter")
+
+    for palabra in palabras_sospechosas:
+        if palabra in mensaje.mensaje:
+            mensaje.sospechoso = True
+
+    if mensaje.fecha > FECHA_ACTUAL:
+        mensaje.sospechoso = True
+
 
 
 def cargar_mensajes(path):
