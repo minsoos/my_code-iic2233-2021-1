@@ -73,6 +73,8 @@ def decodificar_mensaje(dict_):
     if mensaje.fecha > FECHA_ACTUAL:
         mensaje.sospechoso = True
 
+    Mensaje.grupos[mensaje.grupo] = mensaje
+
 
 
 def cargar_mensajes(path):
@@ -88,6 +90,9 @@ def cargar_mensajes(path):
             mensajes
     """
     # COMPLETAR
+    with open(path) as archivo:
+        diccionario = json.load(archivo, hook_object=decodificar_mensaje)
+    return diccionario
 
 
 if __name__ == "__main__":

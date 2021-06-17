@@ -65,36 +65,14 @@ def recuperar_contenido(bytearray_):
         primer_byte = contenido[byte_i]
         segundo_byte = contenido[byte_i + 1]
         if impar:
-            if primer_byte == 0:
-                byte = segundo_byte * 2
-            elif primer_byte == 1:
-                byte = segundo_byte * 2 +1
-            else:
-                raise ValueError("error en contenido")
+            byte = segundo_byte * 2 + primer_byte
+            
         else:
-            if segundo_byte == 0:
-                byte = primer_byte * 2
-            elif segundo_byte == 1:
-                byte = primer_byte * 2 +1
-            else:
-                raise ValueError("error en contenido")
+            byte = primer_byte * 2 + segundo_byte
         
         bytearray_final += bytes(byte)
 
         impar = not impar
-
-
-
-    # for pos_i, byte_i in enumerate(contenido):
-
-    #     if pos_i % 2 == 1:
-    #         bytearray_final.append(byte_1)
-    #         bytearray_final.append(byte_2)
-    #     elif pos_i % 2 == 0:
-    #         bytearray_final.append(byte_2)
-    #         bytearray_final.append(byte_1)
-    #     else:
-    #         raise ValueError("error en recuperar_contenido")
 
     return bytearray_final
     
