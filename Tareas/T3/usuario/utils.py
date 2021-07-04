@@ -1,0 +1,15 @@
+from os import path
+import json
+
+
+def normalizar_ruta(ruta):
+    lista = ruta.split("/")
+    path_ = path.join(*lista)
+    return path_
+
+
+def cargar_parametros(ruta=path.join("parametros.json")):
+    diccionario_parametros = dict()
+    with open(ruta, encoding='utf-8') as archivo:
+        diccionario_parametros = json.load(archivo)
+    return diccionario_parametros
