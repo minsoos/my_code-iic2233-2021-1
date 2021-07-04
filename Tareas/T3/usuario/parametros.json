@@ -2,7 +2,11 @@
     "RUTAS":{
         "VENTANA_INICIO":"assets/ventana_inicio.ui",
         "IMAGEN_NUBES":"sprites_usuario/nubes.jpg",
-        "IMAGEN_DRON":"sprites_usuario/Logo/Logo_transparente.png"
+        "IMAGEN_DRON":"sprites_usuario/Logo/Logo_transparente.png",
+        "VENTANA_ESPERA": "assets/ventana_espera.ui",
+        "IMAGEN_NUBES_ESPERA": "sprites_usuario/nubes_espera.jpeg",
+        "MAPA_SAN_JOAQUIN": "sprites_usuario/Mapas/Mapa SJ.png",
+        "MAPA_INGENIERIA": "sprites_usuario/Mapas/Mapa ING.png"
 
     }
 }

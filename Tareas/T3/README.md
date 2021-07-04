@@ -96,3 +96,12 @@ Para realizar mi tarea saqué código de:
 
 ## Descuentos
 La guía de descuentos se encuentra [link](https://github.com/IIC2233/syllabus/blob/master/Tareas/Descuentos.md).
+
+
+
+
+
+## No borrar
+
+Las nubes de la espera son de:
+https://static.vecteezy.com/system/resources/previews/001/221/937/non_2x/glossy-cartoon-clouds-set-vector.jpg
