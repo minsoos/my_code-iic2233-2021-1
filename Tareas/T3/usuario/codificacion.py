@@ -16,11 +16,8 @@ def codificar_mensaje(mensaje):
         print("ERROR: No se pudo codificar el mensaje")
         return b""
 
-    print(mensaje)
 
     largo = len(mensaje)
-    print(largo)
-    print(largo.to_bytes(4, byteorder="big"))
 
     array = bytearray()
     array += largo.to_bytes(4, byteorder="big")
@@ -32,7 +29,6 @@ def codificar_mensaje(mensaje):
     contador_chunks = 0
     posicion_cursor = 0
 
-    print("el largo es", largo)
 
     while len(array) - bytes_incontables < largo:
         array += contador_chunks.to_bytes(4, byteorder="big")
@@ -51,17 +47,13 @@ def codificar_mensaje(mensaje):
 
 # Decodificar un bytearray para obtener el mensaje original.
 def decodificar_mensaje(mensaje):
-    print("inicial", mensaje)
     largo_bytes = len(mensaje) - 8
     largo = int.from_bytes(mensaje[:4], byteorder="big")
     cursor = 8
     array = bytearray()
     while len(array) < largo and largo_bytes > 0:
-        print(array)
         cursor += 4
         largo_bytes -= 4
-        print("largo del array enviado es", largo_bytes)
-        print("El largo que se envió como parámetro es", largo)
         if largo - len(array) > 60:
             array += mensaje[cursor:cursor + 60]
             cursor += 60
@@ -70,7 +62,6 @@ def decodificar_mensaje(mensaje):
     try:
         mensaje = array.decode(encoding="UTF-8")
         mensaje = json.loads(array)
-        print("final", mensaje)
         return mensaje
     except (json.JSONDecodeError, UnicodeDecodeError):
         print("ERROR: No se pudo decodificar el mensaje")

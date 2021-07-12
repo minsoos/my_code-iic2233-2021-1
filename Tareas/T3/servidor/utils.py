@@ -13,6 +13,3 @@ def cargar_parametros(ruta=path.join("parametros.json")):
     with open(ruta, encoding='utf-8') as archivo:
         diccionario_parametros = json.load(archivo)
     return diccionario_parametros
-
-def ordenamiento_por_turno(objeto):
-    return objeto.turno

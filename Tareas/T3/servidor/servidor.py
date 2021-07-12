@@ -47,6 +47,7 @@ class Servidor:
     
     def conexiones(self):
         self.logica.senal_enviar_mensaje.connect(self.enviar_mensaje)
+        self.logica.senal_eliminar_cliente.connect(self.eliminar_cliente)
 
     def iniciar_servidor(self):
         mi_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -97,26 +98,26 @@ class Servidor:
         Argumentos:
             mensaje (dict): Contiene la información a enviar.
         """
-        socket_cliente = self.clientes_conectados[id_usuario]
         try:
+            socket_cliente = self.clientes_conectados[id_usuario]
             mensaje = codificar_mensaje(mensaje)
-            print("enviaré esto:", mensaje)
             socket_cliente.sendall(mensaje)
-        except ConnectionError:
+        except (ConnectionError, KeyError):
             print("Hubo un error al enviar el mensaje")
             socket_cliente.close()
     
-    def enviar_imagen(self, mensaje, socket_cliente):
+    def enviar_imagen(self, id_usuario, path_imagen):
         """Envía un mensaje a un cliente.
 
         Argumentos:
             mensaje (dict): Contiene la información a enviar.
         """
-
         try:
-            imagen = codificar_imagen(mensaje)
-            socket_cliente.sendall(imagen)
-        except ConnectionError:
+            socket_cliente = self.clientes_conectados[id_usuario]  
+            imagen_en_bytes = codificar_imagen(path_imagen)
+            socket_cliente.sendall(imagen_en_bytes)
+        except (ConnectionError, KeyError):
+            print("Hubo un error al enviar el mensaje")
             socket_cliente.close()
 
     def recibir(self, socket_cliente):

@@ -65,7 +65,6 @@ class Cliente:
             self.conectado = True
             thread_x = threading.Thread(target=self.escuchar_servidor, daemon=True)
             thread_x.start()
-            self.controlador.mostrar_login()
 
     def escuchar_servidor(self):
         """Ciclo principal que escucha al servidor.
@@ -79,9 +78,7 @@ class Cliente:
                 print("Error de conexión con el servidor")
                 self.socket_cliente.close()
             else:
-                print("manejaré el mensaje")
                 retorno = self.controlador.manejar_mensaje(mensaje)
-                print(f"manejar mensaje retorna {retorno}")
 
     def enviar(self, mensaje):
         """Envía un mensaje a un cliente.
@@ -92,7 +89,6 @@ class Cliente:
 
         try:
             mensaje = codificar_mensaje(mensaje)
-            print("mensaje a enviar:", mensaje)
             self.socket_cliente.sendall(mensaje)
         except ConnectionError:
             self.socket_cliente.close()

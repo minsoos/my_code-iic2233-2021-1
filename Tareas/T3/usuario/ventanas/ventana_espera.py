@@ -3,7 +3,7 @@ from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5 import uic
 from utils import cargar_parametros, normalizar_ruta
 
-parametros = cargar_parametros()
+parametros = cargar_parametros("parametros.json")
 path_ventana_espera = parametros["RUTAS"]["VENTANA_ESPERA"]
 path_ventana_espera = normalizar_ruta(path_ventana_espera)
 nombre, padre = uic.loadUiType(path_ventana_espera)
@@ -11,8 +11,8 @@ nombre, padre = uic.loadUiType(path_ventana_espera)
 
 class VentanaEspera(nombre, padre):
 
-    senal_iniciar_juego = pyqtSignal(str)
-    senal_votar = pyqtSignal()
+    senal_iniciar_juego = pyqtSignal()
+    senal_votar = pyqtSignal(str)
 
     def __init__(self) -> None:
         super().__init__()
@@ -20,6 +20,7 @@ class VentanaEspera(nombre, padre):
 
         self.listo = False
         self.voto = False
+        self.posiciones_jugadores = dict()
 
         parametros = cargar_parametros()
         dict_parametros = dict()
@@ -46,6 +47,14 @@ class VentanaEspera(nombre, padre):
 
             self.labels_jugadores[i] = jugador
             i += 1
+        
+        self.labels_estados_jugadores = dict()
+        i = 1
+        for jugador in (self.label_estado_jugador1, self.label_estado_jugador2,\
+            self.label_estado_jugador3, self.label_estado_jugador4):
+
+            self.labels_estados_jugadores[i] = jugador
+            i += 1
 
 
         self.boton_iniciar.hide()
@@ -59,16 +68,38 @@ class VentanaEspera(nombre, padre):
     def inicializar_usuario(self, nombre, n_color, eres_jefe):
         if eres_jefe:
             self.boton_iniciar.show()
-            self.boton_iniciar.enabled()
-        
+            self.boton_iniciar.setEnabled(True)
+        self.posiciones_jugadores[nombre] = n_color
         self.labels_jugadores[n_color].setText(nombre)
+        self.mostrar()
 
     def metodo_votar(self):
         if not self.voto:
-            if self.boton_ingenieria.isClicked():
+            if self.boton_ingenieria.isChecked():
                 self.senal_votar.emit("ingenieria")
-            elif self.boton_ingenieria.isClicked():
+                self.voto = True
+            elif self.boton_san_joaquin.isChecked():
                 self.senal_votar.emit("san joaquin")
+                self.voto = True
+    
+    def actualizar_votos(self, nombre_votador, votos_sj, votos_ing):
+
+        self.votos_ingenieria.setText(str(votos_ing))
+        self.votos_san_joaquin.setText(str(votos_sj))
+
+        numero = self.posiciones_jugadores[nombre_votador]
+        label = self.labels_estados_jugadores[numero]
+
+        label.setText("LISTO")
+        label.setStyleSheet("color: rgb(0, 255, 0)")
+    
+    def nuevo_usuario(self, nombre, n_color):
+        self.posiciones_jugadores[nombre] = n_color
+        self.labels_jugadores[n_color].setText(nombre)
+
+
+
+        
 
     def metodo_iniciar(self):
         if self.voto and not self.listo:

@@ -6,7 +6,8 @@
         "VENTANA_ESPERA": "assets/ventana_espera.ui",
         "IMAGEN_NUBES_ESPERA": "sprites_usuario/nubes_espera.jpeg",
         "MAPA_SAN_JOAQUIN": "sprites_usuario/Mapas/Mapa SJ.png",
-        "MAPA_INGENIERIA": "sprites_usuario/Mapas/Mapa ING.png"
+        "MAPA_INGENIERIA": "sprites_usuario/Mapas/Mapa ING.png",
+        "VENTANA_JUEGO": "assets/ventana_juego.ui"
 
     }
 }
