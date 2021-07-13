@@ -107,8 +107,8 @@ def obtener_bytes_imagen(ruta):
 
 # Decodificar un bytearray a una lista segun el protocolo especificado.
 def decodificar_imagen(mensaje):
-    largo = mensaje[:4]
-    color = mensaje[4:8]
+    largo = int.from_bytes(mensaje[:4], byteorder="big")
+    color = int.from_bytes(mensaje[4:8], byteorder="little")
     cursor = 8
     array = bytearray()
     while len(array) < largo:
@@ -116,4 +116,4 @@ def decodificar_imagen(mensaje):
         array += mensaje[cursor:cursor + 100]
         cursor += 100
 
-    return [array, color]
+    return array

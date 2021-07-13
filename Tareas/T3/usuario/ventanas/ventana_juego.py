@@ -61,6 +61,8 @@ class VentanaJuego(nombre, padre):
             "3": self.foto_perfil_j3
         }
 
+        self.jugadores = dict()
+
     def mostrar(self):
         self.show()
 
@@ -89,22 +91,25 @@ class VentanaJuego(nombre, padre):
         self.mi_name = nombre
     
     def definir_jugadores(self, lista):
-        for jugador in lista:
-            if jugador.nombre == self.mi_name:
-                self.definir_mi_jugador(lista.pop(jugador))
+        for indice, jugador in enumerate(lista):
+            print("lista", lista)
+            if jugador["nombre"] == self.mi_name:
+                self.definir_mi_jugador(lista.pop(indice))
                 break
         
         self.definir_otros_jugadores(lista)
+        self.show()
 
-    def definir_mi_jugador(self, namedtuple_):
-        self.jugadores[namedtuple_.nombre] = {
-            "turno": namedtuple_.turno,
-            "nombre": namedtuple_.nombre,
-            
+    def definir_mi_jugador(self, dict_):
+        self.jugadores[dict_["nombre"]] = {
+            "turno": dict_["turno"],
+            "nombre": dict_["nombre"],
+            "color": dict_["color"],
             "llave_para_labels": "my"
         }
-        self.labels_turnos_de_jugador["my"].setText(diccionario["turno"])
-        self.labels_nombres_de_jugador["my"].setText(diccionario["nombre"])
+        print("Llegué a la línea 109")
+        self.labels_turnos_de_jugador["my"].setText(str(dict_["turno"]))
+        self.labels_nombres_de_jugador["my"].setText(dict_["nombre"])
     
     def definir_otros_jugadores(self, lista_jugadores):
         lista_jugadores.sort(key=ordenamiento_por_turno)
@@ -112,20 +117,27 @@ class VentanaJuego(nombre, padre):
         i = 1
 
         for persona in lista_jugadores:
-            self.jugadores[persona.nombre] = {
-                "turno": persona.turno,
-                "nombre": persona.nombre,
-                "color": persona.color,
+            self.jugadores[persona["nombre"]] = {
+                "turno": persona["turno"],
+                "nombre": persona["nombre"],
+                "color": persona["color"],
                 "llave_para_labels": str(i)
             }
-            self.labels_turnos_de_jugador[str(i)].setText(diccionario["turno"])
-            self.labels_nombres_de_jugador[str(i)].setText(diccionario["nombre"])
+            self.labels_turnos_de_jugador[str(i)].setText(str(persona["turno"]))
+            self.labels_nombres_de_jugador[str(i)].setText(persona["nombre"])
 
             i += 1
+    
+    def recibir_imagen_de_perfil(self, imagen_en_bytes, color):
+        for persona in self.jugadores:
+            if self.jugadores[persona]["color"] == color:
+                llave = self.jugadores[persona]["llave_para_labels"]
+
+                self.labels_foto_de_jugador[llave].setPixmap(QPixmap())
 
     def definir_objetivo(self, desde, hasta):
-        self.label_objetivo_desde.setText(desde)
-        self.label_objetivo_hasta.setText(hasta)
+        self.label_objetivo_desde.setText(str(desde))
+        self.label_objetivo_hasta.setText(str(hasta))
 
         self.label_objetivo_desde.setStyleSheet("color: rgb(255, 255, 0)")
         self.label_objetivo_hasta.setStyleSheet("color: rgb(255, 255, 0)")

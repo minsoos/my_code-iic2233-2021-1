@@ -78,7 +78,10 @@ class Cliente:
                 print("Error de conexión con el servidor")
                 self.socket_cliente.close()
             else:
-                retorno = self.controlador.manejar_mensaje(mensaje)
+                if mensaje[1] == "mensaje":
+                    self.controlador.manejar_mensaje(mensaje[0])
+                elif mensaje[1] == "imagen":
+                    self.controlador.manejar_imagen(mensaje[0], mensaje[2])
 
     def enviar(self, mensaje):
         """Envía un mensaje a un cliente.
@@ -92,18 +95,6 @@ class Cliente:
             self.socket_cliente.sendall(mensaje)
         except ConnectionError:
             self.socket_cliente.close()
-        
-        # while len(array) - parte_incontable < largo:
-        #     if largo - (len(mensaje) - parte_incontable) >= largo_chunk:
-        #         cabeza = self.socket_cliente.recv(4)
-        #         contenido_i = self.socket_cliente.recv(largo_chunk)
-        #         relleno = b""
-        #     else:
-        #         faltante = largo - (len(array) - parte_incontable)
-        #         cabeza = self.socket_cliente.recv(4)
-        #         contenido_i = self.socket_cliente.recv(faltante)
-        #         relleno = b'\x 00' * (largo_chunk - faltante)
-        #     array += cabeza + contenido_i + relleno
 
     def recibir(self):
         """Recibe un mensaje del servidor.
@@ -130,6 +121,7 @@ class Cliente:
             largo_chunk = 100
             color = self.socket_cliente.recv(4)
             array += color
+            color = int.from_bytes(color, byteorder="big")
         elif tipo_mensaje == 2:
             largo_chunk = 60
         else:
@@ -144,8 +136,8 @@ class Cliente:
             array += cabeza + contenido_i
 
         if tipo_mensaje == 1:
-            return decodificar_imagen(array)
+            return decodificar_imagen(array), "imagen", color
         elif tipo_mensaje == 2:
-            return decodificar_mensaje(array)
+            return decodificar_mensaje(array), "mensaje"
         else:
             raise ValueError("Error en recibir de cliente.py")

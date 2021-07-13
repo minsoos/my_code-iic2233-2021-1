@@ -15,4 +15,4 @@ def cargar_parametros(ruta=path.join("parametros.json")):
     return diccionario_parametros
 
 def ordenamiento_por_turno(objeto):
-    return objeto.turno
+    return objeto["turno"]

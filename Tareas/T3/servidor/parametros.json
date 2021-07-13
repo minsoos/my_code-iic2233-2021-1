@@ -1,10 +1,10 @@
 {
     "RUTAS":{
         "IMAGENES_PERFIL":{
-            "1":"sprites_servidor/avatar-1.png",
-            "2":"sprites_servidor/avatar-2.png",
-            "3":"sprites_servidor/avatar-3.png",
-            "4":"sprites_servidor/avatar-4.png"
+            "1":"sprites_servidor/Avatares/avatar-1.png",
+            "2":"sprites_servidor/Avatares/avatar-2.png",
+            "3":"sprites_servidor/Avatares/avatar-3.png",
+            "4":"sprites_servidor/Avatares/avatar-4.png"
         }
     },
     "CANTIDAD_JUGADORES_PARTIDA": 2

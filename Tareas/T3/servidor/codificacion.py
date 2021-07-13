@@ -17,11 +17,8 @@ def codificar_mensaje(mensaje):
         print("ERROR: No se pudo codificar el mensaje")
         return b""
 
-    print(mensaje)
 
     largo = len(mensaje)
-    print(largo)
-    print(largo.to_bytes(4, byteorder="big"))
 
     array = bytearray()
     array += largo.to_bytes(4, byteorder="big")
@@ -50,17 +47,13 @@ def codificar_mensaje(mensaje):
 
 # Decodificar un bytearray para obtener el mensaje original.
 def decodificar_mensaje(mensaje):
-    print("inicial", mensaje)
     largo_bytes = len(mensaje) - 8
     largo = int.from_bytes(mensaje[:4], byteorder="big")
     cursor = 8
     array = bytearray()
     while len(array) < largo and largo_bytes > 0:
-        print(array)
         cursor += 4
         largo_bytes -= 4
-        print("largo del array enviado es", largo_bytes)
-        print("El largo que se envió como parámetro es", largo)
         if largo - len(array) > 60:
             array += mensaje[cursor:cursor + 60]
             cursor += 60
@@ -69,7 +62,6 @@ def decodificar_mensaje(mensaje):
     try:
         mensaje = array.decode(encoding="UTF-8")
         mensaje = json.loads(array)
-        print("final", mensaje)
         return mensaje
     except (json.JSONDecodeError, UnicodeDecodeError):
         print("ERROR: No se pudo decodificar el mensaje")
@@ -82,7 +74,7 @@ def codificar_imagen(ruta):
     array = bytearray()
     array += largo.to_bytes(4, byteorder="big")
     array += (1).to_bytes(4, byteorder="little")
-    array += (ruta[-5]).to_bytes(4, byteorder="big")
+    array += int(ruta[-5]).to_bytes(4, byteorder="big")
 
     bytes_incontables = len(array)
     contador_chunks = 0
@@ -103,7 +95,6 @@ def codificar_imagen(ruta):
 
     return array
 
-@staticmethod
 def obtener_bytes_imagen(ruta):
     """
     Recibe un ruta de una imagen, y codifica sus bytes a un string utf-8

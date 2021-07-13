@@ -14,10 +14,12 @@ class Controlador(QObject):
     # Hacia la sala de espera
     senal_respuesta_ingreso_sala_espera = pyqtSignal(bool, str)
     senal_abrir_ventana_espera = pyqtSignal(str, int, bool)
-    senal_actualizar_votos = pyqtSignal(str, int, int)
+    senal_actualizar_votos = pyqtSignal(list, int, int)
     senal_nuevo_usuario = pyqtSignal(str, int)
     # Hacia la ventana juego
     senal_inicializar_jugadores_en_juego = pyqtSignal(list)
+    senal_inscribir_jugador_en_juego = pyqtSignal(str)
+    senal_enviar_imagen_a_juego = pyqtSignal(bytearray, int)
 
     def __init__(self, ruta_logo, ruta_nubes) -> None:
         super().__init__()
@@ -44,6 +46,8 @@ class Controlador(QObject):
         # Ventana juego
 
         self.senal_inicializar_jugadores_en_juego.connect(self.ventana_juego.definir_jugadores)
+        self.senal_inscribir_jugador_en_juego.connect(self.ventana_juego.configurar_mi_nombre)
+        self.senal_enviar_imagen_a_juego.connect(self.ventana_juego.recibir_imagen_de_perfil)
     
     def manejar_mensaje(self, mensaje):
         '''
@@ -76,6 +80,15 @@ class Controlador(QObject):
         else:
             raise ValueError("La acción no está en mis registros")
     
+    def manejar_imagen(self, imagen_en_bytes, color):
+        print(f"recibí imagen de color {color}, y el usuario es de color {self.int_color_usuario}")
+        if color == self.int_color_usuario:
+            self.imagen_propia = imagen_en_bytes
+            print("Definí mi propia imagen")
+        else:
+            print("Enviaré una imagen al juego")
+            self.senal_enviar_imagen_a_juego.emit(imagen_en_bytes, color)
+    
     # ----------------------------- Ventana inicio
 
     def intentar_ingreso_sala_espera(self, nombre):
@@ -94,6 +107,7 @@ class Controlador(QObject):
         self.senal_respuesta_ingreso_sala_espera.emit(True, "True")
         self.senal_abrir_ventana_espera.emit(nombre, n_color, es_jefe)
         self.dict_jugadores_activos[n_color] = nombre
+        self.senal_inscribir_jugador_en_juego.emit(nombre)
     
     def denegar_usuario_a_espera(self, motivo):
         self.senal_respuesta_ingreso_sala_espera.emit(False, motivo)
@@ -114,13 +128,14 @@ class Controlador(QObject):
         self.enviar_mensaje_a_servidor(diccionario)
     
     def nuevo_usuario(self, mensaje):
-        self.senal_nuevo_usuario.emit( mensaje["nombre"], mensaje["color usuario"])
+        self.senal_nuevo_usuario.emit(mensaje["nombre"], mensaje["color usuario"])
     
     def actualizar_votos_en_sala_espera(self, dict_):
-        self.senal_actualizar_votos.emit(dict_["nombre votador"],
+        self.senal_actualizar_votos.emit(dict_["nombres votadores"],
             dict_["san joaquin"], dict_["ingenieria"])
     
     # ------------------------------- Ventana juego
 
     def inicializar_jugadores_en_juego(self, lista):
         self.senal_inicializar_jugadores_en_juego.emit(lista)
+        self.senal_enviar_imagen_a_juego.emit(self.imagen_propia, self.int_color_usuario)

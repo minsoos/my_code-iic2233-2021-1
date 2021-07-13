@@ -82,24 +82,22 @@ class VentanaEspera(nombre, padre):
                 self.senal_votar.emit("san joaquin")
                 self.voto = True
     
-    def actualizar_votos(self, nombre_votador, votos_sj, votos_ing):
+    def actualizar_votos(self, nombres_votadores, votos_sj, votos_ing):
 
         self.votos_ingenieria.setText(str(votos_ing))
         self.votos_san_joaquin.setText(str(votos_sj))
 
-        numero = self.posiciones_jugadores[nombre_votador]
-        label = self.labels_estados_jugadores[numero]
+        for nombre_votador in nombres_votadores:
+            numero = self.posiciones_jugadores[nombre_votador]
+            label = self.labels_estados_jugadores[numero]
 
-        label.setText("LISTO")
-        label.setStyleSheet("color: rgb(0, 255, 0)")
+            label.setText("LISTO")
+            label.setStyleSheet("color: rgb(0, 255, 0)")
     
     def nuevo_usuario(self, nombre, n_color):
         self.posiciones_jugadores[nombre] = n_color
         self.labels_jugadores[n_color].setText(nombre)
 
-
-
-        
 
     def metodo_iniciar(self):
         if self.voto and not self.listo:

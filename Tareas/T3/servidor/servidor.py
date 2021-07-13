@@ -48,6 +48,7 @@ class Servidor:
     def conexiones(self):
         self.logica.senal_enviar_mensaje.connect(self.enviar_mensaje)
         self.logica.senal_eliminar_cliente.connect(self.eliminar_cliente)
+        self.logica.senal_enviar_imagen.connect(self.enviar_imagen)
 
     def iniciar_servidor(self):
         mi_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -82,9 +83,7 @@ class Servidor:
             try:
                 cliente = self.clientes_conectados[id_cliente]
                 mensaje = self.recibir(cliente)
-                print("enviaré esto a la lógicca", mensaje)
                 if mensaje is not None:
-                    print("enviaré esto a la lógicca x2", mensaje)
                     self.logica.caracterizar_mensaje(id_cliente, mensaje)
 
             except ConnectionResetError as error:
@@ -112,6 +111,7 @@ class Servidor:
         Argumentos:
             mensaje (dict): Contiene la información a enviar.
         """
+        print("En función enviar imagen en servidor")
         try:
             socket_cliente = self.clientes_conectados[id_usuario]  
             imagen_en_bytes = codificar_imagen(path_imagen)
@@ -155,8 +155,6 @@ class Servidor:
             parte_incontable += 4
             contenido_i = socket_cliente.recv(largo_chunk)
             array += cabeza + contenido_i
-
-        print("array", array)
 
         if tipo_mensaje == 1:
             return decodificar_imagen(array)
