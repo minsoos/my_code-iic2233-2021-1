@@ -95,7 +95,7 @@ def codificar_imagen(ruta):
 
     return array
 
-@staticmethod
+
 def obtener_bytes_imagen(ruta):
     """
     Recibe un ruta de una imagen, y codifica sus bytes a un string utf-8
@@ -105,15 +105,19 @@ def obtener_bytes_imagen(ruta):
         imagen_codificada = imagen_bytes # b64encode(imagen_bytes).decode(encoding='ASCII')
     return imagen_codificada
 
-# Decodificar un bytearray a una lista segun el protocolo especificado.
-def decodificar_imagen(mensaje):
-    largo = int.from_bytes(mensaje[:4], byteorder="big")
-    color = int.from_bytes(mensaje[4:8], byteorder="little")
-    cursor = 8
-    array = bytearray()
-    while len(array) < largo:
-        cursor += 4
-        array += mensaje[cursor:cursor + 100]
-        cursor += 100
 
+def decodificar_imagen(mensaje):
+    largo_bytes = len(mensaje) - 12
+    largo = int.from_bytes(mensaje[:4], byteorder="big")
+    cursor = 12
+    array = bytearray()
+    while len(array) < largo and largo_bytes > 0:
+        cursor += 4
+        largo_bytes -= 4
+        if largo - len(array) > 100:
+            array += mensaje[cursor:cursor + 100]
+            cursor += 100
+        else:
+            # array += mensaje[cursor:cursor + 60 - (largo_bytes - largo)]
+            array += mensaje[cursor:cursor + 100]
     return array

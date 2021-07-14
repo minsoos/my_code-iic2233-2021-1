@@ -16,4 +16,3 @@ if __name__ == "__main__":
     Cliente(HOST, PORT)
 
     app.exec()
-

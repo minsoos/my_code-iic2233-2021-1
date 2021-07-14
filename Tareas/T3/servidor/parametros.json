@@ -7,5 +7,7 @@
             "4":"sprites_servidor/Avatares/avatar-4.png"
         }
     },
-    "CANTIDAD_JUGADORES_PARTIDA": 2
+    "CANTIDAD_JUGADORES_PARTIDA": 2,
+    "BATERIAS_MIN": 2,
+    "BATERIAS_MAX": 5
 }

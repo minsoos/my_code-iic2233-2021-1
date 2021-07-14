@@ -68,7 +68,7 @@ class VentanaJuego(nombre, padre):
 
     def esconderse(self):
         self.hide()
-    
+
     def metodo_comprar_camino(self):
         desde = self.edit_comprar_desde.text()
         hasta = self.edit_comprar_hacia.text()
@@ -76,7 +76,7 @@ class VentanaJuego(nombre, padre):
 
     def metodo_sacar_carta(self):
         self.senal_sacar_carta.emit()
-    
+
     def configurar_mapa(self, mapa):
         if mapa == "san joaquin":
             self.label_nombre_mapa.setText("San Joaquín")
@@ -86,17 +86,17 @@ class VentanaJuego(nombre, padre):
             self.label_mapa.setPixmap(QPixmap(self.dict_parametros["mapa_ing"]))
         else:
             raise ValueError("No se pudo configurar bien el mapa")
-    
+
     def configurar_mi_nombre(self, nombre):
         self.mi_name = nombre
-    
+
     def definir_jugadores(self, lista):
         for indice, jugador in enumerate(lista):
             print("lista", lista)
             if jugador["nombre"] == self.mi_name:
                 self.definir_mi_jugador(lista.pop(indice))
                 break
-        
+
         self.definir_otros_jugadores(lista)
         self.show()
 
@@ -107,10 +107,11 @@ class VentanaJuego(nombre, padre):
             "color": dict_["color"],
             "llave_para_labels": "my"
         }
-        print("Llegué a la línea 109")
+        if dict_["turno"] == 1:
+            self.label_turno_actual.setText(dict_["nombre"])
         self.labels_turnos_de_jugador["my"].setText(str(dict_["turno"]))
         self.labels_nombres_de_jugador["my"].setText(dict_["nombre"])
-    
+
     def definir_otros_jugadores(self, lista_jugadores):
         lista_jugadores.sort(key=ordenamiento_por_turno)
 
@@ -123,22 +124,31 @@ class VentanaJuego(nombre, padre):
                 "color": persona["color"],
                 "llave_para_labels": str(i)
             }
+            if persona["turno"] == 1:
+                self.label_turno_actual.setText(persona["nombre"])
             self.labels_turnos_de_jugador[str(i)].setText(str(persona["turno"]))
             self.labels_nombres_de_jugador[str(i)].setText(persona["nombre"])
 
             i += 1
-    
+
     def recibir_imagen_de_perfil(self, imagen_en_bytes, color):
         for persona in self.jugadores:
             if self.jugadores[persona]["color"] == color:
                 llave = self.jugadores[persona]["llave_para_labels"]
+                pixmap = QPixmap()
+                pixmap.loadFromData(imagen_en_bytes)
+                self.labels_foto_de_jugador[llave].setPixmap(pixmap)
+                break
+        print(f"los jugadores son {self.jugadores}")
 
-                self.labels_foto_de_jugador[llave].setPixmap(QPixmap())
+    def setear_baterias(self, baterias):
+        for usuario in baterias:
+            llave = self.jugadores[usuario]["llave_para_labels"]
+            self.labels_baterias_de_jugador[llave].setText(str(baterias[usuario]))
 
     def definir_objetivo(self, desde, hasta):
         self.label_objetivo_desde.setText(str(desde))
         self.label_objetivo_hasta.setText(str(hasta))
-
         self.label_objetivo_desde.setStyleSheet("color: rgb(255, 255, 0)")
         self.label_objetivo_hasta.setStyleSheet("color: rgb(255, 255, 0)")
         self.label_objetivo1.setStyleSheet("color: rgb(255, 255, 0)")

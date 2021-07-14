@@ -3,9 +3,7 @@ from PyQt5.QtCore import pyqtSignal, QObject
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5 import uic
 from random import choice, randint
-from utils import cargar_parametros, normalizar_ruta
-from collections import namedtuple
-
+from utils import cargar_parametros, normalizar_ruta, crear_mapa
 
 
 class Logica(QObject):
@@ -27,7 +25,7 @@ class Logica(QObject):
         for parametro in self.parametros["RUTAS"]["IMAGENES_PERFIL"]:
             ruta = normalizar_ruta(self.parametros["RUTAS"]["IMAGENES_PERFIL"][parametro])
             self.parametros["RUTAS"]["IMAGENES_PERFIL"][parametro] = ruta
-    
+
     def enviar_mensaje_a_usuario(self, id_usuario, diccionario):
         '''
         Recibe el id de un usuario y un diccionario a enviar y se encarga de
@@ -47,7 +45,7 @@ class Logica(QObject):
             self.votacion_de_mapa(id_usuario, dict_["voto"])
         else:
             print("nosé qué me pediste (soy servidor/logica)")
-        
+
     def comprobar_nombre_de_usuario(self, id_usuario, nombre):
         parametro_n_usuarios = self.parametros["CANTIDAD_JUGADORES_PARTIDA"]
         if nombre not in self.usuarios_activos and\
@@ -63,7 +61,7 @@ class Logica(QObject):
                 "comando": "ingreso denegado",
                 "causal": "nombre"}
             self.enviar_mensaje_a_usuario(id_usuario, diccionario)
-    
+
     def enviar_imagen_a_usuario(self, id_usuario, color):
         path_color = self.parametros["RUTAS"]["IMAGENES_PERFIL"][str(color)]
         print("emitiré la señal para enviar una imagen")
@@ -103,7 +101,7 @@ class Logica(QObject):
         for usuario_n in self.usuarios_activos:
             if usuario_n != id_usuario:
                 self.enviar_mensaje_a_usuario(usuario_n, diccionario)
-        
+
         # Enviar el resto de los usuarios al usuario ingresado
 
         for usuario_n in self.usuarios_activos:
@@ -116,7 +114,7 @@ class Logica(QObject):
                     "nombre": usuario_i["nombre"]
                 }
                 self.enviar_mensaje_a_usuario(id_usuario, diccionario)
-        
+
         # Actualización de sistema de votos
 
         diccionario = {
@@ -136,7 +134,7 @@ class Logica(QObject):
             self.conteo_votaciones["san joaquin"] += 1
         else:
             raise ValueError("El voto fue inválido")
-        
+
         self.usuarios_que_votaron.append(self.usuarios_activos[id_usuario]["nombre"])
 
         diccionario = {
@@ -146,26 +144,26 @@ class Logica(QObject):
             "nombres votadores": self.usuarios_que_votaron
         }
 
-
-        
         for usuario in self.usuarios_activos:
             self.enviar_mensaje_a_usuario(usuario, diccionario)
-    
+
     # ------------------------------ ventana juego
-    
+
     def iniciar_juego(self):
-        turnos_partida = [i for i in range(self.parametros["CANTIDAD_JUGADORES_PARTIDA"])]
-        Jugador = namedtuple("Inicializador_jugadores_en_juego", ["nombre", "color", "turno"])
+        turnos_partida = [i + 1 for i in range(self.parametros["CANTIDAD_JUGADORES_PARTIDA"])]
+        self.turnos_de_jugadores = {}
         lista_jugadores = list()
         for jugador in self.usuarios_activos:
             turno_n = randint(0, len(turnos_partida) - 1)
-            turno_n = turnos_partida.pop(turno_n) +1
+            turno_n = turnos_partida.pop(turno_n)
             dict_jugadores = {
                 "nombre": self.usuarios_activos[jugador]["nombre"],
                 "color": self.usuarios_activos[jugador]["color"],
                 "turno": turno_n
 
             }
+            self.turnos_de_jugadores[turno_n] = dict_jugadores["nombre"]
+            self.turno_actual = 1
             lista_jugadores.append(dict_jugadores)
         diccionario = {
             "comando": "inicializar jugadores en juego",
@@ -173,9 +171,13 @@ class Logica(QObject):
         }
         for jugador in self.usuarios_activos:
             self.enviar_mensaje_a_usuario(jugador, diccionario)
-        
+
         self.enviar_imagenes_de_perfil(lista_jugadores)
-    
+        self.indicar_mapa_a_usar()
+        self.crear_nodo_mapa()
+        self.dar_objetivos_a_usuarios()
+        self.dar_baterias()
+
     def enviar_imagenes_de_perfil(self, lista):
         for jugador in lista:
             color = str(jugador["color"])
@@ -183,4 +185,75 @@ class Logica(QObject):
                 if self.usuarios_activos[usuario_a_enviar]["color"] != jugador["color"]:
                     self.enviar_imagen_a_usuario(usuario_a_enviar, color)
 
+    def indicar_mapa_a_usar(self):
+        votos_sj = self.conteo_votaciones["san joaquin"]
+        votos_ing = self.conteo_votaciones["ingenieria"]
+        diccionario = {
+            "comando": "mapa a usar en juego",
+        }
+        if votos_sj == votos_ing:
+            elegido = randint(1, 2)
+            if elegido == 1:
+                self.mapa_de_juego = "san joaquin"
+                diccionario["mapa"] = "san joaquin"
+            elif elegido == 2:
+                self.mapa_de_juego = "ingenieria"
+                diccionario["mapa"] = "ingenieria"
+        elif votos_ing > votos_sj:
+            self.mapa_de_juego = "ingenieria"
+            diccionario["mapa"] = "ingenieria"
+        elif votos_ing < votos_sj:
+            self.mapa_de_juego = "san joaquin"
+            diccionario["mapa"] = "san joaquin"
 
+        for usuario in self.usuarios_activos:
+            self.enviar_mensaje_a_usuario(usuario, diccionario)
+
+    def crear_nodo_mapa(self):
+        mapa = self.mapa_de_juego
+        self.diccionario_nodos = crear_mapa("mapa.json", mapa)
+
+    def dar_objetivos_a_usuarios(self):
+        self.objetivos = {}
+        for usuario in self.usuarios_activos:
+            completado = False
+            while not completado:
+                nodo_a = choice(list(self.diccionario_nodos.keys()))
+                nodo_b = choice(list(self.diccionario_nodos.keys()))
+                if nodo_a != nodo_b:
+                    vecinos_a = list()
+                    nodo_a = self.diccionario_nodos[nodo_a]
+                    for camino in nodo_a.caminos:
+                        nombre_vecino = camino.nodo_1.nombre if camino.nodo_1.nombre != nodo_a\
+                            else camino.nodo_2.nombre
+                        vecinos_a.append(nombre_vecino)
+                    if nodo_b not in vecinos_a:
+                        completado = True
+            
+            self.objetivos[self.usuarios_activos[usuario]["nombre"]] = {
+                "desde": nodo_a,
+                "hasta": nodo_b
+            }
+            
+            diccionario = {
+                "comando": "dar objetivo",
+                "desde": nodo_a.nombre,
+                "hasta": nodo_b
+            }
+            print("enviaré el objetivo al usuario")
+            self.senal_enviar_mensaje.emit(usuario, diccionario)
+    
+    def dar_baterias(self):
+        self.baterias = {}
+        for usuario in self.usuarios_activos:
+            baterias_minimas = self.parametros["BATERIAS_MIN"]
+            baterias_maximas = self.parametros["BATERIAS_MAX"]
+            baterias_usuario = randint(baterias_minimas, baterias_maximas)
+            self.baterias[self.usuarios_activos[usuario]["nombre"]] = baterias_usuario
+
+        diccionario = {
+                "comando": "baterias iniciales",
+                "baterias": self.baterias,
+            }
+        for usuario in self.usuarios_activos:
+            self.enviar_mensaje_a_usuario(usuario, diccionario)

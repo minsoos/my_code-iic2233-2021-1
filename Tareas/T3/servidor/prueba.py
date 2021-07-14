@@ -1,19 +1,5 @@
-from os import path
 import json
-
-
-def normalizar_ruta(ruta):
-    lista = ruta.split("/")
-    path_ = path.join(*lista)
-    return path_
-
-
-def cargar_parametros(ruta=path.join("parametros.json")):
-    diccionario_parametros = dict()
-    with open(ruta, encoding='utf-8') as archivo:
-        diccionario_parametros = json.load(archivo)
-    return diccionario_parametros
-
+from os import path
 
 class Nodo:
 
@@ -88,7 +74,9 @@ def crear_mapa(ruta="mapa.json", mapa="ingenieria"):
         diccionario_puntos[punto] = Nodo(punto, x, y)
 
     for punto in diccionario_caminos:
+        print("punto", punto)
         for camino in diccionario_caminos[punto]:
+            print("camino", camino)
             nodo_1 = diccionario_puntos[punto]
             nodo_2 = diccionario_puntos[camino[0]]
             presio = camino[1]
@@ -96,7 +84,14 @@ def crear_mapa(ruta="mapa.json", mapa="ingenieria"):
             for camino in nodo_1.caminos:
                 if camino.nodo_1 == nodo_2 or camino.nodo_2 == nodo_2:
                     crear = False
+                    print("no crearé este nodo por repetido")
             if crear:
+                print("Crearé un camino ")
                 diccionario_puntos[punto].agregar_camino(nodo_2, presio)
+    print("dfs lista", diccionario_puntos)
 
-    return diccionario_puntos
+    return diccionario_puntos["A"]
+
+if __name__ == "__main__":
+    nodoA = crear_mapa()
+    print("jj", list(map(lambda x: x.nombre, nodoA.dfs_search_lista_nodos())))

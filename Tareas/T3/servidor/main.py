@@ -2,6 +2,7 @@ from servidor import Servidor
 import sys
 from PyQt5.QtWidgets import QApplication
 
+
 def hook(type_error, traceback):
     print(type_error)
     print(traceback)

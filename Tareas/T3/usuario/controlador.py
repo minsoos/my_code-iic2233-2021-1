@@ -20,6 +20,10 @@ class Controlador(QObject):
     senal_inicializar_jugadores_en_juego = pyqtSignal(list)
     senal_inscribir_jugador_en_juego = pyqtSignal(str)
     senal_enviar_imagen_a_juego = pyqtSignal(bytearray, int)
+    senal_definir_mapa_en_juego = pyqtSignal(str)
+    senal_dar_objetivo = pyqtSignal(str, str)
+    senal_esconder_ventana_espera = pyqtSignal()
+    senal_setear_baterias = pyqtSignal(object)
 
     def __init__(self, ruta_logo, ruta_nubes) -> None:
         super().__init__()
@@ -42,12 +46,17 @@ class Controlador(QObject):
         self.ventana_espera.senal_votar.connect(self.votar_mapa)
         self.senal_actualizar_votos.connect(self.ventana_espera.actualizar_votos)
         self.senal_nuevo_usuario.connect(self.ventana_espera.nuevo_usuario)
+        self.senal_esconder_ventana_espera.connect(self.ventana_espera.esconderse)
 
         # Ventana juego
 
         self.senal_inicializar_jugadores_en_juego.connect(self.ventana_juego.definir_jugadores)
         self.senal_inscribir_jugador_en_juego.connect(self.ventana_juego.configurar_mi_nombre)
         self.senal_enviar_imagen_a_juego.connect(self.ventana_juego.recibir_imagen_de_perfil)
+        self.senal_definir_mapa_en_juego.connect(self.ventana_juego.configurar_mapa)
+        self.senal_dar_objetivo.connect(self.ventana_juego.definir_objetivo)
+        self.senal_setear_baterias.connect(self.ventana_juego.setear_baterias)
+        
     
     def manejar_mensaje(self, mensaje):
         '''
@@ -77,6 +86,12 @@ class Controlador(QObject):
         # Ventana juego
         elif accion == "inicializar jugadores en juego":
             self.inicializar_jugadores_en_juego(mensaje["jugadores e info"])
+        elif accion == "mapa a usar en juego":
+            self.definir_mapa_en_juego(mensaje["mapa"])
+        elif accion == "dar objetivo":
+            self.dar_objetivos_de_juego(mensaje["desde"], mensaje["hasta"])
+        elif accion == "baterias iniciales":
+            self.setear_baterias(mensaje["baterias"])
         else:
             raise ValueError("La acción no está en mis registros")
     
@@ -139,3 +154,13 @@ class Controlador(QObject):
     def inicializar_jugadores_en_juego(self, lista):
         self.senal_inicializar_jugadores_en_juego.emit(lista)
         self.senal_enviar_imagen_a_juego.emit(self.imagen_propia, self.int_color_usuario)
+        self.senal_esconder_ventana_espera.emit()
+    
+    def definir_mapa_en_juego(self, mapa):
+        self.senal_definir_mapa_en_juego.emit(mapa)
+    
+    def dar_objetivos_de_juego(self, desde, hasta):
+        self.senal_dar_objetivo.emit(desde, hasta)
+    
+    def setear_baterias(self, baterias):
+        self.senal_setear_baterias.emit(baterias)

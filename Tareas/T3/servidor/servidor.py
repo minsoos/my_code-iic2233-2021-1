@@ -111,7 +111,6 @@ class Servidor:
         Argumentos:
             mensaje (dict): Contiene la información a enviar.
         """
-        print("En función enviar imagen en servidor")
         try:
             socket_cliente = self.clientes_conectados[id_usuario]  
             imagen_en_bytes = codificar_imagen(path_imagen)
