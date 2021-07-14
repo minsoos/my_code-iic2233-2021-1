@@ -1,5 +1,5 @@
 from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtGui import QPixmap, QIcon
+from PyQt5.QtGui import QPixmap, QIcon, QPainter
 from PyQt5 import uic
 from utils import cargar_parametros, normalizar_ruta, ordenamiento_por_turno
 
@@ -159,3 +159,13 @@ class VentanaJuego(nombre, padre):
         self.label_objetivo_hasta.setStyleSheet("color: rgb(0, 255, 0);")
         self.label_objetivo1.setStyleSheet("color: rgb(0, 255, 0);")
         self.label_objetivo2.setStyleSheet("color: rgb(0, 255, 0);")
+
+    def setear_error(self, mensaje):
+        self.label_aviso.setText(mensaje)
+    
+    def cambiar_turno(self, nombre):
+        self.label_turno_actual.setText(nombre)
+    
+    def dibujar_linea(self, posicion_1, posicion_2, color):
+        pintador = QPainter()
+        pintador.drawLine(posicion_1[0], posicion_1[1], *posicion_2)

@@ -50,6 +50,28 @@ class Nodo:
             if vecino not in visitados:
                 vecino.dfs_search_lista_nodos(visitados)
         return visitados
+    
+    def es_su_vecino(self, nombre_otro_nodo):
+        vecinos = list()
+        for camino in self.caminos:
+            nombre_vecino = camino.nodo_1.nombre if camino.nodo_1.nombre != self.nombre\
+                else camino.nodo_2.nombre
+            vecinos.append(nombre_vecino)
+        if nombre_otro_nodo in vecinos:
+            return True
+        else:
+            return False
+    
+    def encontrar_camino_con(self, nombre_otro_nodo):
+        for camino in self.caminos:
+            opcion_1 = camino.nodo_1.nombre == self.nombre\
+                and camino.nodo_2.nombre == nombre_otro_nodo
+            opcion_2 = camino.nodo_2.nombre == self.nombre\
+                and camino.nodo_1.nombre == nombre_otro_nodo
+            if opcion_1 or opcion_2:
+                return camino
+        return None
+            
 
 
 

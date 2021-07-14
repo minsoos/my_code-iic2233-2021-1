@@ -24,6 +24,8 @@ class Controlador(QObject):
     senal_dar_objetivo = pyqtSignal(str, str)
     senal_esconder_ventana_espera = pyqtSignal()
     senal_setear_baterias = pyqtSignal(object)
+    senal_anunciar_error_en_juego = pyqtSignal(str)
+    senal_cambiar_turno = pyqtSignal(str)
 
     def __init__(self, ruta_logo, ruta_nubes) -> None:
         super().__init__()
@@ -56,6 +58,9 @@ class Controlador(QObject):
         self.senal_definir_mapa_en_juego.connect(self.ventana_juego.configurar_mapa)
         self.senal_dar_objetivo.connect(self.ventana_juego.definir_objetivo)
         self.senal_setear_baterias.connect(self.ventana_juego.setear_baterias)
+        self.ventana_juego.senal_comprar_camino.connect(self.comprar_camino)
+        self.senal_anunciar_error_en_juego.connect(self.ventana_juego.setear_error)
+        self.senal_cambiar_turno.connect(self.ventana_juego.cambiar_turno)
         
     
     def manejar_mensaje(self, mensaje):
@@ -90,8 +95,14 @@ class Controlador(QObject):
             self.definir_mapa_en_juego(mensaje["mapa"])
         elif accion == "dar objetivo":
             self.dar_objetivos_de_juego(mensaje["desde"], mensaje["hasta"])
-        elif accion == "baterias iniciales":
+        elif accion == "setear baterias":
             self.setear_baterias(mensaje["baterias"])
+        elif accion == "pintar camino":
+            self.pintar_camino(mensaje["color"], mensaje["desde"], mensaje["hasta"])
+        elif accion == "anunciar error":
+            self.anunciar_error(mensaje["mensaje"])
+        elif accion == "cambiar turno":
+            self.cambiar_turno(mensaje["turno actual"])
         else:
             raise ValueError("La acción no está en mis registros")
     
@@ -164,3 +175,23 @@ class Controlador(QObject):
     
     def setear_baterias(self, baterias):
         self.senal_setear_baterias.emit(baterias)
+    
+    def anunciar_error(self, mensaje):
+        self.senal_anunciar_error_en_juego.emit(mensaje)
+    
+    def comprar_camino(self, desde, hasta):
+        diccionario = {
+            "comando": "jugar turno",
+            "accion": "comprar camino",
+            "desde": desde,
+            "hasta": hasta
+        }
+        self.enviar_mensaje_a_servidor(diccionario)
+    
+    def pintar_camino(self, color, pos_1, pos_2):
+        print("Debo pintar el camino")
+        if color == "rojo":
+            pass
+    
+    def cambiar_turno(self, nombre_jugador):
+        self.senal_cambiar_turno.emit(nombre_jugador)

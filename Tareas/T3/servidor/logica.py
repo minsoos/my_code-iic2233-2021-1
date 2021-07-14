@@ -43,6 +43,8 @@ class Logica(QObject):
             self.iniciar_juego()
         elif comando == "votar":
             self.votacion_de_mapa(id_usuario, dict_["voto"])
+        elif comando == "jugar turno":
+            self.jugar_turno(id_usuario, dict_)
         else:
             print("nosé qué me pediste (soy servidor/logica)")
 
@@ -152,6 +154,7 @@ class Logica(QObject):
     def iniciar_juego(self):
         turnos_partida = [i + 1 for i in range(self.parametros["CANTIDAD_JUGADORES_PARTIDA"])]
         self.turnos_de_jugadores = {}
+        self.jugadores_segun_turno = {}
         lista_jugadores = list()
         for jugador in self.usuarios_activos:
             turno_n = randint(0, len(turnos_partida) - 1)
@@ -162,9 +165,10 @@ class Logica(QObject):
                 "turno": turno_n
 
             }
-            self.turnos_de_jugadores[turno_n] = dict_jugadores["nombre"]
-            self.turno_actual = 1
+            self.turnos_de_jugadores[dict_jugadores["nombre"]] = turno_n
+            self.jugadores_segun_turno[turno_n] = dict_jugadores["nombre"]
             lista_jugadores.append(dict_jugadores)
+        self.turno_actual = 1
         diccionario = {
             "comando": "inicializar jugadores en juego",
             "jugadores e info": lista_jugadores
@@ -221,14 +225,8 @@ class Logica(QObject):
                 nodo_a = choice(list(self.diccionario_nodos.keys()))
                 nodo_b = choice(list(self.diccionario_nodos.keys()))
                 if nodo_a != nodo_b:
-                    vecinos_a = list()
-                    nodo_a = self.diccionario_nodos[nodo_a]
-                    for camino in nodo_a.caminos:
-                        nombre_vecino = camino.nodo_1.nombre if camino.nodo_1.nombre != nodo_a\
-                            else camino.nodo_2.nombre
-                        vecinos_a.append(nombre_vecino)
-                    if nodo_b not in vecinos_a:
-                        completado = True
+                    completado = self.diccionario_nodos[nodo_a].es_su_vecino(nodo_b)
+                    completado = not completado
             
             self.objetivos[self.usuarios_activos[usuario]["nombre"]] = {
                 "desde": nodo_a,
@@ -237,7 +235,7 @@ class Logica(QObject):
             
             diccionario = {
                 "comando": "dar objetivo",
-                "desde": nodo_a.nombre,
+                "desde": nodo_a,
                 "hasta": nodo_b
             }
             print("enviaré el objetivo al usuario")
@@ -250,10 +248,82 @@ class Logica(QObject):
             baterias_maximas = self.parametros["BATERIAS_MAX"]
             baterias_usuario = randint(baterias_minimas, baterias_maximas)
             self.baterias[self.usuarios_activos[usuario]["nombre"]] = baterias_usuario
-
+        
+        self.enviar_info_baterias()
+    
+    def enviar_info_baterias(self):
         diccionario = {
-                "comando": "baterias iniciales",
+                "comando": "setear baterias",
                 "baterias": self.baterias,
             }
         for usuario in self.usuarios_activos:
             self.enviar_mensaje_a_usuario(usuario, diccionario)
+    
+    def jugar_turno(self, id_usuario, diccionario):
+        nombre_jugador = self.usuarios_activos[id_usuario]
+        if self.turnos_de_jugadores[nombre_jugador] == self.turno_actual:
+            accion = diccionario["accion"]
+            if accion == "comprar camino":
+                self.intentar_comprar_camino(id_usuario, diccionario["desde"], diccionario["hasta"])
+            elif accion == "sacar carta":
+                self.sacar_carta(id_usuario)
+
+            if (self.turno_actual + 1) in self.turnos_de_jugadores.values():
+                self.turno_actual += 1
+            else:
+                self.turno_actual = 1
+            
+
+            diccionario = {
+                "comando": "cambiar turno",
+                "turno actual": self.jugadores_segun_turno[self.turno_actual]
+            }
+            for jugador in self.usuarios_activos:
+                self.enviar_mensaje_a_usuario(jugador, diccionario)
+    
+    def intentar_comprar_camino(self, id_usuario, desde, hasta):
+        diccionario_preventivo = {
+            "comando": "anunciar error"
+        }
+
+        nombre_jugador = self.usuarios_activos[id_usuario]
+        desde, hasta = desde.upper(), hasta.upper()
+        nombre_nodos = self.diccionario_nodos.keys()
+        primera_condicion = desde in nombre_nodos
+        segunda_condicion = hasta in nombre_nodos
+        if primera_condicion and segunda_condicion:
+            nodo_inicial = self.diccionario_nodos[desde]
+            if nodo_inicial.es_su_vecino(hasta):
+                camino = nodo_inicial.encontrar_camino_con(hasta)
+                if camino is None:
+                    raise ValueError("El camino no está en los posibles")
+ 
+                presio = camino.costo
+                if self.baterias[nombre_jugador] - presio >= 0:
+                    self.baterias[nombre_jugador] -= presio
+                    print("Aquí debo modificar los puntajes")
+                    self.enviar_info_baterias()
+                    self.enviar_pintada_de_camino(id_usuario, camino)
+                else:
+                    diccionario_preventivo["mensaje"] = "No tienes suficiente dinero"
+                    self.enviar_mensaje_a_usuario(id_usuario, diccionario_preventivo)
+            else:
+                diccionario_preventivo["mensaje"] = "El camino que quieres comprar no existe"
+                self.enviar_mensaje_a_usuario(id_usuario, diccionario_preventivo)
+        else:
+            diccionario_preventivo["mensaje"] = "Los nodos que indicas no son válidos"
+            self.enviar_mensaje_a_usuario(id_usuario, diccionario_preventivo)
+    
+    def enviar_pintada_de_camino(self, id_usuario, camino):
+        pos_nodo_1 = camino.nodo_1.x, camino.nodo_1.y
+        pos_nodo_2 = camino.nodo_2.x, camino.nodo_2.y
+        color = self.usuarios_activos[id_usuario]["color"]
+        diccionario = {
+            "comando": "pintar camino",
+            "color": color,
+            "desde": pos_nodo_1,
+            "hasta": pos_nodo_2
+        }
+        for jugador in self.usuarios_activos:
+            self.enviar_mensaje_a_usuario(jugador, diccionario)
+
