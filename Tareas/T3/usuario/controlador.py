@@ -139,12 +139,9 @@ class Controlador(QObject):
             raise ValueError("La acción no está en mis registros")
     
     def manejar_imagen(self, imagen_en_bytes, color):
-        print(f"recibí imagen de color {color}, y el usuario es de color {self.int_color_usuario}")
         if color == self.int_color_usuario:
             self.imagen_propia = imagen_en_bytes
-            print("Definí mi propia imagen")
         else:
-            print("Enviaré una imagen al juego")
             self.senal_enviar_imagen_a_juego.emit(imagen_en_bytes, color)
     
     # ----------------------------- Ventana inicio
@@ -221,7 +218,6 @@ class Controlador(QObject):
             "desde": viaje[0],
             "hasta": viaje[1]
         }
-        print("Pedí comprar un camino")
         self.enviar_mensaje_a_servidor(diccionario)
     
     def sacar_carta(self):
@@ -257,7 +253,6 @@ class Controlador(QObject):
 
         if self.nombre_usuario == lista_jugadores[0][0]:
             self.senal_dar_gif_celebracion.emit()
-        print("esconderé el juego y conf la de puntajes")
         self.senal_esconder_ventana_juego.emit()
         self.senal_enviar_puntajes_a_final.emit(lista_jugadores)
     

@@ -96,7 +96,6 @@ class VentanaJuego(nombre, padre):
 
     def definir_jugadores(self, lista):
         for indice, jugador in enumerate(lista):
-            print("lista", lista)
             if jugador["nombre"] == self.mi_name:
                 self.definir_mi_jugador(lista.pop(indice))
                 break
@@ -202,10 +201,6 @@ class VentanaJuego(nombre, padre):
         self.label.setPixmap(pixmap)
         self.label.show()
         self.labels_rayas.append(self.label)
-    
-    def keyPressEvent(self, event):
-        if event.key() == Qt.Key_L:
-            self.senal_terminela_profe.emit()
     
     def limpiar_sala(self):
         for label in self.labels_rayas:

@@ -55,7 +55,6 @@ class VentanaFinal(nombre, padre):
 
     def ingresar_puntajes_y_usuarios(self, lista_jugadores):
         cola = deque(lista_jugadores)
-        print("lista jugadores", lista_jugadores)
         i = 1
         while len(cola) > 0:
             jugador = cola.popleft()

@@ -57,7 +57,6 @@ class Cliente:
         try:
             self.socket_cliente.connect((self.host, self.port))
         except ConnectionError:
-            print(f"No se pudo conectar a {self.host}:{self.port}")
             self.socket_cliente.close()
 
         else:
@@ -74,7 +73,6 @@ class Cliente:
             try:
                 mensaje = self.recibir()
             except ConnectionResetError:
-                print("Error de conexión con el servidor")
                 self.socket_cliente.close()
             else:
                 if mensaje[1] == "mensaje":
@@ -108,7 +106,7 @@ class Cliente:
         try:
             largo = self.socket_cliente.recv(4)
         except ConnectionError:
-            print("Error al escuchar al servidor")
+            pass
         array += largo
         largo = int.from_bytes(largo, byteorder="big")
 
