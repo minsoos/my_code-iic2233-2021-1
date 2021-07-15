@@ -163,7 +163,7 @@ class Logica(QObject):
     # ------------------------------ ventana juego
 
     def iniciar_juego(self):
-        if len(self.usuarios_activos) == self.parametros["CANTIDAD_JUGADORES_PARTIDA"]:
+        if len(self.usuarios_que_votaron) == self.parametros["CANTIDAD_JUGADORES_PARTIDA"]:
             turnos_partida = [i + 1 for i in range(self.parametros["CANTIDAD_JUGADORES_PARTIDA"])]
             self.turnos_de_jugadores = {}
             self.jugadores_segun_turno = {}
