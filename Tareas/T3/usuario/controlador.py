@@ -3,9 +3,7 @@ from ventanas.ventana_espera import VentanaEspera
 from ventanas.ventana_juego import VentanaJuego
 from ventanas.ventana_final import VentanaFinal
 from PyQt5.QtCore import pyqtSignal, QObject
-from PyQt5.QtGui import QPixmap, QIcon
-from PyQt5 import uic
-from utils import cargar_parametros, normalizar_ruta, ordenamiento_por_puntaje
+from utils import ordenamiento_por_puntaje
 
 
 class Controlador(QObject):

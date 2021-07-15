@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QPen, QPixmap, QIcon, QPainter
+from PyQt5.QtGui import QPen, QPixmap, QPainter
 from PyQt5 import uic
 from PyQt5.QtWidgets import QLabel
 from utils import cargar_parametros, normalizar_ruta, ordenamiento_por_turno

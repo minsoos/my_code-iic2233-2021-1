@@ -1,7 +1,4 @@
-from codificacion import codificar_imagen
 from PyQt5.QtCore import pyqtSignal, QObject
-from PyQt5.QtGui import QPixmap, QIcon
-from PyQt5 import uic
 from random import choice, randint
 from utils import cargar_parametros, contar_caminos, normalizar_ruta, crear_mapa
 

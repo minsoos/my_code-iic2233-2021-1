@@ -1,7 +1,6 @@
 """
 Modulo contiene implementación principal del servidor
 """
-import json
 import socket
 import threading
 from codificacion import decodificar_imagen, decodificar_mensaje, codificar_mensaje, codificar_imagen

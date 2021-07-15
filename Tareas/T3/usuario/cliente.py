@@ -1,7 +1,6 @@
 """
 Modulo contiene implementación principal del cliente
 """
-import json
 import threading
 import socket
 from codificacion import decodificar_imagen, decodificar_mensaje, codificar_mensaje

@@ -1,5 +1,4 @@
 import json
-from base64 import b64encode
 """
 Modulo para funciones de codificacion y decodificacion para envio de mensajes.
 Recuerda, no debes modificar los argumentos que recibe cada funcion,

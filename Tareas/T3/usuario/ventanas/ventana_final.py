@@ -1,8 +1,7 @@
-from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QMovie, QPen, QPixmap, QIcon, QPainter
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtGui import QMovie, QPixmap
 from PyQt5 import uic
-from PyQt5.QtWidgets import QLabel
-from utils import (cargar_parametros, normalizar_ruta, ordenamiento_por_puntaje)
+from utils import (cargar_parametros, normalizar_ruta)
 from collections import deque
 parametros = cargar_parametros("parametros.json")
 path_ventana_espera = parametros["RUTAS"]["VENTANA_FINAL"]
@@ -56,7 +55,7 @@ class VentanaFinal(nombre, padre):
 
     def ingresar_puntajes_y_usuarios(self, lista_jugadores):
         cola = deque(lista_jugadores)
-        print("lista jugadores",lista_jugadores)
+        print("lista jugadores", lista_jugadores)
         i = 1
         while len(cola) > 0:
             jugador = cola.popleft()
