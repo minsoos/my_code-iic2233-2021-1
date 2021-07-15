@@ -23,7 +23,6 @@ class Logica(QObject):
         Recibe el id de un usuario y un diccionario a enviar y se encarga de
         mandarle al servidor que lo mande
         '''
-        print(f"enviaré el mensaje {diccionario}")
         self.senal_enviar_mensaje.emit(id_usuario, diccionario)
 
     def caracterizar_mensaje(self, id_usuario, dict_):
@@ -31,7 +30,7 @@ class Logica(QObject):
         if comando == "intentar ingreso sala de espera":
             self.comprobar_nombre_de_usuario(id_usuario, dict_["nombre"])
         elif comando == "iniciar juego":
-            print("Se iniciará una nueva partida")
+            print("Se iniciará una nueva partida\n")
             self.iniciar_juego()
         elif comando == "votar":
             self.votacion_de_mapa(id_usuario, dict_["voto"])
@@ -41,24 +40,22 @@ class Logica(QObject):
             self.volver_a_sala_espera(id_usuario)
         elif comando == "terminar partida":
             self.terminar_juego()
-        else:
-            print("nosé qué me pediste (soy servidor/logica)")
 
     def comprobar_nombre_de_usuario(self, id_usuario, nombre):
         parametro_n_usuarios = self.parametros["CANTIDAD_JUGADORES_PARTIDA"]
         nombres_activos = map(lambda x: x["nombre"], self.usuarios_activos.values())
         if nombre not in nombres_activos and\
             len(self.usuarios_activos) < parametro_n_usuarios and len(nombre) <= 15:
-            print(f"Ingresó un nuevo cliente exitosamente: {nombre}")
+            print(f"Ingresó un nuevo cliente exitosamente: {nombre}\n")
             self.inicializar_usuario(id_usuario, nombre)
         elif len(self.usuarios_activos) >= parametro_n_usuarios:
-            print(f"No hay cupos para que ingrese: {nombre}")
+            print(f"No hay cupos para que ingrese: {nombre}\n")
             diccionario = {
                 "comando": "ingreso denegado",
                 "causal": "cupos"}
             self.enviar_mensaje_a_usuario(id_usuario, diccionario)
         else:
-            print(f"El nombre no es válido, o está siendo usado por otro jugador: {nombre}")
+            print(f"El nombre no es válido, o está siendo usado por otro jugador: {nombre}\n")
             diccionario = {
                 "comando": "ingreso denegado",
                 "causal": "nombre"}
@@ -66,7 +63,6 @@ class Logica(QObject):
 
     def enviar_imagen_a_usuario(self, id_usuario, color):
         path_color = self.parametros["RUTAS"]["IMAGENES_PERFIL"][str(color)]
-        print("emitiré la señal para enviar una imagen")
         self.senal_enviar_imagen.emit(id_usuario, path_color)
 
     def desconectar_usuario(self, id_usuario):
@@ -85,7 +81,7 @@ class Logica(QObject):
         colores_disponibles = {1, 2, 3, 4} - set(map(lambda x: x["color"],
             self.usuarios_activos.values()))
         color_usuario = choice(list(colores_disponibles))
-        print(f"le dimos el color {color_usuario} a {nombre}")
+        print(f"le dimos el color {color_usuario} a {nombre}\n")
         self.usuarios_activos[id_usuario] = {
             "color": color_usuario,
             "nombre": nombre
@@ -115,7 +111,6 @@ class Logica(QObject):
 
         for usuario_n in self.usuarios_activos:
             if usuario_n != id_usuario:
-                #print(f"Enviaré al usuario {self.usuarios_activos[usuario_n]["nombre"]}")
                 usuario_i = self.usuarios_activos[usuario_n]
                 diccionario = {
                     "comando": "nuevo usuario",
@@ -125,7 +120,6 @@ class Logica(QObject):
                 self.enviar_mensaje_a_usuario(id_usuario, diccionario)
 
         # Actualización de sistema de votos
-
         diccionario = {
             "comando": "actualizacion votos",
             "san joaquin": self.conteo_votaciones["san joaquin"],
@@ -133,7 +127,6 @@ class Logica(QObject):
             "nombres votadores": self.usuarios_que_votaron
         }
         self.enviar_mensaje_a_usuario(id_usuario, diccionario)
-
         self.enviar_imagen_a_usuario(id_usuario, color_usuario)
 
     def votacion_de_mapa(self, id_usuario, voto):
@@ -145,7 +138,7 @@ class Logica(QObject):
             raise ValueError("El voto fue inválido")
 
         self.usuarios_que_votaron.append(self.usuarios_activos[id_usuario]["nombre"])
-        print(f"El cliente {self.usuarios_que_votaron[-1]} está listo para empezar")
+        print(f"El cliente {self.usuarios_que_votaron[-1]} está listo para empezar\n")
 
         diccionario = {
             "comando": "actualizacion votos",
@@ -153,7 +146,6 @@ class Logica(QObject):
             "ingenieria": self.conteo_votaciones["ingenieria"],
             "nombres votadores": self.usuarios_que_votaron
         }
-
         for usuario in self.usuarios_activos:
             self.enviar_mensaje_a_usuario(usuario, diccionario)
 
@@ -231,7 +223,6 @@ class Logica(QObject):
     
     def dar_caminos_totales(self):
         self.caminos_faltantes = contar_caminos("mapa.json", self.mapa_de_juego)
-        print(f"Los caminos totales son {self.caminos_faltantes}")
 
     def dar_objetivos_a_usuarios(self):
         self.objetivos = {}
@@ -255,7 +246,6 @@ class Logica(QObject):
                 "desde": nodo_a,
                 "hasta": nodo_b
             }
-            print("enviaré el objetivo al usuario")
             self.senal_enviar_mensaje.emit(usuario, diccionario)
     
     def dar_baterias(self):
@@ -285,10 +275,8 @@ class Logica(QObject):
         self.enviar_mensaje_a_usuario(id_jugador, diccionario)
 
     def jugar_turno(self, id_usuario, diccionario):
-        print("intentando jugar turno")
         nombre_jugador = self.usuarios_activos[id_usuario]["nombre"]
         if self.turnos_de_jugadores[nombre_jugador] == self.turno_actual:
-            print("Jugar turno de verdad")
             accion = diccionario["accion"]
             if accion == "comprar camino":
                 exito = self.intentar_comprar_camino(id_usuario, diccionario["desde"],
@@ -301,11 +289,11 @@ class Logica(QObject):
                     self.turno_actual += 1
                 else:
                     self.turno_actual = 1
-                print(f"Quedan {self.caminos_faltantes} disponibles")
                 if self.caminos_faltantes == 0:
                     self.terminar_juego()
                 else:
-                    print(f"Comienza el turno de {self.jugadores_segun_turno[self.turno_actual]}")
+                    print(f"Comienza el turno de {self.jugadores_segun_turno[self.turno_actual]},"
+                        f" su turno es {self.turno_actual}\n")
                     diccionario = {
                         "comando": "cambiar turno",
                         "turno actual": self.jugadores_segun_turno[self.turno_actual]
@@ -318,7 +306,7 @@ class Logica(QObject):
         self.baterias[self.usuarios_activos[id_usuario]["nombre"]] += adicion
         nombre = self.usuarios_activos[id_usuario]["nombre"]
         print(f"El jugador {nombre} sacó una carta, "
-            f"obteniendo {adicion} baterías")
+            f"obteniendo {adicion} baterías\n")
         self.enviar_info_baterias()
     
     def intentar_comprar_camino(self, id_usuario, desde, hasta):
@@ -339,7 +327,7 @@ class Logica(QObject):
                     raise ValueError("El camino no está en los posibles")
  
                 presio = camino.costo
-                print(f"Tienes {self.baterias[nombre_jugador]} y cuesta {presio}")
+                print(f"Tienes {self.baterias[nombre_jugador]} y cuesta {presio}\n baterías")
                 if self.baterias[nombre_jugador] - presio >= 0:
                     if camino.dueno is None:
                         self.baterias[nombre_jugador] -= presio
@@ -353,12 +341,12 @@ class Logica(QObject):
                         self.caminos_faltantes -= 1
                         print(f"El jugador {nombre_jugador} compró el camino entre "
                             f"{camino.nodo_1.nombre} y {camino.nodo_2.nombre}, "
-                            f"le quedan {self.baterias[nombre_jugador]}")
+                            f"le quedan {self.baterias[nombre_jugador]} baterías\n")
                         return True
                     else:
                         print(f"El jugador {nombre_jugador} no pudo comprar el camino entre"
                             f"{camino.nodo_1.nombre} y {camino.nodo_2.nombre} porque ya tiene "
-                            f" dueño, tiene {self.baterias[nombre_jugador]}")
+                            f" dueño, tiene {self.baterias[nombre_jugador]}\n")
                         diccionario_preventivo["mensaje"] = "El camino ya tiene dueño"
                         self.enviar_mensaje_a_usuario(id_usuario, diccionario_preventivo)
                         return False
@@ -366,19 +354,19 @@ class Logica(QObject):
                     print(f"El jugador {nombre_jugador} no pudo comprar el camino entre"
                             f"{camino.nodo_1.nombre} y {camino.nodo_2.nombre} porque"
                             f"tiene {self.baterias[nombre_jugador]} y el camino cuesta"
-                            f"{presio}")
+                            f"{presio}\n")
                     diccionario_preventivo["mensaje"] = "No tienes suficiente dinero"
                     self.enviar_mensaje_a_usuario(id_usuario, diccionario_preventivo)
                     return False
             else:
                 print(f"El jugador {nombre_jugador} no pudo comprar el camino porque no existe,"
-                    f"tiene {self.baterias[nombre_jugador]}")
+                    f"tiene {self.baterias[nombre_jugador]}\n")
                 diccionario_preventivo["mensaje"] = "El camino que quieres comprar no existe"
                 self.enviar_mensaje_a_usuario(id_usuario, diccionario_preventivo)
                 return False
         else:
             print(f"El jugador {nombre_jugador} no pudo comprar el camino porque los valores"
-                f"ingresados no son válidos. Tiene {self.baterias[nombre_jugador]}")
+                f"ingresados no son válidos. Tiene {self.baterias[nombre_jugador]}\n")
             diccionario_preventivo["mensaje"] = "Los nodos que indicas no son válidos"
             self.enviar_mensaje_a_usuario(id_usuario, diccionario_preventivo)
             return False
@@ -419,16 +407,12 @@ class Logica(QObject):
             lista_caminos_largos = []
             for nodo in self.diccionario_nodos:
                 self.diccionario_nodos[nodo].dfs_camino_propio_mas_largo(nombre,
-                    lista_caminos_largos)
-            
-            print(lista_caminos_largos)
-            
+                    lista_caminos_largos)            
             mas_largo_por_jugador[max(lista_caminos_largos)] = nombre
-        
+
         maximo_largo = max(list(mas_largo_por_jugador.keys()))
         nombre_mas_largo = mas_largo_por_jugador[maximo_largo]
         self.puntajes_de_jugadores[nombre_mas_largo] += self.parametros["PUNTOS_RUTA_LARGA"]
-        print(f"La ruta más larga la tiene {nombre_mas_largo}")
 
         for jugador in self.usuarios_activos:
             nombre = self.usuarios_activos[jugador]["nombre"]
