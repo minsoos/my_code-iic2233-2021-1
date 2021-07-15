@@ -15,12 +15,7 @@ class Logica(QObject):
     def __init__(self) -> None:
         super().__init__()
         self.usuarios_activos = {}
-        self.conteo_votaciones = {
-            "ingenieria": 0,
-            "san joaquin": 0
-        }
-        self.usuarios_que_votaron = []
-
+        self.inicializar_sala_espera()
         self.parametros = cargar_parametros("parametros.json")
         for parametro in self.parametros["RUTAS"]["IMAGENES_PERFIL"]:
             ruta = normalizar_ruta(self.parametros["RUTAS"]["IMAGENES_PERFIL"][parametro])
@@ -45,6 +40,10 @@ class Logica(QObject):
             self.votacion_de_mapa(id_usuario, dict_["voto"])
         elif comando == "jugar turno":
             self.jugar_turno(id_usuario, dict_)
+        elif comando == "volver a espera":
+            self.volver_a_sala_espera(id_usuario)
+        elif comando == "terminar partida":
+            self.terminar_juego()
         else:
             print("nosé qué me pediste (soy servidor/logica)")
 
@@ -77,6 +76,13 @@ class Logica(QObject):
         self.usuarios_activos.pop(id_usuario)
 
     # ---------------------------------- Sala de espera
+
+    def inicializar_sala_espera(self):
+        self.conteo_votaciones = {
+            "ingenieria": 0,
+            "san joaquin": 0
+        }
+        self.usuarios_que_votaron = []
 
     def inicializar_usuario(self, id_usuario, nombre):
         colores_disponibles = {1, 2, 3, 4} - set(map(lambda x: x["color"],
@@ -313,8 +319,9 @@ class Logica(QObject):
     def sacar_carta(self, id_usuario):
         adicion = randint(self.parametros["BATERIAS_MIN"], self.parametros["BATERIAS_MAX"])
         self.baterias[self.usuarios_activos[id_usuario]["nombre"]] += adicion
-        print(f"El jugador {self.usuarios_activos[id_usuario]["nombre"]} sacó una carta,\
-            obteniendo {adicion} baterías")
+        nombre = self.usuarios_activos[id_usuario]["nombre"]
+        print(f"El jugador {nombre} sacó una carta, "
+            f"obteniendo {adicion} baterías")
         self.enviar_info_baterias()
     
     def intentar_comprar_camino(self, id_usuario, desde, hasta):
@@ -347,34 +354,34 @@ class Logica(QObject):
                         self.comprobar_objetivo_cumplido(id_usuario)
                         self.enviar_info_puntaje(id_usuario)
                         self.caminos_faltantes -= 1
-                        print(f"El jugador {nombre_jugador} compró el camino entre\
-                            {camino.nodo_1.nombre} y {camino.nodo_2.nombre},\
-                            le quedan {self.baterias[nombre_jugador]}")
+                        print(f"El jugador {nombre_jugador} compró el camino entre "
+                            f"{camino.nodo_1.nombre} y {camino.nodo_2.nombre}, "
+                            f"le quedan {self.baterias[nombre_jugador]}")
                         return True
                     else:
-                        print(f"El jugador {nombre_jugador} no pudo comprar el camino entre\
-                            {camino.nodo_1.nombre} y {camino.nodo_2.nombre} porque ya tiene dueño,\
-                            tiene {self.baterias[nombre_jugador]}")
+                        print(f"El jugador {nombre_jugador} no pudo comprar el camino entre"
+                            f"{camino.nodo_1.nombre} y {camino.nodo_2.nombre} porque ya tiene "
+                            f" dueño, tiene {self.baterias[nombre_jugador]}")
                         diccionario_preventivo["mensaje"] = "El camino ya tiene dueño"
                         self.enviar_mensaje_a_usuario(id_usuario, diccionario_preventivo)
                         return False
                 else:
-                    print(f"El jugador {nombre_jugador} no pudo comprar el camino entre\
-                            {camino.nodo_1.nombre} y {camino.nodo_2.nombre} porque\
-                            tiene {self.baterias[nombre_jugador]} y el camino cuesta\
-                            {presio}")
+                    print(f"El jugador {nombre_jugador} no pudo comprar el camino entre"
+                            f"{camino.nodo_1.nombre} y {camino.nodo_2.nombre} porque"
+                            f"tiene {self.baterias[nombre_jugador]} y el camino cuesta"
+                            f"{presio}")
                     diccionario_preventivo["mensaje"] = "No tienes suficiente dinero"
                     self.enviar_mensaje_a_usuario(id_usuario, diccionario_preventivo)
                     return False
             else:
-                print(f"El jugador {nombre_jugador} no pudo comprar el camino porque no existe,\
-                            tiene {self.baterias[nombre_jugador]}")
+                print(f"El jugador {nombre_jugador} no pudo comprar el camino porque no existe,"
+                    f"tiene {self.baterias[nombre_jugador]}")
                 diccionario_preventivo["mensaje"] = "El camino que quieres comprar no existe"
                 self.enviar_mensaje_a_usuario(id_usuario, diccionario_preventivo)
                 return False
         else:
-            print(f"El jugador {nombre_jugador} no pudo comprar el camino porque los valores\
-                            ingresados no son válidos. Tiene {self.baterias[nombre_jugador]}")
+            print(f"El jugador {nombre_jugador} no pudo comprar el camino porque los valores"
+                f"ingresados no son válidos. Tiene {self.baterias[nombre_jugador]}")
             diccionario_preventivo["mensaje"] = "Los nodos que indicas no son válidos"
             self.enviar_mensaje_a_usuario(id_usuario, diccionario_preventivo)
             return False
@@ -404,12 +411,52 @@ class Logica(QObject):
             self.enviar_mensaje_a_usuario(jugador, diccionario)
     
     def terminar_juego(self):
+        mas_largo_por_jugador = {}
         for jugador in self.usuarios_activos:
             nombre = self.usuarios_activos[jugador]["nombre"]
             if self.objetivos[nombre]["cumplido"]:
                 self.puntajes_de_jugadores[nombre] += self.parametros["PUNTOS_OBJETIVO"]
             else:
                 self.puntajes_de_jugadores[nombre] -= self.parametros["PUNTOS_OBJETIVO"]
-                self.puntajes_de_jugadores[nombre] = max(0, self.puntajes_de_jugadores)
-        
 
+            lista_caminos_largos = []
+            for nodo in self.diccionario_nodos:
+                self.diccionario_nodos[nodo].dfs_camino_propio_mas_largo(nombre,
+                    lista_caminos_largos)
+            
+            print(lista_caminos_largos)
+            
+            mas_largo_por_jugador[max(lista_caminos_largos)] = nombre
+        
+        maximo_largo = max(list(mas_largo_por_jugador.keys()))
+        nombre_mas_largo = mas_largo_por_jugador[maximo_largo]
+        self.puntajes_de_jugadores[nombre_mas_largo] += self.parametros["PUNTOS_RUTA_LARGA"]
+        print(f"La ruta más larga la tiene {nombre_mas_largo}")
+
+        for jugador in self.usuarios_activos:
+            nombre = self.usuarios_activos[jugador]["nombre"]
+            self.puntajes_de_jugadores[nombre] = max(0, self.puntajes_de_jugadores[nombre])
+        
+        diccionario = {
+            "comando": "pasar a ventana final",
+            "puntajes": self.puntajes_de_jugadores
+        }
+        for jugador in self.usuarios_activos:
+            self.enviar_mensaje_a_usuario(jugador, diccionario)
+        self.inicializar_sala_espera()
+        self.limpiar_sala_espera_y_juego()
+
+    # --------------------------------- Ventana final
+
+    def volver_a_sala_espera(self, id_usuario):
+        diccionario = {
+            "comando": "volver a sala de espera"
+        }
+        self.enviar_mensaje_a_usuario(id_usuario, diccionario)
+    
+    def limpiar_sala_espera_y_juego(self):
+        diccionario = {
+            "comando": "limpiar salas",
+        }
+        for usuario in self.usuarios_activos:
+            self.enviar_mensaje_a_usuario(usuario, diccionario)

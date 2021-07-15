@@ -1,10 +1,11 @@
 from ventanas.ventana_inicio import VentanaInicio
 from ventanas.ventana_espera import VentanaEspera
 from ventanas.ventana_juego import VentanaJuego
+from ventanas.ventana_final import VentanaFinal
 from PyQt5.QtCore import pyqtSignal, QObject
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5 import uic
-from utils import cargar_parametros, normalizar_ruta
+from utils import cargar_parametros, normalizar_ruta, ordenamiento_por_puntaje
 
 
 class Controlador(QObject):
@@ -29,12 +30,19 @@ class Controlador(QObject):
     senal_pintar_camino = pyqtSignal(list, list, str)
     senal_setear_puntaje = pyqtSignal(int)
     senal_objetivo_cumplido = pyqtSignal()
+    # Hacia la ventana final
+    senal_enviar_puntajes_a_final = pyqtSignal(list)
+    senal_dar_gif_celebracion = pyqtSignal()
+    senal_esconder_ventana_juego = pyqtSignal()
+    senal_limpiar_salas = pyqtSignal()
+    senal_mostrar_ventana_espera = pyqtSignal()
 
     def __init__(self, ruta_logo, ruta_nubes) -> None:
         super().__init__()
         self.ventana_inicio = VentanaInicio(ruta_logo, ruta_nubes)
         self.ventana_espera = VentanaEspera()
         self.ventana_juego = VentanaJuego()
+        self.ventana_final = VentanaFinal()
 
         self.dict_jugadores_activos = dict()
 
@@ -68,8 +76,17 @@ class Controlador(QObject):
         self.senal_pintar_camino.connect(self.ventana_juego.dibujar_linea)
         self.senal_setear_puntaje.connect(self.ventana_juego.setear_puntaje)
         self.senal_objetivo_cumplido.connect(self.ventana_juego.objetivo_cumplido)
-        
-    
+        self.ventana_juego.senal_terminela_profe.connect(self.parar_juego)
+        self.senal_esconder_ventana_juego.connect(self.ventana_juego.esconderse)
+
+        # Ventana final
+        self.senal_enviar_puntajes_a_final.connect(self.ventana_final.ingresar_puntajes_y_usuarios)
+        self.ventana_final.senal_jugar_denuevo.connect(self.solicitar_volver_a_espera)
+        self.senal_dar_gif_celebracion.connect(self.ventana_final.habilitar_gif_celebracion)
+        self.senal_limpiar_salas.connect(self.ventana_espera.limpiar_sala)
+        self.senal_limpiar_salas.connect(self.ventana_juego.limpiar_sala)
+        self.senal_mostrar_ventana_espera.connect(self.ventana_espera.mostrar)
+
     def manejar_mensaje(self, mensaje):
         '''
         Recibe un diccionario que le envía el cliente, y realiza la acción
@@ -114,6 +131,12 @@ class Controlador(QObject):
             self.setear_puntaje(mensaje["puntaje"])
         elif accion == "objetivo cumplido":
             self.dar_objetivo_por_cumplido()
+        elif accion == "pasar a ventana final":
+            self.pasar_a_ventana_final(mensaje["puntajes"])
+        elif accion == "volver a sala de espera":
+            self.volver_a_sala_de_espera()
+        elif accion == "limpiar salas":
+            self.limpiar_salas()
         else:
             raise ValueError("La acción no está en mis registros")
     
@@ -211,7 +234,6 @@ class Controlador(QObject):
         self.enviar_mensaje_a_servidor(diccionario)
     
     def pintar_camino(self, color, pos_1, pos_2):
-        print("Debo pintar el camino")
         if color == 1:
             color_imagen = "azul"
         elif color == 2:
@@ -228,3 +250,35 @@ class Controlador(QObject):
     
     def setear_puntaje(self, puntaje):
         self.senal_setear_puntaje.emit(puntaje)
+    
+    def pasar_a_ventana_final(self, dict_):
+        lista_jugadores = []
+        for jugador in dict_:
+            lista_jugadores.append((jugador, dict_[jugador]))
+        lista_jugadores.sort(key=ordenamiento_por_puntaje, reverse=True)
+
+        if self.nombre_usuario == lista_jugadores[0][0]:
+            self.senal_dar_gif_celebracion.emit()
+        print("esconderé el juego y conf la de puntajes")
+        self.senal_esconder_ventana_juego.emit()
+        self.senal_enviar_puntajes_a_final.emit(lista_jugadores)
+    
+    def parar_juego(self):
+        diccionario = {
+            "comando": "terminar partida",
+        }
+        self.enviar_mensaje_a_servidor(diccionario)
+    
+    # ---------------------------------------------- Ventana final
+
+    def solicitar_volver_a_espera(self):
+        diccionario = {
+            "comando": "volver a espera",
+        }
+        self.enviar_mensaje_a_servidor(diccionario)
+    
+    def volver_a_sala_de_espera(self):
+        self.senal_mostrar_ventana_espera.emit()
+
+    def limpiar_salas(self):
+        self.senal_limpiar_salas.emit()

@@ -89,10 +89,24 @@ class Nodo:
                         return True
         return False
     
-    def dfs_camino_propio_mas_largo(self, nombre_usuario, visitados=None):
-        pass
-            
+    def dfs_camino_propio_mas_largo(self, nombre_usuario, lista_largos, visitados=None,
+            precio=0):
 
+        visitados = visitados or set()
+
+        visitados.add(self)
+
+        for camino in self.caminos:
+            costo = camino.costo
+            vecino = camino.nodo_1 if camino.nodo_1 != self else camino.nodo_2
+            if camino.dueno == nombre_usuario:
+                if vecino not in visitados:
+                    vecino.dfs_camino_propio_mas_largo(nombre_usuario,
+                        lista_largos, visitados, precio + costo)
+                else:
+                    lista_largos.append(precio + costo)
+            else:
+                lista_largos.append(precio)
 
 
 class Camino:
@@ -142,6 +156,7 @@ def crear_mapa(ruta, mapa):
                 diccionario_puntos[punto].agregar_camino(nodo_2, presio)
 
     return diccionario_puntos
+
 
 def contar_caminos(ruta, mapa):
     with open(ruta, encoding='utf-8') as archivo:

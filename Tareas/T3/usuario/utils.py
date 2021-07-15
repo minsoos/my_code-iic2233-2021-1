@@ -16,3 +16,6 @@ def cargar_parametros(ruta=path.join("parametros.json")):
 
 def ordenamiento_por_turno(objeto):
     return objeto["turno"]
+
+def ordenamiento_por_puntaje(objeto):
+    return objeto[1]

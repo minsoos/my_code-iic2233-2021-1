@@ -13,7 +13,9 @@
         "IMAGEN_NUBES_ESPERA": "sprites_usuario/nubes_espera.jpeg",
         "MAPA_SAN_JOAQUIN": "sprites_usuario/Mapas/Mapa SJ.png",
         "MAPA_INGENIERIA": "sprites_usuario/Mapas/Mapa ING.png",
-        "VENTANA_JUEGO": "assets/ventana_juego.ui"
+        "VENTANA_JUEGO": "assets/ventana_juego.ui",
+        "VENTANA_FINAL": "assets/ventana_final.ui",
+        "GIF_CELEBRACION":"sprites_usuario/pangui_celebrando.gif"
 
     }
 }

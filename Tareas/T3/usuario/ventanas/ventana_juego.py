@@ -14,6 +14,7 @@ class VentanaJuego(nombre, padre):
 
     senal_comprar_camino = pyqtSignal(tuple)
     senal_sacar_carta = pyqtSignal()
+    senal_terminela_profe = pyqtSignal()
 
     def __init__(self) -> None:
         super().__init__()
@@ -142,7 +143,6 @@ class VentanaJuego(nombre, padre):
                 pixmap.loadFromData(imagen_en_bytes)
                 self.labels_foto_de_jugador[llave].setPixmap(pixmap)
                 break
-        print(f"los jugadores son {self.jugadores}")
 
     def setear_baterias(self, baterias):
         for usuario in baterias:
@@ -202,5 +202,16 @@ class VentanaJuego(nombre, padre):
         self.label.setPixmap(pixmap)
         self.label.show()
         self.labels_rayas.append(self.label)
-        
-        
+    
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_L:
+            self.senal_terminela_profe.emit()
+    
+    def limpiar_sala(self):
+        for label in self.labels_rayas:
+            label.hide()
+        self.labels_rayas = []
+        self.label_aviso.setText("Caja de aviso")
+        self.mi_puntaje.setText("000")
+        self.edit_comprar_desde.setText("")
+        self.edit_comprar_hacia.setText("")
