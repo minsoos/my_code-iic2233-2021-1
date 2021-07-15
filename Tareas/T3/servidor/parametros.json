@@ -14,6 +14,6 @@
         "4": "amarillo"
     },
     "CANTIDAD_JUGADORES_PARTIDA": 2,
-    "BATERIAS_MIN": 2,
-    "BATERIAS_MAX": 5
+    "BATERIAS_MIN": 20,
+    "BATERIAS_MAX": 50
 }

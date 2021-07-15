@@ -1,4 +1,10 @@
 {
+    "LABEL_MAPA":{
+        "X_LEFT":10,
+        "X_RIGHT":670,
+        "Y_UP":150,
+        "Y_DOWN":645
+    },
     "RUTAS":{
         "VENTANA_INICIO":"assets/ventana_inicio.ui",
         "IMAGEN_NUBES":"sprites_usuario/nubes.jpg",

@@ -1,6 +1,7 @@
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtGui import QPixmap, QIcon, QPainter
+from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtGui import QPen, QPixmap, QIcon, QPainter
 from PyQt5 import uic
+from PyQt5.QtWidgets import QLabel
 from utils import cargar_parametros, normalizar_ruta, ordenamiento_por_turno
 
 parametros = cargar_parametros("parametros.json")
@@ -19,6 +20,7 @@ class VentanaJuego(nombre, padre):
         self.setupUi(self)
 
         parametros = cargar_parametros()
+        self.labels_rayas = []
         self.dict_parametros = dict()
         mapa_sj = parametros["RUTAS"]["MAPA_SAN_JOAQUIN"]
         self.dict_parametros["mapa_sj"] = mapa_sj
@@ -28,6 +30,7 @@ class VentanaJuego(nombre, padre):
         self.dict_parametros["fondo"] = fondo
         for elemento in self.dict_parametros:
             self.dict_parametros[elemento] = normalizar_ruta(self.dict_parametros[elemento])
+        self.dict_parametros["LABEL_MAPA"] = parametros["LABEL_MAPA"]
 
         self.label_fondo.setPixmap(QPixmap(self.dict_parametros["fondo"]))
         self.boton_comprar.clicked.connect(self.metodo_comprar_camino)
@@ -167,5 +170,35 @@ class VentanaJuego(nombre, padre):
         self.label_turno_actual.setText(nombre)
     
     def dibujar_linea(self, posicion_1, posicion_2, color):
-        pintador = QPainter()
-        pintador.drawLine(posicion_1[0], posicion_1[1], *posicion_2)
+        p_mapa = self.dict_parametros["LABEL_MAPA"]
+        x_left, x_right = p_mapa["X_LEFT"], p_mapa["X_RIGHT"]
+        y_up, y_down = p_mapa["Y_UP"], p_mapa["Y_DOWN"]
+        self.label = QLabel(self)
+        self.label.setGeometry(x_left, y_up, (x_right - x_left), (y_down - y_up))
+        print(x_left, y_up, (x_right - x_left), (y_down - y_up))
+        pixmap = QPixmap(self.label.size())
+        pixmap.fill(Qt.transparent)
+        pintador = QPainter(pixmap)
+        if color == "rojo":
+            color_pen = Qt.red
+        elif color == "azul":
+            color_pen = Qt.blue
+        elif color == "amarillo":
+            color_pen = Qt.yellow
+        elif color == "verde":
+            color_pen = Qt.green
+        pen = QPen(color_pen, 10)
+        pintador.setPen(pen)
+        x1 = posicion_1[0] * (x_right - x_left)
+        y1 = posicion_1[1] * (y_down - y_up)
+        x2 = posicion_2[0] * (x_right - x_left)
+        y2 = posicion_2[1] * (y_down - y_up)
+        print(x1, y1, x2, y2)
+        pintador.drawLine(x1, y1, x2, y2)
+
+        pintador.end()
+        self.label.setPixmap(pixmap)
+        self.label.show()
+        self.labels_rayas.append(self.label)
+        
+        

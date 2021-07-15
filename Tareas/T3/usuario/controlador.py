@@ -26,6 +26,7 @@ class Controlador(QObject):
     senal_setear_baterias = pyqtSignal(object)
     senal_anunciar_error_en_juego = pyqtSignal(str)
     senal_cambiar_turno = pyqtSignal(str)
+    senal_pintar_camino = pyqtSignal(list, list, str)
 
     def __init__(self, ruta_logo, ruta_nubes) -> None:
         super().__init__()
@@ -61,6 +62,8 @@ class Controlador(QObject):
         self.ventana_juego.senal_comprar_camino.connect(self.comprar_camino)
         self.senal_anunciar_error_en_juego.connect(self.ventana_juego.setear_error)
         self.senal_cambiar_turno.connect(self.ventana_juego.cambiar_turno)
+        self.ventana_juego.senal_sacar_carta.connect(self.sacar_carta)
+        self.senal_pintar_camino.connect(self.ventana_juego.dibujar_linea)
         
     
     def manejar_mensaje(self, mensaje):
@@ -179,19 +182,36 @@ class Controlador(QObject):
     def anunciar_error(self, mensaje):
         self.senal_anunciar_error_en_juego.emit(mensaje)
     
-    def comprar_camino(self, desde, hasta):
+    def comprar_camino(self, viaje):
         diccionario = {
             "comando": "jugar turno",
             "accion": "comprar camino",
-            "desde": desde,
-            "hasta": hasta
+            "desde": viaje[0],
+            "hasta": viaje[1]
+        }
+        print("Pedí comprar un camino")
+        self.enviar_mensaje_a_servidor(diccionario)
+    
+    def sacar_carta(self):
+        diccionario = {
+            "comando": "jugar turno",
+            "accion": "sacar carta"
         }
         self.enviar_mensaje_a_servidor(diccionario)
     
     def pintar_camino(self, color, pos_1, pos_2):
         print("Debo pintar el camino")
-        if color == "rojo":
-            pass
+        if color == 1:
+            color_imagen = "azul"
+        elif color == 2:
+            color_imagen = "rojo"
+        elif color == 3:
+            color_imagen = "verde"
+        elif color == 4:
+            color_imagen = "amarillo"
+        
+        self.senal_pintar_camino.emit(pos_1, pos_2, color_imagen)
+
     
     def cambiar_turno(self, nombre_jugador):
         self.senal_cambiar_turno.emit(nombre_jugador)

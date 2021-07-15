@@ -260,33 +260,41 @@ class Logica(QObject):
             self.enviar_mensaje_a_usuario(usuario, diccionario)
     
     def jugar_turno(self, id_usuario, diccionario):
-        nombre_jugador = self.usuarios_activos[id_usuario]
-        if self.turnos_de_jugadores[nombre_jugador] == self.turno_actual:
+        print("intentando jugar turno")
+        nombre_jugador = self.usuarios_activos[id_usuario]["nombre"]
+        if self.turnos_de_jugadores[nombre_jugador]== self.turno_actual:
+            print("Jugar turno de verdad")
             accion = diccionario["accion"]
             if accion == "comprar camino":
-                self.intentar_comprar_camino(id_usuario, diccionario["desde"], diccionario["hasta"])
+                exito = self.intentar_comprar_camino(id_usuario, diccionario["desde"],
+                diccionario["hasta"])
             elif accion == "sacar carta":
                 self.sacar_carta(id_usuario)
+                exito = True
+            if exito:
+                if (self.turno_actual + 1) in self.turnos_de_jugadores.values():
+                    self.turno_actual += 1
+                else:
+                    self.turno_actual = 1
 
-            if (self.turno_actual + 1) in self.turnos_de_jugadores.values():
-                self.turno_actual += 1
-            else:
-                self.turno_actual = 1
-            
-
-            diccionario = {
-                "comando": "cambiar turno",
-                "turno actual": self.jugadores_segun_turno[self.turno_actual]
-            }
-            for jugador in self.usuarios_activos:
-                self.enviar_mensaje_a_usuario(jugador, diccionario)
+                diccionario = {
+                    "comando": "cambiar turno",
+                    "turno actual": self.jugadores_segun_turno[self.turno_actual]
+                }
+                for jugador in self.usuarios_activos:
+                    self.enviar_mensaje_a_usuario(jugador, diccionario)
+    
+    def sacar_carta(self, id_usuario):
+        adicion = randint(self.parametros["BATERIAS_MIN"], self.parametros["BATERIAS_MAX"])
+        self.baterias[self.usuarios_activos[id_usuario]["nombre"]] += adicion
+        self.enviar_info_baterias()
     
     def intentar_comprar_camino(self, id_usuario, desde, hasta):
         diccionario_preventivo = {
             "comando": "anunciar error"
         }
 
-        nombre_jugador = self.usuarios_activos[id_usuario]
+        nombre_jugador = self.usuarios_activos[id_usuario]["nombre"]
         desde, hasta = desde.upper(), hasta.upper()
         nombre_nodos = self.diccionario_nodos.keys()
         primera_condicion = desde in nombre_nodos
@@ -299,24 +307,36 @@ class Logica(QObject):
                     raise ValueError("El camino no está en los posibles")
  
                 presio = camino.costo
+                print(f"Tienes {self.baterias[nombre_jugador]} y cuesta {presio}")
                 if self.baterias[nombre_jugador] - presio >= 0:
-                    self.baterias[nombre_jugador] -= presio
-                    print("Aquí debo modificar los puntajes")
-                    self.enviar_info_baterias()
-                    self.enviar_pintada_de_camino(id_usuario, camino)
+                    if camino.dueno is None:
+                        self.baterias[nombre_jugador] -= presio
+                        print("Aquí debo modificar los puntajes")
+                        self.enviar_info_baterias()
+                        self.enviar_pintada_de_camino(id_usuario, camino)
+                        camino.dueno = nombre_jugador
+                        return True
+                    else:
+                        diccionario_preventivo["mensaje"] = "El camino ya tiene dueño"
+                        self.enviar_mensaje_a_usuario(id_usuario, diccionario_preventivo)
+                        return False
                 else:
+                    print(f"No te alcanza, tienes {self.baterias[nombre_jugador]} y cuesta {presio}")
                     diccionario_preventivo["mensaje"] = "No tienes suficiente dinero"
                     self.enviar_mensaje_a_usuario(id_usuario, diccionario_preventivo)
+                    return False
             else:
                 diccionario_preventivo["mensaje"] = "El camino que quieres comprar no existe"
                 self.enviar_mensaje_a_usuario(id_usuario, diccionario_preventivo)
+                return False
         else:
             diccionario_preventivo["mensaje"] = "Los nodos que indicas no son válidos"
             self.enviar_mensaje_a_usuario(id_usuario, diccionario_preventivo)
+            return False
     
     def enviar_pintada_de_camino(self, id_usuario, camino):
-        pos_nodo_1 = camino.nodo_1.x, camino.nodo_1.y
-        pos_nodo_2 = camino.nodo_2.x, camino.nodo_2.y
+        pos_nodo_1 = (camino.nodo_1.x, camino.nodo_1.y)
+        pos_nodo_2 = (camino.nodo_2.x, camino.nodo_2.y)
         color = self.usuarios_activos[id_usuario]["color"]
         diccionario = {
             "comando": "pintar camino",
