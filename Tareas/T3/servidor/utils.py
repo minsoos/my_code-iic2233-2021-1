@@ -34,7 +34,7 @@ class Nodo:
         visitados.add(self)
 
         for camino in self.caminos:
-            vecino = camino.nodo_1 if camino.nodo_1 != self else camino.nodo2
+            vecino = camino.nodo_1 if camino.nodo_1 != self else camino.nodo_2
             if vecino not in visitados:
                 if vecino.nombre == nombre_nodo:
                     return vecino
@@ -71,6 +71,26 @@ class Nodo:
             if opcion_1 or opcion_2:
                 return camino
         return None
+    
+    def dfs_cumplimiento_de_objetivo(self, nombre_otro_nodo, nombre_usuario, visitados=None):
+        visitados = visitados or set()
+
+        visitados.add(self)
+
+        for camino in self.caminos:
+            if camino.dueno == nombre_usuario:
+                vecino = camino.nodo_1 if camino.nodo_1 != self else camino.nodo_2
+                if vecino not in visitados:
+                    if vecino.nombre == nombre_otro_nodo:
+                        return True
+                    
+                    if vecino.dfs_cumplimiento_de_objetivo(nombre_otro_nodo, nombre_usuario,
+                        visitados):
+                        return True
+        return False
+    
+    def dfs_camino_propio_mas_largo(self, nombre_usuario, visitados=None):
+        pass
             
 
 
@@ -91,7 +111,7 @@ class Camino:
             return False
 
 
-def crear_mapa(ruta="mapa.json", mapa="ingenieria"):
+def crear_mapa(ruta, mapa):
     with open(ruta, encoding='utf-8') as archivo:
         diccionario = json.load(archivo)
 
@@ -122,3 +142,23 @@ def crear_mapa(ruta="mapa.json", mapa="ingenieria"):
                 diccionario_puntos[punto].agregar_camino(nodo_2, presio)
 
     return diccionario_puntos
+
+def contar_caminos(ruta, mapa):
+    with open(ruta, encoding='utf-8') as archivo:
+        diccionario = json.load(archivo)
+    if mapa == "ingenieria":
+        key_mapa = "ingenieria"
+    elif mapa == "san joaquin":
+        key_mapa = "san_joaquin"
+    else:
+        raise ValueError("El mapa ingresado no está en las opciones")
+    set_total = set()
+    caminos = diccionario["mapa"][key_mapa]["caminos"]
+    for punto in caminos:
+        for camino in caminos[punto]:
+            lista_i1 = (punto, camino[0])
+            lista_i2 = (camino[0], punto)
+            if lista_i1 not in set_total and lista_i2 not in set_total:
+                set_total.add(lista_i1)
+    return len(set_total)
+

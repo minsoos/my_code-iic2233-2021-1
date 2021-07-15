@@ -27,6 +27,8 @@ class Controlador(QObject):
     senal_anunciar_error_en_juego = pyqtSignal(str)
     senal_cambiar_turno = pyqtSignal(str)
     senal_pintar_camino = pyqtSignal(list, list, str)
+    senal_setear_puntaje = pyqtSignal(int)
+    senal_objetivo_cumplido = pyqtSignal()
 
     def __init__(self, ruta_logo, ruta_nubes) -> None:
         super().__init__()
@@ -64,6 +66,8 @@ class Controlador(QObject):
         self.senal_cambiar_turno.connect(self.ventana_juego.cambiar_turno)
         self.ventana_juego.senal_sacar_carta.connect(self.sacar_carta)
         self.senal_pintar_camino.connect(self.ventana_juego.dibujar_linea)
+        self.senal_setear_puntaje.connect(self.ventana_juego.setear_puntaje)
+        self.senal_objetivo_cumplido.connect(self.ventana_juego.objetivo_cumplido)
         
     
     def manejar_mensaje(self, mensaje):
@@ -106,6 +110,10 @@ class Controlador(QObject):
             self.anunciar_error(mensaje["mensaje"])
         elif accion == "cambiar turno":
             self.cambiar_turno(mensaje["turno actual"])
+        elif accion == "setear puntaje":
+            self.setear_puntaje(mensaje["puntaje"])
+        elif accion == "objetivo cumplido":
+            self.dar_objetivo_por_cumplido()
         else:
             raise ValueError("La acción no está en mis registros")
     
@@ -176,6 +184,9 @@ class Controlador(QObject):
     def dar_objetivos_de_juego(self, desde, hasta):
         self.senal_dar_objetivo.emit(desde, hasta)
     
+    def dar_objetivo_por_cumplido(self):
+        self.senal_objetivo_cumplido.emit()
+    
     def setear_baterias(self, baterias):
         self.senal_setear_baterias.emit(baterias)
     
@@ -211,7 +222,9 @@ class Controlador(QObject):
             color_imagen = "amarillo"
         
         self.senal_pintar_camino.emit(pos_1, pos_2, color_imagen)
-
-    
+ 
     def cambiar_turno(self, nombre_jugador):
         self.senal_cambiar_turno.emit(nombre_jugador)
+    
+    def setear_puntaje(self, puntaje):
+        self.senal_setear_puntaje.emit(puntaje)

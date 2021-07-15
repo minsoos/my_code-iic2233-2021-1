@@ -61,7 +61,8 @@ class Servidor:
         """
         while True:
             socket_cliente, direccion_ip = self.socket_servidor.accept()
-            print(f"Un nuevo cliente con dirección {direccion_ip} ha sido aceptado")
+            print(f"Nuevo cliente con dirección {direccion_ip} e id\
+                {self._id_cliente} ha sido aceptado")
             self.clientes_conectados_lock.acquire()
             self.clientes_conectados[self._id_cliente] = socket_cliente
             self.clientes_conectados_lock.release()
@@ -86,7 +87,7 @@ class Servidor:
                 if mensaje is not None:
                     self.logica.caracterizar_mensaje(id_cliente, mensaje)
 
-            except ConnectionResetError as error:
+            except (ConnectionResetError, KeyError) as error:
                 print(f"ERROR: conexión con cliente {id_cliente} fue reseteada")
                 self.eliminar_cliente(id_cliente)
 

@@ -13,6 +13,17 @@
         "3": "verde",
         "4": "amarillo"
     },
+    "COSTO_VS_PUNTOS":{
+        "1":1,
+        "2":2,
+        "3":4,
+        "4":7,
+        "5":10,
+        "6":15,
+        "7":18
+
+    },
+    "PUNTOS_OBJETIVO": 50,
     "CANTIDAD_JUGADORES_PARTIDA": 2,
     "BATERIAS_MIN": 20,
     "BATERIAS_MAX": 50

@@ -148,6 +148,9 @@ class VentanaJuego(nombre, padre):
         for usuario in baterias:
             llave = self.jugadores[usuario]["llave_para_labels"]
             self.labels_baterias_de_jugador[llave].setText(str(baterias[usuario]))
+    
+    def setear_puntaje(self, puntaje):
+        self.mi_puntaje.setText(str(puntaje))
 
     def definir_objetivo(self, desde, hasta):
         self.label_objetivo_desde.setText(str(desde))
@@ -173,9 +176,9 @@ class VentanaJuego(nombre, padre):
         p_mapa = self.dict_parametros["LABEL_MAPA"]
         x_left, x_right = p_mapa["X_LEFT"], p_mapa["X_RIGHT"]
         y_up, y_down = p_mapa["Y_UP"], p_mapa["Y_DOWN"]
+        # https://stackoverflow.com/questions/59866185/how-to-draw-with-qpainter-on-top-of-already-placed-qlabel-or-qpixmap
         self.label = QLabel(self)
         self.label.setGeometry(x_left, y_up, (x_right - x_left), (y_down - y_up))
-        print(x_left, y_up, (x_right - x_left), (y_down - y_up))
         pixmap = QPixmap(self.label.size())
         pixmap.fill(Qt.transparent)
         pintador = QPainter(pixmap)
@@ -187,13 +190,12 @@ class VentanaJuego(nombre, padre):
             color_pen = Qt.yellow
         elif color == "verde":
             color_pen = Qt.green
-        pen = QPen(color_pen, 10)
+        pen = QPen(color_pen, 4)
         pintador.setPen(pen)
         x1 = posicion_1[0] * (x_right - x_left)
         y1 = posicion_1[1] * (y_down - y_up)
         x2 = posicion_2[0] * (x_right - x_left)
         y2 = posicion_2[1] * (y_down - y_up)
-        print(x1, y1, x2, y2)
         pintador.drawLine(x1, y1, x2, y2)
 
         pintador.end()
