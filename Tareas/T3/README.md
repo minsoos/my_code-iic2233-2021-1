@@ -114,7 +114,7 @@ El módulo principal de la tarea a ejecutar es ```main.py``` y está en ```T3/se
 
 ## Flujo del programa :cyclone:
 
-Acá se da el flujo del programa de forma de poder hacer un tracking general de dónde ocurre cada cosa.
+Acá se da el flujo del programa de forma de poder hacer un tracking general de dónde ocurre cada cosa. No pude hacerlo más detallado, hice lo que pude con el tiempo :( sorry
 
   
 
@@ -126,49 +126,13 @@ Acá se da el flujo del programa de forma de poder hacer un tracking general de 
 
 1.  **logica.py**: realiza toda la lógica del servidor. Apoyándose en ```logica_util.py``` (Contiene la función que se encarga de cuando un usuario intenta comprar un camino) y ```utils.py```.
 Esta lógica recibe el diccionario decodificado por servidor.py (el cual se encarga del networking que se hace entre el cliente y servidor). E identifica el comando que envía el usuario. Para hacer lo que tiene configurado según este comando.
-La lógica hace sus modificaciones propias e indica comandos mediante los métodos ```enviar_mensaje_a_usuario()``` y ```enviar_imagen_a_usuario()```, los cuales envían un diccionario y una imagen, respectivamente, a servidor, quien lo codifica y lo envía a usuario
+La lógica hace sus modificaciones propias e indica comandos mediante los métodos ```enviar_mensaje_a_usuario()``` y ```enviar_imagen_a_usuario()```, los cuales envían un diccionario y una imagen, respectivamente, a servidor, quien lo codifica y lo envía a usuario.
+El código está separado por secciones mediante ```# --------------```.
+Se hacen "logs" con ciertos hitos en el código
 
 2.  **controlador.py**: Recibe un comando desde el servidor de la misma manera que la lógica del servidor y lo ejecuta. Este controlador además alberga las instanciaciones de las ventanas. Aquí, se conectan las señales de estas y hacias ellas
 
-3.  **LogicaVentanaInicio**: Si recibe la señal para iniciar partida ejecuta ```comprobar_alfanum```, que ejecuta funciones para comprobar el nombre. En caso de que esté correcto, envía una señal de aprobación a VentanaInicio, en caso contrario levanta una ventana de error. Además, si la ventana de inicio solicita entrar al ranking, abre el ranking
 
-4.  **VentanaRanking**: Es actualizado por su lógica cada vez que se abre. Esta misma le entrega una lista con la que setea los primeros 5 lugares. En caso de que no hayan más de 5, su plantilla viene por defecto con usuario None y 0 ptos.
-
-5.  **LogicaVentanaRanking**: Abre el archivo ranking.txt y revisa las líneas de jugadas anteriores, las ordena por orden de puntaje
-
-6. **VentanaPreparacion**: Da la opción de elegir la dificultad mediante un QComboBox, además se puede elegir un personaje arrastrándolo al tablero. Cuando se hace, se envía una señal al backend para que haga el cambio. Con el teclado se puede mover al personaje y aumentarle la vida con un cheat. Cuando un personaje se intersecta con un edificio, envía una señal del edificio intersectado y la dificultad actual seleccionada al backend. También tiene un botón para solicitar salir a la pantalla de inicio. Por otro lado, actualiza sus datos cada vez que una señal lo solicita.
-
-7. **VentanaMapaErrado**: Se levanta cada vez que un personaje se intersecta con un edificio que no corresponde, por una señal enviada por el backend de ventana preparación. No se muestra si no ha pasado más de TIEMPO_ENTRE_MENSAJES_DE_ERROR entre una llamada a mostrarse y otra
-
-8. **Personajes**: La clase personaje y sus heredados modelan los personajes que controla el jugador en el juego. Estos personajes tienen un QTimer que va alternando entre las variantes 1, 2 y 3 de cada orientación cuando se solicita mover al personaje. Esto para dar la sensación de animación cuando se mueve. Además, cuando se le solicita mover, de acuerdo a su velocidad, entrega una nueva posición, que respeta obstáculos, en caso de estar en un juego, y los márgenes de este. Además, tiene una property de vida que puede ser modificada, pero no varía más allá que entre 0 y 1. Cuando esta llega a cero, envía una señal
-
-9. **LogicaVentanaPreparacion**: Recibe la inicialización dada por la LógicaVentanaInicio, crea instancias de los personajes con los que se puede jugar. Le da una configuración de inicio a la ventana de preparación y la muestra mediante señales. Además, hace las conexiones entre la ventana y los personajes (cuando se sale de la ventana desconecta todo)
-Por otro lado, cada vez que se solicita cambiar un personaje, para el QTimer del anterior, le da la información del mapa al personaje nuevo y empieza su QTimer.
-Cuando recibe una señal sobre una intersección entre edificio y personaje, comprueba que sea con su personaje correspondiente. En caso positivo, cierra la ventana y abre la de juego, enviándole los datos actuales de la ventana más el personaje. En caso negativo levanta la VentanaMapaErrado
-Además, es la encargada de guardar el resultado del juego en ranking.txt cuando se solicita desde la ventana de postronda o de la misma ventana de preparación cuando se solicita salir
-
-10. **VentanaJuego**: Inicializa todo de acuerdo a parámetros fijos de las ventanas de juego y también a argumentos variables entregados por la lógica. Crea los obstáculos mediante una lista que se envía del backend. Crea el personaje revisando que no intersecte con esos obstáculos. Además realiza las conexiones, para que el objeto personaje le envíe actualizaciones de posición y se conecte a un método propio.
-Con respecto al teclado, guarda las últimas 3 teclas que se presionaron, y si la tecla no es para moverse (excluyendo a la D), revisa si hay un cheat code con las últimas 3 teclas apretadas. Vale decir que cuando no se presiona una tecla de relevancia, esta misma se cambia por "z".
-También hace intersects entre los objetos y el personaje, para que cuando haya uno enviar una señal al backend para que haga lo respectivo.
-Cuando recibe una señal de instalar un objeto en una posición, revisa si intersecta con algo, si lo hace, pide nuevamente una señal para que el backend le dé otra posición posible hasta que haya una.
-Lo demás es sólo recibir señales y mandar de acuerdo a cosas apretadas y realizar acciones, actualizaciones en tablero, etc.
-
-11. **Gorgory**: Este personaje guarda en un deque, tuplas con el lugar x,y que se tiene que mover y cuánto tiene que esperar para moverse hacia ese lugar (estas posiciones son enviadas desde el frontend al backend y posteriormente se entregan a Gorgory, que calcula el tiempo intermedio). Con el tiempo de espera hace sleep hasta que pase el tiempo, y posteriormente se mueve hacia donde debe hacerlo
-
-12. **CronometroSegundos**: El tiempo se mide con un cronómetro, que consiste en un QTimer que se actualiza cada 0.01 segundos, esto para poder parar el tiempo en caso de que se pause el juego
-
-13. **LogicaVentanaJuego**: Inicializa todo de acuerdo a parametros fijos y a argumentos entregados por la lógica de la preparación cuando se solicita entrar al juego. En específico, crea un QTimer que es el encargado del tiempo de partida, un generador de objetos, que es el encargado de generar objetos de la clase Objetos cada cierto intervalo de tiempo e instanciar a Gorgory, que es el personaje malo del juego. También genera los obstáculos, enterándose de que no topen entre ellos y haya una distancia suficiente para que un personaje pueda pasar entre ellos Además, hace las conexiones entre los personajes y la ventana (los desconecta al salir de la ventana). 
-Cuando recibe una señal con un objeto del generador de objeto, lo conecta, para que avise cuando caducó, y envía una señal para colocarlo en la ventana de acuerdo a una posición al azar. Cuando el objeto caduca también envía una señal para hacerlo desaparecer. También recibe señales para hacer desaparecer objetos cuando el personaje los toca, y revisa qué tipo de objeto es y qué efectos debe tener. Todo esto se hace con una lista que tiene los mismos índices en el backend que en el frontend.
-La lógica también envía actualizaciones del movimiento y animación de Gorgory.
-Además, maneja los distintos casos en que hay que terminar el juego, llamando a la ventana de postronda. Cuando se pausa, cambia el estado de self.pausa a True, bloqueando varios procesos, y detiene todos los QTimers del juego.
-Revisa si las combinaciones del teclado sirven para cheatcodes y los ejecuta.
-Además envía todas las actualizaciones a la ventana de juego
-
-14. **VentanaJuego**: Es inicializada de acuerdo a los datos que le entrega la lógica, puede bloquear el botón de volver a la preparación si se perdió. Por lo demás, envía señales al backend de acuerdo a qué botón se apretó
-
-15. **LogicaVentanaJuego**: De acuerdo al botón que se apretó, la lógica llama a la ventana preparación o inicio para que se abran, o bien sale del juego. Siempre suma el progreso de la partida a la ventana de preparación, pero sólo en los últimos dos casos, solicita que la ventana preparación guarde el progreso
-
-  
   
   
 
