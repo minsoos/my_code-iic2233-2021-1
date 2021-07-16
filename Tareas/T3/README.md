@@ -114,17 +114,21 @@ El módulo principal de la tarea a ejecutar es ```main.py``` y está en ```T3/se
 
 ## Flujo del programa :cyclone:
 
-Qué hace cada parte del programa está indicado con comentarios en el código, pero acá se da el flujo de este de forma de poder hacer un tracking general de dónde ocurre cada cosa.
+Acá se da el flujo del programa de forma de poder hacer un tracking general de dónde ocurre cada cosa.
 
   
 
-- La función que permite ordenar las listas del archivo ranking.txt por puntaje está en utils.py, se llama ordenar_por_puntaje()
+- Hay una función utils.py en el servidor y en el usuario. En ambos hay una función para cargar los parámetros desde parametros.json y para normalizar la ruta (cambiar el string por un path generado con os.path). 
+- En el servidor hay una clase Nodo, que contiene todas las funciones que se hacen con ella; incluyendo los dfs para ver si se cumple el objetivo del usuario y para identidicar el camino más largod desde un nodo. También hay un camino, que es un objeto que maneja las relaciones entre los nodos. Además hay una función para recuperar la info de los nodos y caminos desde ```mapa.json```. También hay una función para contar los caminos que hay en el mapa correspondiente.
+- En el usuario hay dos funciones para ordenar listas de acuerdo a ciertos parámetros, que se usan como keys en sort().
 
-- Aunque no se especifique repetitivamente, todas las relaciones entre ventanas distintas y backend/frontend se hacen con señales
+- Aunque no se especifique repetitivamente, todas las relaciones entre ventanas distintas y el controlador del usuario se hacen con señales
 
-1.  **Main.py**: Inicializa todas las ventanas, lógica y música y establece las conexiones de señales entre ellas
+1.  **logica.py**: realiza toda la lógica del servidor. Apoyándose en ```logica_util.py``` (Contiene la función que se encarga de cuando un usuario intenta comprar un camino) y ```utils.py```.
+Esta lógica recibe el diccionario decodificado por servidor.py (el cual se encarga del networking que se hace entre el cliente y servidor). E identifica el comando que envía el usuario. Para hacer lo que tiene configurado según este comando.
+La lógica hace sus modificaciones propias e indica comandos mediante los métodos ```enviar_mensaje_a_usuario()``` y ```enviar_imagen_a_usuario()```, los cuales envían un diccionario y una imagen, respectivamente, a servidor, quien lo codifica y lo envía a usuario
 
-2.  **VentanaInicio**: Da la opción de ingresar a la ventana de preparación con un nombre de usuario ingresado en el cuadro de texto o ir a la ventana ranking.
+2.  **controlador.py**: Recibe un comando desde el servidor de la misma manera que la lógica del servidor y lo ejecuta. Este controlador además alberga las instanciaciones de las ventanas. Aquí, se conectan las señales de estas y hacias ellas
 
 3.  **LogicaVentanaInicio**: Si recibe la señal para iniciar partida ejecuta ```comprobar_alfanum```, que ejecuta funciones para comprobar el nombre. En caso de que esté correcto, envía una señal de aprobación a VentanaInicio, en caso contrario levanta una ventana de error. Además, si la ventana de inicio solicita entrar al ranking, abre el ranking
 
@@ -210,37 +214,21 @@ Por otro lado, los módulos que fueron creados fueron los siguientes:
 
   
 
-1.  ```frontend_ventana_inicio```: Contiene a ```VentanaInicio``` y ```VentanaError```
+1.  ```servidor/logica```: Contiene a ```Logica```
 
-2.  ```frontend_ventana_juego```: Contiene a ```VentanaJuego```
+2.  ```servidor/servidor```: Contiene a ```Servidor```
 
-3.  ```frontend_ventana_preparacion```: Contiene a ```VentanaPreparacion``` y ```VentanaMapaErrado```
+3.  ```usuario/ventana_espera```: Contiene a ```VentanaEspera```
 
-4.  ```frontend_ventana_ranking```: Contiene a ```VentanaRanking```
+4.  ```usuario/ventana_final```: Contiene a ```VentanaFinal```
 
-5.  ```labels_drag_drop```: Contiene a ```DragLabel``` y ```DropLabel```
+5.  ```usuario/ventana_inicio```: Contiene a ```VentanaInicio```
 
-6.  ```frontend_ventana_postronda```: Contiene a ```VentanaPostRonda```
+6.  ```usuario/ventana_juego```: Contiene a ```VentanaJuego```
 
-7.  ```backend_ventana_inicio```: Contiene a ```LogicaVentanaInicio```
+7.  ```usuario/cliente```: Contiene a ```Cliente```
 
-8.  ```backend_ventana_juego```: Contiene a ```LogicaVentanaJuego```
-
-9.  ```backend_ventana_postronda```: Contiene a ```LogicaVentanaPostRonda```
-
-10.  ```backend_ventana_preparacion```: Contiene a ```LogicaVentanaPreparacion```
-
-11.  ```musica```: Contiene a ```Musica```
-
-12.  ```backend_ventana_ranking```: Contiene a ```LogicaVentanaRanking```
-
-13.  ```personajes```: Contiene a ```Personaje```, ```Homero```, ```Lisa```, ```Moe```, ```Krusty```, ```Gorgory```, ```CronometroSegundos```
-
-11.  ```utils```: Contiene a ```Generador_de_objetos```, ```Objeto```
-
-12.  ```parametros```: Contiene los parámetros fijos y paths usados en todo el código
-
-
+8.  ```usuario/controlador```: Contiene a ```Controlador```
 
 
 ## Supuestos y consideraciones adicionales :thinking:
@@ -253,7 +241,8 @@ Realicé los siguientes supuestos:
 
 * Se debe instalar la librería ```PyQt5```
 
-* Se subió la carpeta de sprites al servidor y al usuario, ya que se sumaros sprites nuevos y los que estaban quedaron organizados de forma distinta a como se enviaron (dado la separación entre cliente y servidor)
+* Se subió la carpeta de sprites al servidor y al usuario, ya que se sumaron sprites nuevos y los que estaban quedaron organizados de forma distinta a como se enviaron (dado la separación entre cliente y servidor)
+
 * Se le dio un puntaje asignado a los caminos que costaban 7 baterías
 
 
@@ -261,18 +250,13 @@ Realicé los siguientes supuestos:
 
 Para realizar mi tarea saqué código de:
 
-1. \<https://www.programmersought.com/article/37923092494/>: Es un artículo en que enseñan a ocupar QSound
+1. \<https://pythonpyqt.com/pyqt-gif/>: Enseñan a setear gifs
 
-2. \<https://programtalk.com/python-examples/PyQt5.QtCore.Qt.StrongFocus/>: Enseñan a usar setFocusPolicy
-
-3. \<https://stackoverflow.com/questions/9952553/transpaprent-qlabel/10038177>: Enseñan a poner transparencia al label, de todos modos se dejó comentado porque traía problemas
-
-4. \<https://learndataanalysis.org/create-label-to-label-drag-and-drop-effect-pyqt5-tutorial/>: Enseñan a crear los labels drag and drop
-
-5. \<https://doc.qt.io/qt-5/qpoint.html>: Documentación de QPoint
+2. \<https://stackoverflow.com/questions/59866185/how-to-draw-with-qpainter-on-top-of-already-placed-qlabel-or-qpixmap>: Enseña a dibujar rectas sobre un label
 
 
 ## Descuentos
 
+Hardcoding de el puerto y la dirección ip en servidor y usuario
 
 
