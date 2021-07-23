@@ -102,8 +102,8 @@ if __name__ == "__main__":
 
     for consulta in range(6):
         for documento in range(50, 70):
-            descargar_documento(documento, f'documentos/documento{documento-20}.md')
-            with open(f'documentos/documento{documento-20}.md', encoding="UTF-8") as f:
+            descargar_documento(documento, f'documentos/documento{documento}.md')
+            with open(f'documentos/documento{documento}.md', encoding="UTF-8") as f:
                 texto = f.read()
             consulta_elem = consultas[consulta][0]
             patron = consultas[consulta][1]
