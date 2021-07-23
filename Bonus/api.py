@@ -29,7 +29,7 @@ def registro(nombre, username):
 def descargar_documento(identificador_documento, ruta_documento):
     url = URL+f"documentos/{identificador_documento}"
     respuesta = requests.get(url)
-    with open(ruta_documento, "w") as file:
+    with open(ruta_documento, "w", encoding="UTF-8") as file:
         file.write(respuesta.json()["texto"])
 
 
