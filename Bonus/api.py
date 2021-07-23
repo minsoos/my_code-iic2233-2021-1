@@ -29,7 +29,7 @@ def registro(nombre, username):
 def descargar_documento(identificador_documento, ruta_documento):
     url = URL+f"documentos/{identificador_documento}"
     respuesta = requests.get(url)
-    with open(ruta_documento, "w", encoding="UTF-8") as file:
+    with open(ruta_documento, "w") as file:
         file.write(respuesta.json()["texto"])
 
 
@@ -46,17 +46,5 @@ def entregar_consulta(n_consulta, identificador_documento, patron, respuesta):
 
     codigo_respuesta = respuesta1_servidor.json()["proceso"]
 
-    url = URL+f"estudiantes/{USERNAME}/consultas/{codigo_respuesta}"
-    respuesta2_servidor = requests.get(url)
-
-    resultados = respuesta2_servidor.json()["resultado"]
-
-    print(resultados, "\n")
-
-    # if False not in resultados["comparacion"] and resultados["extra"]["largo"][-2] == resultados["extra"]["largo"][-17]:
-    #     print("True\n")
-    # else:
-    #     print("False\n")
-    #     print(respuesta)
 
     return codigo_respuesta
