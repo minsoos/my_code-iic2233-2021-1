@@ -43,3 +43,4 @@ class DCCatastrofe:
 if __name__ == "__main__":
     central = DCCatastrofe(PATH_CSV)
     central.iniciar_simulacion()
+    debugger()

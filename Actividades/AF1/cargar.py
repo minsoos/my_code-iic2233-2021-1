@@ -4,7 +4,7 @@ from collections import namedtuple, defaultdict
 def cargar_platos(ruta_archivo = "platos.csv"):
     archivo = open(ruta_archivo)
     lista_de_platos = archivo.readlines()
-    Plato = namedtuple("platos", ["n", "categoria", "tiempo", "precio", "ingredientes"])
+    Plato = namedtuple("platos", ["nombre", "categoria", "tiempo", "precio", "ingredientes"])
     diccionario_de_platos = dict()
     for i in range(len(lista_de_platos)):
         lista_de_platos[i] = lista_de_platos[i].strip().split(",")

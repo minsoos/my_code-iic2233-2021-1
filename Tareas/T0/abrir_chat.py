@@ -115,7 +115,6 @@ def abrir_chat_grupal(usuario, grupo, lista_mensajes):
     print("\n" + "*"*50 + "\n")
     return escribir_mensaje(usuario, grupo, "grupo")
 
-
 def escribir_mensaje(emisor, receptor, tipo):
     #  Esta función escribe un mensaje en un chat cualquiera
     escrito = input()
@@ -124,12 +123,9 @@ def escribir_mensaje(emisor, receptor, tipo):
             return menu_grupos.menu_grupos(emisor)
         elif tipo == "regular":
             return menu_contactos.menu_contactos(emisor)
-    elif escrito == ABANDONAR_FRASE:
-        if tipo == "regular":
-            print("\nNo puedes salir de una conversación regular\n")
-            return abrir_chat(emisor, receptor, tipo)
-        elif tipo == "grupo":
-            return sacar_de_grupo(emisor, receptor)
+    elif escrito == ABANDONAR_FRASE and tipo == "regular":
+        print("\nNo puedes salir de una conversación regular\n")
+        return abrir_chat(emisor, receptor, tipo)
     else:
         #  Sacamos la fecha
         fecha = datetime.now()
@@ -140,7 +136,8 @@ def escribir_mensaje(emisor, receptor, tipo):
         minuto = fecha.minute
         segundo = fecha.second
         fecha = f"{ano}/{mes}/{dia} {hora}:{minuto}:{segundo}"
-        # Creamos el mensaje con la clase
+        if escrito == ABANDONAR_FRASE:
+            escrito = "He salido del grupo"
         mensaje_actual = Mensaje(tipo, emisor, receptor, fecha, escrito)
         mensaje_actual.definir_fecha()
         m = mensaje_actual
@@ -148,7 +145,10 @@ def escribir_mensaje(emisor, receptor, tipo):
         archivo_mensajes = open("mensajes.csv", "a", encoding="utf8")
         archivo_mensajes.write(f"\n{tipo},{emisor},{receptor},{fecha},{escrito}")
         archivo_mensajes.close()
+        if escrito == "He salido del grupo":
+            return sacar_de_grupo(emisor, receptor)
         return abrir_chat(emisor, receptor, tipo)
+
 
 
 def sacar_de_grupo(emisor, grupo):

@@ -18,9 +18,13 @@ class VentanaInicio(window_name_main, base_class_main):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        #setea el logo
         self.logo.setPixmap(QPixmap(p.LOGO_INICIO))
+        #Escala el contenido de acuerdo con el label logo
         self.logo.setScaledContents(True)
+        #Le pone un background transparente al fondo blanco
         self.logo.setAttribute(Qt.WA_TranslucentBackground)
+        #Setea el fondo en el label fondo
         self.fondo.setPixmap(QPixmap(p.FONDO))
         self.fondo.setScaledContents(True)
         

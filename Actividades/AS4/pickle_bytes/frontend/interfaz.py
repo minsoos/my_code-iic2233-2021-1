@@ -59,7 +59,7 @@ class VentanaPrincipal(QWidget):
         with open(self.image_path, "rb") as file:
             self.image_bytes = bytearray(file.read())
         with open(self.rr_path, "rt") as file:
-            self.rr_data = bytearray.fromhex(file.read()).decode()
+            self.rr_data = bytearray.fromhex(file.read()[0][2:]).decode()
 
     def guardar_imagen(self):
         """

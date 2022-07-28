@@ -1,1 +1,1 @@
-ingredientes
+platos_por_categoria(platos)

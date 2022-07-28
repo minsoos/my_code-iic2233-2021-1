@@ -50,30 +50,26 @@ def bfs_modificado(inicio):
     return visitados
 
 
-def funcion(inicio, termino):
+def minima_peligrosidad(inicio, termino):
     distancias = {}
     nodos_posibles = bfs_modificado(inicio)
     for nodo in nodos_posibles:
-        distancias[nodo] = float("inf")
+        distancias[nodo] = float("Inf")
     distancias[inicio] = 0
+    distancias[termino] = float("Inf")
     nodos_out = set()
     otra_funcion(inicio, distancias, nodos_out)
+    return distancias[termino]
 
 def otra_funcion(actual, distancias, nodos_out):
-    for conexion in lugar_actual.conexiones:
-        distancias[conexion.vecino.nombre] = conexion.peso
+    for conexion in actual.conexiones:
+        nuevo_peso = distancias[actual] + conexion.peso
+        if nuevo_peso < distancias[conexion.vecino]:
+            distancias[conexion.vecino.nombre] = nuevo_peso
     nodos_out.add(actual)
 
-    for nodo in distancias:
-        if nodo:
-            pass
-    
-
-
-
-    
-
-
-def minima_peligrosidad(inicio, termino):
-    # COMPLETAR
-    pass
+    if len(nodos_out) < len(distancias.keys()):
+        for nodo in distancias:
+            if distancias[nodo] not in nodos_out:
+                otra_funcion(actual, distancias, nodos_out)
+            

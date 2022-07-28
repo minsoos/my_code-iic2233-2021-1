@@ -1,23 +1,25 @@
 import cargar
 from collections import defaultdict
 platos = cargar.cargar_platos()
+
+
 def platos_por_categoria(platos):
     diccionario = defaultdict(list)
     for i in platos:
-        diccionario[platos[i].categoria].append(platos[i].n)
+        diccionario[platos[i].categoria].append(platos[i])
     return diccionario
     ##############
-    #categorias = set()
-    #for i in platos:
-       # categorias.add(i.categoria)
-    #for i in categorias:
-      #  for e in range(len(platos)):
+    #categorias = set()#
+    #for i in platos:#
+    # categorias.add(i.categoria)#
+    #for i in categorias:#
+    #  for e in range(len(platos)):
 
 
 
 # Retorna los platos que no incluyan los ingredientes descartados
 def descartar_platos(ingredientes_descartados, platos):
-    platos_descartados={}
+    platos_descartados = {}
     for i in platos:
         tiene_ingrediente_descartado = False
         for e in ingredientes_descartados:
@@ -51,7 +53,7 @@ def resumen_orden(lista_platos):
     cantidad = 0
     platoss = []
     for i in lista_platos:
-        platoss.append(i.n)
+        platoss.append(i.nombre)
         cantidad += 1
         tiempo += i.tiempo
         presio += i.precio
